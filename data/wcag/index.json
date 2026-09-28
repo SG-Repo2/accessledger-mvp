@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0.0",
+  "datasetVersion": "2026.09.28-1",
+  "standard": {
+    "name": "WCAG",
+    "version": "2.1",
+    "targetLevels": ["A", "AA"]
+  },
+  "publishedAt": "2026-09-28T00:00:00.000Z",
+  "publicationSources": [
+    "https://www.w3.org/TR/WCAG21/",
+    "https://dequeuniversity.com/rules/axe/4.13/"
+  ],
+  "criteria": ["criteria/4.1.2.json"]
+}

@@ -64,6 +64,7 @@ describe('shared domain contracts', () => {
       schemaVersion: CONTRACT_SCHEMA_VERSION,
       id: 'observation-1',
       assessmentId: assessment.id,
+      source: evidence.source,
       sourceRuleId: 'button-name',
       category: 'accessible-name',
       summary: 'A button has no accessible name.',
@@ -71,6 +72,7 @@ describe('shared domain contracts', () => {
       evaluation: 'supported',
       candidateWcagCriteria: ['4.1.2'],
       evidenceIds: [evidence.id],
+      facts: { result: 'violation', occurrenceCount: 1 },
       createdAt: now,
       updatedAt: now,
     });
@@ -85,6 +87,7 @@ describe('shared domain contracts', () => {
       selector: '#save',
       htmlSnippet: '<button id="save"></button>',
       componentFingerprint: null,
+      sourceDetail: { kind: 'axe_node', target: ['#save'] },
       observedAt: now,
     });
 
@@ -136,6 +139,15 @@ describe('shared domain contracts', () => {
           mappingType: 'tool_documented',
           mappingSource: null,
           verifiedAt: null,
+          evidenceRequirements: [
+            {
+              id: 'scanner-violation',
+              description: 'The scanner result is a violation.',
+              factPath: 'result',
+              operator: 'equals',
+              expectedValue: 'violation',
+            },
+          ],
         },
       ],
       manualValidationGuidance: 'Validate complex controls with assistive technology.',

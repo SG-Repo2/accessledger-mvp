@@ -88,22 +88,36 @@ the target ID, ordered raw evidence IDs, and optional exact source evidence ID.
 
 ### Observation
 
-An observation is a normalized technical proposition derived from evidence. It stores category,
-summary, optional source rule, testability category, evaluation state, candidate WCAG criterion IDs,
-and at least one evidence ID. It does not claim resident impact.
+An observation is a normalized technical proposition derived from evidence. It stores the exact
+source tool and version, category, summary, optional source rule, testability category, evaluation
+state, candidate WCAG criterion IDs, at least one evidence ID, and structured deterministic
+`facts`. Facts are intentionally small inputs for inspectable requirement evaluation; they do not
+replace or rewrite the referenced raw payload. An observation does not claim resident impact.
 
 ### ObservationOccurrence
 
 An occurrence is one concrete affected location. It references its observation, page, and at least
-one evidence item, with optional selector, HTML snippet, and component fingerprint. Grouping may
-associate occurrences but must not delete them. Occurrence count on a finding is a derived snapshot
-whose consistency is enforced outside Zod.
+one evidence item, with optional selector, HTML snippet, component fingerprint, and JSON
+`sourceDetail`. Source detail retains the exact relevant scanner rule/node or accessibility target,
+semantics, and provenance so later stages need not infer them from prose. Grouping may associate
+occurrences but must not delete them. Occurrence count on a finding is a derived snapshot whose
+consistency is enforced outside Zod.
 
 ### WCAGCriterion
 
 The criterion record contains `id`, title, level, principle, guideline, normative/intent sources,
 automated testability, evidence requirements, known rule mappings, and manual validation guidance.
 Normative and informative sources are not interchangeable. See `WCAG-KNOWLEDGE-MODEL.md`.
+
+### WcagCandidateEvaluation
+
+A candidate evaluation is a separate versioned record, never a Finding. It references its
+Observation and evidence, the independent WCAG dataset version, WCAG edition, nullable criterion,
+source mapping, evaluation state, reason, and an ordered requirement trace. Each requirement trace
+records the inspected fact path, operator, expected and actual JSON values, and whether evidence
+was `satisfied`, `contradicted`, or `insufficient`. A known mapping produces `supported`,
+`unsupported`, or `uncertain`; an unknown source rule is preserved as `unknown_rule` with an
+uncertain evaluation and no invented criterion.
 
 ### Finding
 

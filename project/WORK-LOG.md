@@ -97,3 +97,33 @@
 - **Scope:** No collector, schema, architecture, WCAG, observation, grouping, finding, severity,
   LLM, UI, journey, speech, or NVDA behavior changed. No Chunk 3 work began.
 - **Next logical action:** Execute Chunk 3 from the exact prompt in `project/HANDOFF.md`.
+
+## 2026-09-28 — Codex — Chunk 3
+
+- **Files changed:** Added `@accessledger/observations`, `@accessledger/wcag`, and the versioned
+  `data/wcag` dataset; extended shared Observation, ObservationOccurrence, rule-mapping, and WCAG
+  candidate-evaluation contracts; updated contract/acceptance tests, workspace lockfile,
+  architecture/data/WCAG/testing/runtime documentation, backlog, decisions, current state, and
+  handoff.
+- **Implemented:** Deterministic normalization for axe-core `button-name`, `label`, and
+  `aria-valid-attr-value` violations and explicitly empty computed Chromium button names; exact
+  per-node/target occurrence preservation; source/tool/fact provenance; scope validation; explicit
+  ignored-evidence outcomes; runtime-validated WCAG knowledge loading; source-version and fact-based
+  supported/unsupported/uncertain evaluation; and unknown-rule preservation.
+- **Public contract decision:** Added Observation `source`/`facts`, ObservationOccurrence
+  `sourceDetail`, rule mapping evidence requirements, requirement evaluations, and
+  `WcagCandidateEvaluation`. ADR-009 retains contract schema `1.0.0` for additive pre-release
+  changes and records dataset version `2026.09.28-1`.
+- **Persistence decision:** No persistence was required or added. Chunk 3 is a pure transformation
+  boundary over validated, JSON-serializable inputs/outputs; SQLite remains only an expected later
+  default when concrete access patterns exist.
+- **Tests executed:** Chunk 3 unit and controlled live-fixture tests; `npm run typecheck`; full
+  `npm test`; `npm run lint`; `npm run format:check`.
+- **Result:** All checks passed. Root suite: 9 files / 41 tests. Tests cover positive, negative,
+  preservation, deterministic fixture, unknown-rule, insufficient-evidence, unsupported-candidate,
+  dataset-version, JSON round-trip, source-version, and Page/Evidence traceability behavior.
+- **Known issues:** WCAG coverage is intentionally limited to 4.1.2 and four mappings; only three
+  axe violation rules and one browser-semantics fact normalize. Windows execution remains
+  unrecorded. No known Chunk 3 defect.
+- **Next logical action:** Execute Chunk 4 (Deduplication / Grouping) from `project/HANDOFF.md`; do
+  not begin findings, severity, UI, journeys, export, LLM analysis, or NVDA automation.

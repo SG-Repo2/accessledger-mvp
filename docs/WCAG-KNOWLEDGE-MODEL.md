@@ -51,12 +51,18 @@ toolVersionRange
 mappingType: tool_documented | reviewed
 mappingSource
 verifiedAt
+evidenceRequirements[]
 ```
 
 Tool-documented mappings should be imported from stable tool metadata or official documentation and
 pinned to a compatible version range where available. Reviewed mappings are explicitly approved by
 an auditor/maintainer. Speculative LLM suggestions are not persisted as deterministic mappings;
 they remain candidates attached to analysis and require review.
+
+Each mapping requirement has a stable ID, concise description, normalized fact path, operator, and
+expected JSON value. Chunk 3 supports `equals`, `greater_than`, and `non_empty`. These requirements
+make the candidate decision inspectable; criterion-level prose requirements still describe the
+broader evidence expectation.
 
 A scanner rule may map to multiple criteria, and a criterion may have many rules. The mapping only
 creates a candidate unless the rule result and criterion-specific evidence requirements support the
@@ -68,8 +74,10 @@ For each candidate relationship:
 
 1. Resolve the criterion record and applicable version.
 2. Collect the referenced raw result and normalized technical facts.
-3. Compare available evidence with `evidenceRequirements`.
-4. Record `supported`, `unsupported`, or `uncertain` without rewriting source evidence.
+3. Check the source-tool version and compare normalized facts with the mapping's explicit
+   `evidenceRequirements`.
+4. Record `supported`, `unsupported`, or `uncertain` plus each satisfied, contradicted, or
+   insufficient requirement without rewriting source evidence.
 5. Queue contextual, interaction, or NVDA guidance for human validation.
 
 This prevents `scanner warning -> WCAG finding` and `agent failure -> WCAG violation` shortcuts.
@@ -88,6 +96,13 @@ data/wcag/
 `index.json` identifies the WCAG edition, dataset version, publication sources, and included
 criteria. Every record validates through shared schemas. Mapping changes are code-reviewed and
 tested against fixtures. Store links and concise requirements, not large copied W3C text.
+
+The initial dataset version is `2026.09.28-1`. It targets WCAG 2.1 A/AA and intentionally includes
+only 4.1.2 Name, Role, Value because that is the only criterion needed by the current deterministic
+fixture coverage. It contains axe-core 4.13.x mappings for `button-name`, `label`, and
+`aria-valid-attr-value`, plus a reviewed mapping for a Chromium button with an explicitly available
+empty computed name. Deque's versioned rule pages are the mapping sources; the W3C Recommendation
+is normative and the Understanding page is informative.
 
 Application schema version, WCAG standard version, dataset version, and scanner version are
 separate concepts and must not be conflated.

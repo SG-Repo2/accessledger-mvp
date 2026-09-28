@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "4.1.2",
+  "title": "Name, Role, Value",
+  "level": "A",
+  "principle": "robust",
+  "guideline": "4.1 Compatible",
+  "normativeSource": "https://www.w3.org/TR/WCAG21/#name-role-value",
+  "intentSource": "https://www.w3.org/WAI/WCAG21/Understanding/name-role-value.html",
+  "automatedTestability": "partial",
+  "evidenceRequirements": [
+    "The relevant user-interface component and concrete page occurrence are identified.",
+    "Deterministic evidence establishes the missing programmatic name or invalid exposed state, property, or value covered by the mapped rule.",
+    "The source rule and tool version are within the reviewed mapping scope."
+  ],
+  "knownRuleMappings": [
+    {
+      "tool": "axe-core",
+      "ruleId": "button-name",
+      "toolVersionRange": "4.13.x",
+      "mappingType": "tool_documented",
+      "mappingSource": "https://dequeuniversity.com/rules/axe/4.13/button-name",
+      "verifiedAt": "2026-09-28T00:00:00.000Z",
+      "evidenceRequirements": [
+        {
+          "id": "scanner-result-is-violation",
+          "description": "The normalized axe result is a violation, not a pass or incomplete result.",
+          "factPath": "result",
+          "operator": "equals",
+          "expectedValue": "violation"
+        },
+        {
+          "id": "concrete-occurrence-present",
+          "description": "At least one concrete failing node is preserved.",
+          "factPath": "occurrenceCount",
+          "operator": "greater_than",
+          "expectedValue": 0
+        }
+      ]
+    },
+    {
+      "tool": "axe-core",
+      "ruleId": "label",
+      "toolVersionRange": "4.13.x",
+      "mappingType": "tool_documented",
+      "mappingSource": "https://dequeuniversity.com/rules/axe/4.13/label",
+      "verifiedAt": "2026-09-28T00:00:00.000Z",
+      "evidenceRequirements": [
+        {
+          "id": "scanner-result-is-violation",
+          "description": "The normalized axe result is a violation, not a pass or incomplete result.",
+          "factPath": "result",
+          "operator": "equals",
+          "expectedValue": "violation"
+        },
+        {
+          "id": "concrete-occurrence-present",
+          "description": "At least one concrete failing node is preserved.",
+          "factPath": "occurrenceCount",
+          "operator": "greater_than",
+          "expectedValue": 0
+        }
+      ]
+    },
+    {
+      "tool": "axe-core",
+      "ruleId": "aria-valid-attr-value",
+      "toolVersionRange": "4.13.x",
+      "mappingType": "tool_documented",
+      "mappingSource": "https://dequeuniversity.com/rules/axe/4.13/aria-valid-attr-value",
+      "verifiedAt": "2026-09-28T00:00:00.000Z",
+      "evidenceRequirements": [
+        {
+          "id": "scanner-result-is-violation",
+          "description": "The normalized axe result is a violation, not a pass or incomplete result.",
+          "factPath": "result",
+          "operator": "equals",
+          "expectedValue": "violation"
+        },
+        {
+          "id": "concrete-occurrence-present",
+          "description": "At least one concrete failing node is preserved.",
+          "factPath": "occurrenceCount",
+          "operator": "greater_than",
+          "expectedValue": 0
+        }
+      ]
+    },
+    {
+      "tool": "Chrome DevTools Protocol Accessibility",
+      "ruleId": "empty-accessible-name",
+      "toolVersionRange": null,
+      "mappingType": "reviewed",
+      "mappingSource": "https://www.w3.org/WAI/WCAG21/Understanding/name-role-value.html",
+      "verifiedAt": "2026-09-28T00:00:00.000Z",
+      "evidenceRequirements": [
+        {
+          "id": "semantics-collected",
+          "description": "Browser accessibility semantics were collected successfully.",
+          "factPath": "collectionStatus",
+          "operator": "equals",
+          "expectedValue": "collected"
+        },
+        {
+          "id": "button-role-exposed",
+          "description": "The browser accessibility API exposes the target as a button.",
+          "factPath": "role",
+          "operator": "equals",
+          "expectedValue": "button"
+        },
+        {
+          "id": "accessible-name-empty",
+          "description": "The browser accessibility API exposes an available but empty computed name.",
+          "factPath": "name",
+          "operator": "equals",
+          "expectedValue": ""
+        }
+      ]
+    }
+  ],
+  "manualValidationGuidance": "Browser semantics and deterministic rules support the technical candidate only. Validate complex custom-control behavior and actual assistive-technology interaction separately when those claims are needed."
+}

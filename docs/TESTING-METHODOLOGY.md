@@ -110,6 +110,12 @@ Live municipal websites are exploratory/validation targets only after fixture ac
 They must not be the primary CI dependency because content, timing, consent screens, and network
 behavior change independently of the code.
 
+Chunk 3 normalization tests exercise the controlled axe and browser-semantics fixture path plus
+fully local source payloads. They prove positive and negative behavior, exact node/selector/source
+detail retention, Page/Evidence traceability, unknown-rule retention, insufficient evidence,
+unsupported candidates, JSON round trips, source-version scope, and dataset version. The WCAG
+mapper tests compare explicit facts only; scanner impact labels are never converted into severity.
+
 ## Product-level MVP measure
 
 The MVP is evaluated by whether an auditor can reach reliable, reviewable findings in less manual

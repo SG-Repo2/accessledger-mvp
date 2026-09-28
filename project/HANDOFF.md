@@ -1,130 +1,98 @@
-# Handoff — Start Chunk 3 Only
+# Handoff — Start Chunk 4 Only
 
 ## Last completed work
 
-Chunk 2 (Accessibility Evidence) is complete. Controlled targets can be collected through the
-existing live `BrowserCapture` and emitted as validated, JSON-serializable
-`Evidence(kind="accessibility_semantics")`. The implementation records browser-exposed role, name,
-description, value, focusability, states, relationships, unavailable fields, and typed target
-errors. It does not create observations, WCAG mappings, findings, severity, synthesized speech, or
-NVDA claims.
+Chunk 3 (Observation Normalization + WCAG Mapping) is complete. Validated raw scanner and
+accessibility-semantics evidence can now become narrow, deterministic Observation and
+ObservationOccurrence records, and source-rule candidates can be evaluated against a small,
+versioned WCAG dataset as supported, unsupported, or uncertain. No occurrence is grouped or
+deduplicated, and no Finding, severity, UI, journey, export, LLM, speech, or NVDA behavior exists.
 
-All root checks pass: 7 test files / 27 tests. Collector, integrated assessor, and CLI tests cover
-browser semantics, error behavior, round-trip serialization, traceability, resource cleanup, and
-optional target forwarding.
-
-## Runtime versions and installation
-
-- Node acceptance host: `22.23.3`
-- npm: `10.9.9`
-- Playwright: `1.63.0`
-- Installed acceptance Chromium: Playwright build `1243`, browser `153.0.8010.12`, macOS arm64
-- Chrome DevTools Protocol: `1.3`
-- axe-core: `4.13.0`
-
-After `npm install`, install the platform browser separately with:
-
-```text
-npm run playwright:install
-```
-
-The developer CLI accepts `npm run scan -- <URL> [--target "<selector>" ...]`. Each repeated flag
-creates an ordered CSS target descriptor and exercises the existing Chunk 2 collector. With no
-targets it preserves the original behavior and returns an empty `accessibilityEvidence` array. See
-`docs/RAW-CAPTURE-RUNTIME.md` for lifecycle and provenance details.
+All root checks pass: 9 test files / 41 tests. The suite includes controlled Chromium/axe fixture
+acceptance plus positive, negative, preservation, unknown-rule, insufficient-evidence,
+unsupported-candidate, dataset-version, source-version, serialization, and traceability cases.
 
 ## Public contracts and interfaces
 
-`@accessledger/shared` now exports these Chunk 2 schemas and inferred types:
+`@accessledger/shared` retains contract schema `1.0.0` and now includes:
 
-- `accessibilityTargetDescriptorSchema` / `AccessibilityTargetDescriptor`
-- `accessibilityCollectionContextSchema` / `AccessibilityCollectionContext`
-- `accessibilityTextFieldSchema`, `accessibilityPrimitiveFieldSchema`, and
-  `accessibilityBooleanFieldSchema`
-- `accessibilityRelationshipTargetSchema` and `accessibilityRelationshipFieldSchema`
-- `accessibilitySemanticsSchema` / `AccessibilitySemantics`
-- `accessibilitySemanticsProvenanceSchema`
-- `accessibilitySemanticsErrorSchema` / `AccessibilitySemanticsError`
-- `accessibilitySemanticsPayloadSchema` / `AccessibilitySemanticsPayload`
-- `accessibilitySemanticsEvidenceMetadataSchema`
-- `accessibilitySemanticsEvidenceSchema` / `AccessibilitySemanticsEvidence`
+- Observation `source` (exact Evidence source) and structured JSON `facts` used by explicit mapping
+  requirements.
+- ObservationOccurrence `sourceDetail`, retaining exact relevant axe rule/node or accessibility
+  target/semantics/provenance data.
+- `ruleEvidenceRequirementSchema` / `RuleEvidenceRequirement` and the extended `RuleMapping`
+  `evidenceRequirements` field.
+- `wcagRequirementEvaluationSchema` / `WcagRequirementEvaluation`.
+- `wcagCandidateEvaluationSchema` / `WcagCandidateEvaluation`, which records dataset/standard,
+  mapping resolution, nullable criterion/mapping for unknown rules, supported/unsupported/uncertain
+  state, reason, ordered requirement trace, evidence IDs, and evaluation time.
 
-`RawPageAssessmentRequest` has optional `accessibilityTargets`; `RawPageAssessment` has required,
-ordered `accessibilityEvidence`. Page `rawEvidenceIds` contains browser, scanner, then accessibility
-evidence IDs. Each semantics record's metadata separately preserves the ordered browser/scanner raw
-evidence IDs and nullable exact source evidence ID.
+`@accessledger/observations` exports:
 
-`@accessledger/browser` extends the runtime-only `BrowserCapture` with
-`captureAccessibilityTree(targets)`, returning `BrowserAccessibilityTreeSnapshot` and per-target
-`BrowserAccessibilityTreeResult` JSON. No Playwright/CDP handles cross the boundary.
+- `ObservationNormalizer.normalize({ page, evidence }) -> { observations, occurrences,
+ignoredEvidence, unrecognizedRules }`
+- `DeterministicObservationNormalizer` and injectable clock/ID options
+- input/result/context and ignored-evidence types
 
-`@accessledger/accessibility` exports:
+`@accessledger/wcag` exports:
 
-- `AccessibilityEvidenceCollector.collect(page, targets)`
-- `BrowserAccessibilityEvidenceCollector`
-- `BrowserAccessibilityEvidenceCollectorOptions`
+- `WcagKnowledge.getCriterion(id)`, `getCriteria()`, and `findRuleMappings(tool, ruleId)`
+- `JsonWcagKnowledge`, loading reviewable JSON from `data/wcag`
+- `WcagMapper.evaluate(observation) -> WcagCandidateEvaluation[]`
+- `EvidenceBasedWcagMapper` and injectable clock/ID options
 
-`@accessledger/evidence` keeps `RawPageAssessor` and `assessRawPage`; both now run requested target
-collection inside the existing `try/finally` lifecycle before closing the capture.
+## Normalization behavior and traceability
 
-## Target and payload behavior
+The normalizer covers only axe-core violation results for `button-name`, `label`, and
+`aria-valid-attr-value`, plus collected Chromium semantics where role is explicitly `button` and
+computed name is explicitly available as `""`. One covered axe violation creates one observation;
+each node creates a separate occurrence. A semantics fact creates one observation and one
+occurrence. Repeated locations are intentionally not merged.
 
-A target descriptor has `schemaVersion: "1.0.0"`, opaque `id`, `strategy: "css"`, non-empty
-`selector`, and nullable `sourceEvidenceId`. Target IDs are unique within one collection. Selectors
-are reproducible evidence locators for the captured page, not guaranteed durable element identity.
+Scanner passes, incomplete results, unknown rules, raw browser results, collection errors, non-empty
+names, and other semantics do not create observations. Unknown source rules remain in
+`unrecognizedRules` with their Evidence ID and tool/version. Browser-semantics observations retain the
+accessibility Evidence ID plus its ordered browser/scanner raw-evidence chain. Scanner observations
+retain their exact scanner Evidence ID. Every occurrence keeps its Page ID, selector where
+available, HTML where supplied, exact source detail, and observation/evidence linkage.
 
-Collected payloads distinguish `available` values from `unavailable` values with reason
-`not_exposed_or_not_applicable`. In particular, an empty computed accessible name is stored as
-available `""`, not as unavailable. State fields currently cover busy, disabled, focused, invalid,
-read-only, required, checked, expanded, modal, pressed, and selected. Relationship fields cover
-active descendant, controls, described-by, details, error-message, flow-to, labelled-by, and owns.
+## WCAG dataset and evaluation
 
-Typed error codes are `target_not_found_or_detached`, `multiple_targets_matched`, `hidden_target`,
-`accessibility_node_unavailable`, and `browser_api_error`. Errors remain source evidence; they are
-not accessibility violations.
+Dataset `2026.09.28-1` targets WCAG 2.1 Levels A/AA and includes only criterion 4.1.2 Name, Role,
+Value because current fixtures require no other criterion. Tool-documented axe-core 4.13.x mappings
+cover `button-name`, `label`, and `aria-valid-attr-value`; a reviewed Chromium mapping covers the
+explicit empty computed button name. Mapping sources are versioned Deque rule pages or W3C
+Understanding guidance; the W3C WCAG 2.1 Recommendation remains normative.
 
-## Browser API and NVDA boundary
+The mapper checks source-version scope and explicit fact requirements. All satisfied requirements
+produce `supported`; a contradicted fact produces `unsupported`; missing facts or an out-of-range
+tool version produce `uncertain`. An unknown tool/rule produces an `unknown_rule` uncertain record
+with null criterion/source mapping. Candidate evaluations do not mutate observations or create
+findings.
 
-The implementation uses a temporary Chromium CDP session and
-`Accessibility.getPartialAXTree` after resolving exactly one attached, rendered CSS target. It
-detaches the CDP session after collection and closes the owning Playwright page/context/browser via
-the existing assessor lifecycle.
+## Persistence and decisions
 
-Provenance uses classification `browser_accessibility_semantics`, source/API name
-`Chrome DevTools Protocol Accessibility`, pinned browser/automation/protocol versions, and
-`assistiveTechnologyOutput: false`. These values may differ from platform accessibility APIs and
-NVDA's heuristics, modes, announcements, and settings. They do not prove speech, focus-order
-quality, task completion, resident experience, WCAG conformance, or severity.
+ADR-009 records the additive contracts, narrow covered facts, dataset version, mapping semantics,
+and decision to retain contract schema `1.0.0`. Chunk 3 did not require persistence; there are no
+tables, migrations, ORM, database setup commands, or artifact layout. SQLite remains an expected
+later default only if a later chunk proves repository/query/transaction requirements.
 
-## Fixture and test coverage
+## Coverage gaps and limits
 
-`data/fixtures/accessibility-semantics.html` covers a labelled/described/value-bearing required
-textbox, labelled/described checked custom checkbox, expanded/controls button, unnamed button,
-hidden button, and element detached before collection. Tests prove computed roles/names/
-descriptions/value, focusability, states, IDREF relationships, explicit unavailable fields,
-hidden/detached errors, JSON round trips, raw-evidence/Page traceability, browser-semantic labeling,
-and resource closure.
-
-The fixture server remains portable Node code and uses an explicit allow-list. Managed sandboxes
-may require permission for loopback binding and Chromium launch. Windows execution remains
-unrecorded; there are no known Chunk 2 defects.
-
-## Decision and limits
-
-ADR-008 records the target/evidence contracts, Chromium/CDP boundary, existing-capture lifecycle,
-explicit browser-not-AT classification, and decision to retain schema `1.0.0` for additive
-pre-release contracts. No persistence, observation, WCAG mapping, grouping, finding, UI, journey,
-severity, LLM, speech, or NVDA implementation was added.
+The WCAG dataset is deliberately incomplete, normalization does not ingest all axe rules, and rule
+range matching currently supports the pinned `4.13.x` dataset scope. Extending coverage requires
+reviewed mappings, explicit requirements, deterministic fixtures, and tests. Browser semantics are
+not NVDA, actual assistive-technology behavior, resident testimony, severity, certification, or a
+legal conclusion. Windows execution remains unrecorded; there are no known Chunk 3 defects.
 
 ## What to do next
 
-Implement **Chunk 3 — Observation Normalization + WCAG Mapping** exactly as specified in
-`docs/MVP-IMPLEMENTATION-PLAN.md`. Consume the existing raw scanner and accessibility evidence,
-preserve every Page/Evidence reference, make a persistence decision only if Chunk 3 requires it,
-and stop before Chunk 4 grouping.
+Implement **Chunk 4 — Deduplication / Grouping** exactly as specified in
+`docs/MVP-IMPLEMENTATION-PLAN.md`. Consume the normalized observations and every concrete
+occurrence without deleting or overwriting any of them. Stop before Chunk 5 findings.
 
 ## Exact recommended prompt for the next agent
 
 ```text
-Read AGENTS.md, project/CURRENT-STATE.md, project/HANDOFF.md, docs/ARCHITECTURE.md, the Chunk 3 section of docs/MVP-IMPLEMENTATION-PLAN.md, docs/TESTING-METHODOLOGY.md, docs/DATA-MODEL.md, docs/WCAG-KNOWLEDGE-MODEL.md, docs/RAW-CAPTURE-RUNTIME.md, and relevant entries in project/DECISIONS.md. Implement Chunk 3 only: Observation Normalization + WCAG Mapping. Use npm and preserve the existing TypeScript/ESM/workspace setup. Consume validated raw browser/scanner and accessibility_semantics Evidence without changing its source meaning. Define and test the ObservationNormalizer.normalize and WcagKnowledge/WcagMapper boundaries before export. Normalize only deterministic covered fixture facts into Observation and ObservationOccurrence records while preserving every Page ID, Evidence ID, selector, source detail, and concrete occurrence. Add a small versioned WCAG 2.1 A/AA knowledge dataset and inspectable, documented tool/rule mappings with provenance; evaluate candidate mappings as supported, unsupported, or uncertain from explicit evidence requirements, and preserve unknown rules and insufficient evidence. Make and document a lightweight persistence decision only if Chunk 3 actually requires persistence. Do not begin Chunk 4: do not group or deduplicate occurrences, draft findings, implement the auditor UI or resident automation, assign severity, use LLM analysis, simulate speech, automate NVDA, or claim certification/legal conformance. Add deterministic positive, negative, preservation, unknown-rule, insufficient-evidence, dataset-version, and traceability tests. Run npm run typecheck, npm test, npm run lint, and npm run format:check, then update project/CURRENT-STATE.md, project/WORK-LOG.md, project/BACKLOG.md, project/DECISIONS.md if needed, and project/HANDOFF.md. Report files changed, public contracts, tests, decisions, unresolved issues, and the exact prompt for the next Chunk 4 agent.
+Read AGENTS.md, project/CURRENT-STATE.md, project/HANDOFF.md, docs/ARCHITECTURE.md, the Chunk 4 section of docs/MVP-IMPLEMENTATION-PLAN.md, docs/TESTING-METHODOLOGY.md, docs/DATA-MODEL.md, and relevant entries in project/DECISIONS.md. Implement Chunk 4 only: Deduplication / Grouping. Use npm and preserve the existing TypeScript/ESM/workspace setup. Consume validated Chunk 3 Observation and ObservationOccurrence records and define and test the grouping.group boundary before export. Add conservative, inspectable, versioned grouping proposals using deterministic signals such as source rule/category, normalized component fingerprints when present, selector/component structure, and page/template context; retain every member observation ID, occurrence ID, Page ID, and Evidence ID without deleting, rewriting, or collapsing any occurrence. Prefer false negatives to false merges, preserve singleton and ambiguous cases for review, and make grouping rationale/signals explicit. Add or revise shared public contracts only through the documented schema process, and make a lightweight persistence decision only if Chunk 4 actually requires persistence. Do not begin Chunk 5: do not draft findings or condition/cause/effect/recommendation prose, assign severity or confidence, implement the auditor UI or journeys/export, use LLM analysis, simulate speech, automate NVDA, or claim certification/legal conformance. Add deterministic positive, negative, repeated-component, cross-page, ambiguous, singleton, zero-occurrence-loss, traceability, schema-version, and serialization tests. Run npm run typecheck, npm test, npm run lint, and npm run format:check, then update project/CURRENT-STATE.md, project/WORK-LOG.md, project/BACKLOG.md, project/DECISIONS.md if needed, and project/HANDOFF.md. Report files changed, public contracts, tests, decisions, unresolved issues, and the exact prompt for the next Chunk 5 agent.
 ```

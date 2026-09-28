@@ -108,6 +108,17 @@ platform API consumption, heuristics, announcements, modes, and user settings. I
 speech output, focus order quality, task completion, resident experience, WCAG conformance, or
 severity.
 
+## Chunk 3 downstream use
+
+Pass a validated Page and its browser, scanner, and accessibility Evidence records to
+`DeterministicObservationNormalizer.normalize`. The normalizer never edits the capture aggregate.
+It currently recognizes only the documented fixture-covered facts listed in
+`docs/WCAG-KNOWLEDGE-MODEL.md`; operational browser evidence, scanner passes/incomplete results,
+unknown rules, and accessibility collection errors do not become observations. Unknown source
+rules are retained in normalization output with their Evidence and tool/version context. The output
+remains in memory as validated JSON-serializable records in Chunk 3; no database setup or migration
+command is required.
+
 ## Public exports
 
 - `@accessledger/shared`: `rawPageAssessmentRequestSchema`, `rawPageAssessmentErrorSchema`,
@@ -122,6 +133,10 @@ severity.
   `BrowserAccessibilityEvidenceCollector`, and its options.
 - `@accessledger/evidence`: `RawPageAssessor`, its options, and `assessRawPage`, now returning
   ordered `accessibilityEvidence` when targets are supplied.
+- `@accessledger/observations`: `ObservationNormalizer`,
+  `DeterministicObservationNormalizer`, normalization inputs/results, and ignored-evidence reasons.
+- `@accessledger/wcag`: `WcagKnowledge`, `JsonWcagKnowledge`, `WcagMapper`, and
+  `EvidenceBasedWcagMapper`.
 
 The aggregate accepts `assessmentId`, URL, and optional accessibility targets. Default IDs and
 timestamps are generated at runtime; tests can inject clocks, ID factories, loaders, and scanners

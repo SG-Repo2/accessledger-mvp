@@ -133,3 +133,36 @@
   selectors. Selectors are evidence locators, not durable identity. Unexposed fields remain
   explicitly unavailable, platform/AT behavior still requires human validation, and Chunk 3 may
   normalize these records without changing their source meaning.
+
+## ADR-009 — Deterministic normalization and explicit WCAG candidate evaluation
+
+- **Date:** 2026-09-28
+- **Status:** Accepted
+- **Context:** Chunk 3 must turn validated raw evidence into traceable technical propositions and
+  evaluate documented WCAG candidates without treating scanner output as a Finding or losing
+  unknown/insufficient states.
+- **Decision:** Add source provenance and structured facts to Observation, exact JSON source detail
+  to ObservationOccurrence, explicit rule evidence requirements to WCAG mappings, and a separate
+  versioned `WcagCandidateEvaluation` contract. Normalize only axe-core `button-name`, `label`, and
+  `aria-valid-attr-value` violations plus a collected browser-semantics button with an explicitly
+  available empty name. Evaluate mappings through source-version and fact requirements as
+  supported, unsupported, or uncertain; preserve unknown rules as uncertain with no criterion.
+  Store the initial WCAG 2.1 A/AA dataset as reviewable JSON version `2026.09.28-1`, containing only
+  criterion 4.1.2 and the mappings needed by fixtures.
+- **Persistence decision:** Chunk 3 does not require persistence. Normalization and mapping are pure
+  transformations over validated records and produce JSON-serializable contracts. Keep SQLite as
+  the expected later default, but add no tables, ORM, migration, or setup command until a later
+  chunk proves repository/query/transaction requirements.
+- **Reason:** The mapper needs inspectable inputs and per-requirement trace to distinguish absent
+  evidence from contradictory evidence. Exact occurrence source detail keeps later grouping and
+  review auditable without copying or altering raw Evidence.
+- **Alternatives considered:** Trust axe WCAG tags as conclusions; store evaluation on Finding;
+  discard unknown rules; infer missing evidence as failure; introduce SQLite solely to retain
+  transient Chunk 3 outputs.
+- **Schema-version decision:** Retain `CONTRACT_SCHEMA_VERSION` at `1.0.0`. These are additive
+  pre-release contracts and fields introduced before persisted production data exists. A breaking
+  change after persistence or external release requires an explicit version increment.
+- **Consequences:** Chunk 4 receives independent observations and concrete occurrences with no
+  deduplication. Coverage is intentionally narrow; adding rules, criteria, operators, or source
+  versions requires reviewed dataset/code changes and deterministic tests. Browser semantics remain
+  browser evidence, not NVDA or resident experience.

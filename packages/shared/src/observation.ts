@@ -1,6 +1,12 @@
 import { z } from 'zod';
 
-import { entityIdSchema, entityTimestampsSchema, schemaVersionSchema } from './common.js';
+import {
+  entityIdSchema,
+  entityTimestampsSchema,
+  jsonValueSchema,
+  schemaVersionSchema,
+} from './common.js';
+import { evidenceSourceSchema } from './evidence.js';
 
 export const testabilitySchema = z.enum(['deterministic', 'contextual', 'human_validation']);
 
@@ -16,6 +22,7 @@ export const observationSchema = z
     schemaVersion: schemaVersionSchema,
     id: entityIdSchema,
     assessmentId: entityIdSchema,
+    source: evidenceSourceSchema,
     sourceRuleId: z.string().trim().min(1).nullable(),
     category: z.string().trim().min(1),
     summary: z.string().trim().min(1),
@@ -23,6 +30,7 @@ export const observationSchema = z
     evaluation: evidenceEvaluationSchema,
     candidateWcagCriteria: z.array(z.string().trim().min(1)),
     evidenceIds: z.array(entityIdSchema).min(1),
+    facts: z.record(z.string(), jsonValueSchema),
   })
   .extend(entityTimestampsSchema.shape);
 
@@ -36,6 +44,7 @@ export const observationOccurrenceSchema = z.object({
   selector: z.string().trim().min(1).nullable(),
   htmlSnippet: z.string().trim().min(1).nullable(),
   componentFingerprint: z.string().trim().min(1).nullable(),
+  sourceDetail: jsonValueSchema,
   observedAt: z.iso.datetime({ offset: true }),
 });
 

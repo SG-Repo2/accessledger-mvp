@@ -100,14 +100,17 @@ Windows-specific implementation behind the cross-platform validation interface.
 
 ## Persistence strategy
 
-The MVP should use a local, lightweight database after its access patterns are proven; SQLite is
-the expected default, subject to a Chunk 3 decision. Persistence uses repositories defined around
+The MVP should use a local, lightweight database after its access patterns are proven; SQLite
+remains the expected default. Chunk 3 did not require persistence: normalization and mapping are
+pure, deterministic transformations over validated records, and their outputs validate as
+JSON-serializable public contracts. A later chunk must make a separate storage decision when a real
+repository, transaction, or query requirement exists. Persistence uses repositories defined around
 shared domain records, migrations, and explicit transactions. Large binary artifacts such as
 screenshots may be stored in a portable artifact directory with database metadata and content
 hashes. Paths must be resolved with Node `path` APIs and stored as portable relative references
 when possible.
 
-No persistence layer exists in Chunk 0. JSON-serializable schemas define the boundary without
+No persistence layer exists through Chunk 3. JSON-serializable schemas define the boundary without
 prematurely choosing tables or an ORM.
 
 ## Package interfaces by stage
@@ -163,6 +166,28 @@ raw evidence IDs in metadata, and optionally identifies the exact source evidenc
 target. Provenance labels the result `browser_accessibility_semantics`, includes Chromium,
 Playwright, and protocol versions, and sets `assistiveTechnologyOutput: false`. These records are
 not NVDA output, synthesized speech, resident experience, or human validation.
+
+### Chunk 3 observation and WCAG boundary
+
+`@accessledger/observations` exposes `ObservationNormalizer.normalize({ page, evidence })`. The
+deterministic implementation validates scope before processing and currently covers axe-core
+`button-name`, `label`, and `aria-valid-attr-value` violations plus a collected Chromium button
+whose computed name is explicitly available and empty. It creates one Observation per covered raw
+rule result and one `ObservationOccurrence` per concrete axe node or semantics target. It does not
+group repeated locations. Raw selectors, HTML, node/check detail, semantics, target descriptors,
+provenance, Page IDs, and all evidence-chain IDs are retained without changing the raw records.
+Passes, browser operational evidence, semantics errors, and facts outside this allow-list remain
+explicit ignored inputs and do not become accessibility conclusions. Unknown source rules are
+retained separately with their Evidence ID and tool/version instead of being silently discarded.
+
+`@accessledger/wcag` exposes `WcagKnowledge.getCriterion(id)` and
+`WcagMapper.evaluate(observation)`. `JsonWcagKnowledge` loads and runtime-validates the reviewable
+dataset under `data/wcag`; `EvidenceBasedWcagMapper` resolves a source tool/rule, checks its source
+version and explicit fact requirements, and emits separate `WcagCandidateEvaluation` records.
+Known candidates remain `supported`, `unsupported`, or `uncertain`; unknown rules produce an
+uncertain trace with no fabricated criterion. The mapper does not mutate observations or create
+findings. Dataset version, contract schema version, WCAG edition, and source-tool version remain
+independent.
 
 ## Cross-platform boundary
 
