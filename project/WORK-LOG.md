@@ -221,3 +221,43 @@
   execution remains unrecorded. No known Chunk 6 correctness defect.
 - **Next logical action:** Execute Chunk 7 (Resident Journey Recording) from `project/HANDOFF.md`;
   add a new migration and do not begin export or autonomous/automated resident/NVDA behavior.
+
+## 2026-09-28 — Codex — Chunk 7
+
+- **Files changed:** Added the `@accessledger/journeys` workspace and tests; extended shared journey
+  and audit contracts; added SQLite migration 2 plus journey repository operations; extended
+  Finding review traces and the auditor studio; updated the lockfile, architecture, auditor-review,
+  data-model, journey, testing, backlog, decisions, current-state, work-log, and handoff documents.
+- **Persistence design:** Left migration 1 unchanged. Migration 2 adds current ResidentJourney
+  projections, append-only protocol revisions, normalized protocol/result Finding links,
+  append-only JourneyResult rows, immutable result Evidence links, and append-only journey audit
+  events. Protocol edits use optimistic whole-record comparison. Create/edit/result/Validation
+  writes use `BEGIN IMMEDIATE`; duplicate result tests prove Evidence and audit rollback.
+- **Implemented:** Generic protocol create/load/list/edit/safe soft-delete; human performer; platform/browser/
+  optional assistive-technology environment; start/end timing; all five explicit outcomes;
+  distinct not-attempted/interrupted-inconclusive/unable behavior; optional human NVDA observations;
+  immutable same-assessment human Evidence; same-assessment Finding links; complete audit history;
+  and native keyboard-operable studio forms plus linked-result Finding review.
+- **Validation policy:** Recording a result never creates a claim or severity. A separate operation
+  creates JourneyResult-subject Validation only for a linked in-review Finding using Evidence from
+  that result. The Validation, Finding validation-status projection, review audit event, and journey
+  audit event commit atomically. Existing exact supported-severity assignment remains authoritative.
+- **Public contract decision:** JourneyResult adds required `environment`, non-empty unique Evidence,
+  timing refinements, and guarded optional NVDA observations. Added `JourneyAuditEvent`,
+  `ResidentJourneyService`, journey inputs/traces, `JourneyRepository`, linked JourneyResults on
+  Finding review traces, and persistence schema version 2. ADR-013 retains public contract schema
+  `1.0.0` as a coordinated pre-release change.
+- **Tests executed:** Targeted shared/persistence/journeys/findings/studio suites; `npm run
+typecheck`; full `npm test` with loopback permission for deterministic browser fixtures; `npm run
+lint`; `npm run format:check`.
+- **Result:** All required checks passed. Root suite: 15 files / 81 tests. Targeted Chunk 7/review
+  suites: 5 files / 22 tests. Coverage includes migration order/idempotence, transaction rollback,
+  create/edit/audit history, all outcomes, performer/environment/timing, link integrity,
+  interrupted/inconclusive, optional NVDA, immutable supporting Evidence, separate Validation/exact
+  severity, no automatic outcome, schema/serialization, semantic keyboard UI, and happy path.
+- **Known issues:** The studio remains unstyled/local and has no importer, artifact viewer,
+  authentication, concurrent merge UI, or delete control (safe result-free soft delete is service-only). Node 22 emits the upstream
+  `node:sqlite` experimental warning. Windows/NVDA execution remains an external human procedure.
+  No known Chunk 7 correctness defect.
+- **Next logical action:** Execute Chunk 8 (Findings Register Export) from `project/HANDOFF.md`;
+  preserve approved-only traceability and never infer claims or severity from journey outcomes.

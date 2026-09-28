@@ -277,3 +277,50 @@
   feature warning. The current repository is intentionally local/synchronous and not multi-user.
   A later journey migration can append tables and reuse Validation/human Evidence without changing
   immutable Chunk 6 records.
+
+## ADR-013 — Revisioned human journey records with explicit result-backed Validation
+
+- **Date:** 2026-09-28
+- **Status:** Accepted
+- **Context:** Chunk 7 must retain editable human-authored civic-task protocols and reproducible
+  manual outcomes without turning browser/scanner/agent failure into resident experience or
+  bypassing Chunk 6's human Evidence and severity gates.
+- **Decision:** Add `ResidentJourneyService` and a `JourneyRepository` implemented by
+  `SqliteReviewRepository`. Add ordered persistence migration 2 without changing migration 1.
+  Store a current ResidentJourney projection plus append-only revisions, append-only JourneyResult
+  records, normalized same-assessment Finding links, immutable result-to-Evidence links, and
+  append-only `JourneyAuditEvent` history. Require each result to contain an explicitly selected
+  outcome, named human performer, platform/browser/optional assistive-technology environment,
+  timing, and non-empty human Evidence. Treat `not_attempted` as having no end time; require an end
+  time for every attempted state, including interrupted `inconclusive` work. Permit optional NVDA
+  observations only when an NVDA-on-Windows environment is recorded.
+- **Deletion policy:** Provide CRUD completeness through a non-destructive soft delete only for
+  protocols with no recorded results. Active reads exclude the deleted projection while the row,
+  revisions, and audit events remain. Result-bearing protocols cannot be deleted.
+- **Validation policy:** Recording a JourneyResult never creates a Validation, alters a Finding, or
+  assigns severity. A second explicit operation may add a Validation whose subject is the persisted
+  result, whose Finding is linked to the protocol/result, and whose Evidence IDs come from that
+  result. Store the Validation, derived Finding validation status, review audit event, and journey
+  audit event in one transaction. Existing FindingReviewService exact-severity assignment and
+  approval gates remain authoritative.
+- **Public contracts:** Add required JourneyResult `environment`, non-empty supporting Evidence,
+  timing/NVDA refinements, and versioned `JourneyAuditEvent`; add `ResidentJourneyService`, journey
+  input/trace contracts, `JourneyRepository`, and persistence schema version 2. Finding review
+  traces add linked `journeyResults`.
+- **Reason:** Revisioned protocols preserve corrections without erasing history; immutable results
+  and Evidence preserve what a human actually recorded; normalized links enforce scope; and the
+  separate Validation step prevents outcome labels from silently becoming technical, experiential,
+  severity, conformance, certification, or legal claims.
+- **Alternatives considered:** Mutable results; JSON-only journey files; encode outcome directly as
+  Validation; map `unable_to_complete` to Blocker; infer outcomes from browser/agent failures; drive
+  NVDA remotely; modify migration 1; physically delete protocols and their history.
+- **Schema-version decision:** Retain public `CONTRACT_SCHEMA_VERSION` `1.0.0` for coordinated
+  pre-release additions before any released/retained journey data exists. Persistence schema moves
+  independently from 1 to 2. A breaking public change after release requires a contract version and
+  data migration.
+- **Consequences:** Existing JourneyResult producers must provide environment and at least one
+  Evidence ID. The local core remains cross-platform and runs without NVDA. Windows/NVDA execution
+  is an external human procedure. Protocol deletion is a soft delete allowed only before results
+  exist; retained rows/revisions/audit history are never physically removed. Chunk 8 may export
+  linked result summaries but must preserve uncertainty and must not infer claims from outcome
+  names.

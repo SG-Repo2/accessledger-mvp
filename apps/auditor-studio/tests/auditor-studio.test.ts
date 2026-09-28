@@ -1,9 +1,10 @@
 import { FindingReviewService } from '@accessledger/findings';
+import { ResidentJourneyService } from '@accessledger/journeys';
 import { SqliteReviewRepository } from '@accessledger/persistence';
 import { describe, expect, it } from 'vitest';
 
 import { reviewFixture, reviewNow } from '../../../tests/support/review-fixture.js';
-import { AuditorStudio, renderReviewPage } from '../src/index.js';
+import { AuditorStudio, renderJourneyPage, renderReviewPage } from '../src/index.js';
 
 describe('Auditor Studio', () => {
   it('renders an evidence-first, keyboard-operable semantic review page', () => {
@@ -30,6 +31,54 @@ describe('Auditor Studio', () => {
     const labelTargets = [...html.matchAll(/<label for="([^"]+)"/g)].map((match) => match[1]);
     expect(labelTargets.length).toBeGreaterThan(10);
     for (const target of labelTargets) expect(html).toContain(`id="${target}"`);
+    repository.close();
+  });
+
+  it('renders semantic journey controls, distinct uncertainty outcomes, and linked results', () => {
+    const { repository, service, studio } = setup();
+    const fixture = reviewFixture();
+    service.createReview(fixture, { actor: 'Auditor Example' });
+    service.startReview(fixture.finding.id, { actor: 'Auditor Example' });
+    const protocol = studio.handleJourney('create-journey', {
+      actor: 'Auditor Example',
+      assessmentId: fixture.finding.assessmentId,
+      goal: 'Locate a public meeting agenda',
+      startingUrl: 'https://fixture.example/',
+      preconditions: 'Use a clean browser profile.',
+      humanTask: 'Find and open the current public meeting agenda.',
+      expectedObservableOutcome: 'The current agenda opens.',
+      relatedFindingIds: fixture.finding.id,
+    });
+    studio.handleJourney('record-journey-result', {
+      journeyId: protocol.journey.id,
+      actor: 'Auditor Example',
+      outcome: 'inconclusive',
+      platform: 'macOS 26',
+      browserName: 'Firefox',
+      browserVersion: '143',
+      assistiveTechnologyName: '',
+      assistiveTechnologyVersion: '',
+      startedAt: reviewNow,
+      completedAt: reviewNow,
+      nvdaResult: '',
+      notes: 'The network disconnected before the human test could isolate site behavior.',
+      relatedFindingIds: fixture.finding.id,
+    });
+
+    const html = renderJourneyPage(studio.loadJourney(protocol.journey.id));
+    expect(html).toContain('<main id="journey-main">');
+    expect(html).toContain('value="not_attempted"');
+    expect(html).toContain('value="inconclusive"');
+    expect(html).toContain('value="unable_to_complete"');
+    expect(html).toContain('Add separate Validation record');
+    expect(html).not.toMatch(/onclick=|tabindex="[1-9]|accesskey=/i);
+    for (const target of [...html.matchAll(/<label for="([^"]+)"/g)].map((match) => match[1])) {
+      expect(html).toContain(`id="${target}"`);
+    }
+
+    const findingHtml = renderReviewPage(studio.load(fixture.finding.id));
+    expect(findingHtml).toContain('Linked resident journey results');
+    expect(findingHtml).toContain('inconclusive');
     repository.close();
   });
 
@@ -75,10 +124,14 @@ function setup(): {
     clock: () => new Date(reviewNow),
     idFactory: sequenceIds(),
   });
+  const journeyService = new ResidentJourneyService(repository, {
+    clock: () => new Date(reviewNow),
+    idFactory: sequenceIds(),
+  });
   return {
     repository,
     service,
-    studio: new AuditorStudio(service, {
+    studio: new AuditorStudio(service, journeyService, {
       clock: () => new Date(reviewNow),
       idFactory: sequenceIds(),
     }),

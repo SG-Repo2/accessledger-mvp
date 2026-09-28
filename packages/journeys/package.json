@@ -1,5 +1,5 @@
 {
-  "name": "@accessledger/auditor-studio",
+  "name": "@accessledger/journeys",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -13,12 +13,9 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run",
-    "start": "tsx src/start.ts"
+    "test": "vitest run"
   },
   "dependencies": {
-    "@accessledger/findings": "0.0.1",
-    "@accessledger/journeys": "0.0.1",
     "@accessledger/persistence": "0.0.1",
     "@accessledger/shared": "0.0.1"
   }

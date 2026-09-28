@@ -102,10 +102,11 @@ Windows-specific implementation behind the cross-platform validation interface.
 
 ## Persistence strategy
 
-Chunk 6 uses SQLite through the Node `node:sqlite` API for the first proven durable access pattern:
-reviewer edits, grouping decisions, Validation records, guarded Finding transitions, and audit
-history. `@accessledger/persistence` owns ordered SQL migrations and a narrow synchronous review
-repository. The initial persistence schema version is `1`; migrations run in explicit
+Chunks 6–7 use SQLite through the Node `node:sqlite` API for the proven durable access patterns:
+reviewer edits, grouping decisions, Validation records, guarded Finding transitions, audit
+history, human-authored journey protocols, and append-only manual results.
+`@accessledger/persistence` owns ordered SQL migrations and narrow synchronous review/journey
+repositories. The current persistence schema version is `2`; migrations run in explicit
 `BEGIN IMMEDIATE` transactions and are recorded in `schema_migrations`.
 
 Immutable Observation, ObservationOccurrence, WcagCandidateEvaluation, Page, and Evidence JSON is
@@ -115,6 +116,13 @@ SQLite triggers reject updates/deletes. A Finding update and its audit event, or
 human Evidence, derived validation status, and audit event, commit atomically. Optimistic comparison
 of the complete current Finding JSON rejects stale reviewer writes. No ORM, remote service, account,
 or multi-tenant boundary is introduced.
+
+Migration 2 adds current ResidentJourney projections, append-only protocol revisions, append-only
+JourneyResult records, normalized Finding/Evidence links, and append-only journey audit events.
+Protocol edits use optimistic whole-record comparison. Creating/editing a protocol, recording a
+result with immutable human Evidence, and adding a result-backed Validation each commit atomically.
+Journey result Validation reuses the Chunk 6 `validations` table and exact-severity gate; a result
+outcome alone never updates a Finding or assigns severity.
 
 SQLite paths are supplied by the caller and resolved with Node path APIs by the local application.
 Large binary artifacts remain a future portable artifact-directory concern; only their immutable
@@ -266,6 +274,33 @@ agent behavior, and LLM text have no promotion path into these judgments.
 fieldsets, tables, buttons, and disclosure elements expose the representative occurrence, every
 member occurrence, raw/human Evidence, WCAG evaluations, missing fields, validation needs, review
 actions, and audit history without requiring direct database use. It is not a customer dashboard.
+
+### Chunk 7 resident-journey boundary
+
+`@accessledger/journeys` exposes `ResidentJourneyService` over the combined `JourneyRepository` and
+`ReviewRepository` implemented by `SqliteReviewRepository`. It creates, loads/lists, edits, and
+safely soft-deletes result-free generic human-authored protocols; loads their append-only audit
+history; and records explicit manual
+results with a named performer, platform/browser/optional assistive-technology environment,
+start/end timing, one of five outcomes, notes, optional human NVDA observations, Finding links, and
+immutable human Evidence.
+
+`not_attempted` has no completion time. Every attempted result—including an interrupted or
+otherwise `inconclusive` attempt—has an end time. `unable_to_complete` is reserved for an observed
+human task result and is not selected from a browser, scanner, network, authentication, or agent
+failure. NVDA observations require a recorded NVDA-on-Windows environment, but NVDA is optional and
+the service has no execution/control adapter.
+
+A JourneyResult can support a Finding only through a separately recorded `Validation` whose subject
+is that persisted result, whose Evidence IDs are a non-empty subset of the immutable result
+Evidence, and whose Finding is already linked to the protocol/result in the same assessment. The
+Validation and Finding validation-status projection are one transaction. Exact severity still
+requires a supported `severity` claim and is assigned through `FindingReviewService`; outcome names
+do not map automatically to severity or any other claim.
+
+The internal studio adds protocol create/edit, manual result recording, separate result Validation,
+protocol audit history, and linked-result views in Finding review using native semantic controls.
+It does not execute tasks, submit forms, synthesize users/speech, automate NVDA, or add export.
 
 ## Cross-platform boundary
 

@@ -2,10 +2,13 @@ import type {
   Evidence,
   Finding,
   GroupProposal,
+  JourneyAuditEvent,
+  JourneyResult,
   Observation,
   ObservationOccurrence,
   Page,
   ReviewAuditEvent,
+  ResidentJourney,
   Validation,
   WcagCandidateEvaluation,
 } from '@accessledger/shared';
@@ -29,6 +32,7 @@ export interface PersistedReviewBundle extends ReviewSourceContext {
   group: GroupProposal;
   originalGroup: GroupProposal;
   validations: Validation[];
+  journeyResults: JourneyResult[];
   auditHistory: ReviewAuditEvent[];
 }
 
@@ -56,4 +60,29 @@ export interface ReviewRepository {
     event: ReviewAuditEvent,
   ): void;
   close(): void;
+}
+
+export interface JourneyRepository {
+  createJourney(journey: ResidentJourney, event: JourneyAuditEvent): void;
+  updateJourney(previous: ResidentJourney, next: ResidentJourney, event: JourneyAuditEvent): void;
+  deleteJourney(journey: ResidentJourney, event: JourneyAuditEvent): void;
+  loadJourney(journeyId: string): ResidentJourney | null;
+  listJourneys(assessmentId?: string): ResidentJourney[];
+  recordJourneyResult(
+    result: JourneyResult,
+    supportingEvidence: readonly Evidence[],
+    event: JourneyAuditEvent,
+  ): void;
+  loadJourneyResult(resultId: string): JourneyResult | null;
+  loadJourneyResultEvidence(resultId: string): Evidence[];
+  listJourneyResults(journeyId: string): JourneyResult[];
+  listJourneyResultsForFinding(findingId: string): JourneyResult[];
+  loadJourneyAuditHistory(journeyId: string): JourneyAuditEvent[];
+  commitJourneyResultValidation(
+    previousFinding: Finding,
+    nextFinding: Finding,
+    validation: Validation,
+    reviewEvent: ReviewAuditEvent,
+    journeyEvent: JourneyAuditEvent,
+  ): void;
 }

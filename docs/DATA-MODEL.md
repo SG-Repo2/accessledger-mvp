@@ -25,6 +25,7 @@ Finding *--1 source GroupProposal and *--* Observation and *--* Evidence
 Validation *--1 Observation | Finding | JourneyResult
 ResidentJourney 1--* JourneyResult
 Finding *--* ResidentJourney (related IDs)
+JourneyResult *--* Evidence (immutable supporting links)
 ```
 
 ### Assessment
@@ -173,7 +174,7 @@ Actions cover review creation/start, grouping decisions, allowed edits, Validati
 severity assignment, and approval/rejection. Audit snapshots do not replace the immutable domain
 records they reference.
 
-### Review persistence projection
+### Review and journey persistence projection
 
 SQLite persistence schema version `1` stores the immutable source records, immutable original draft
 Finding and GroupProposal, mutable current Finding projection, append-only grouping decisions,
@@ -181,15 +182,28 @@ append-only Validation records, and append-only audit events. The current GroupP
 status is projected from the newest decision while its original members and indexes remain intact.
 Public domain JSON is runtime-validated on every repository read.
 
+Persistence schema version `2` adds current ResidentJourney projections, append-only protocol
+revisions, normalized current protocol-to-Finding links, append-only JourneyResult records,
+append-only result-to-Finding and result-to-Evidence links, and append-only journey audit events.
+Migration 1 is unchanged. Protocol edits use optimistic comparison; result/Evidence/Validation and
+audit writes are transactional.
+
 ### ResidentJourney
 
 A journey is a human validation protocol: assessment, goal, starting URL, preconditions, human task,
-expected observable outcome, and related finding IDs. Examples are data, not hard-coded engine logic.
+expected observable outcome, related Finding IDs, and record timestamps. Examples are data, not
+hard-coded engine logic. Finding links must exist in the same assessment. Edits replace the current
+projection while retaining an append-only revision and audit event; results remain attached to the
+stable journey identity. A protocol edit cannot remove a Finding link referenced by an existing
+append-only result. Safe deletion is an internal soft-delete projection allowed only before results
+exist; revisions and audit history remain.
 
 ### JourneyResult
 
-A result stores its assessment/journey, human performer, timing, optional NVDA observations, notes,
-related findings, evidence, and one outcome:
+A result stores its assessment/journey, required human performer, explicit environment, timing,
+optional human NVDA observations, notes, related Findings, immutable supporting Evidence, and one
+outcome. Environment contains platform, browser name/version, and nullable assistive-technology
+name/version:
 
 - `completed`
 - `completed_with_difficulty`
@@ -197,9 +211,29 @@ related findings, evidence, and one outcome:
 - `not_attempted`
 - `inconclusive`
 
+`not_attempted` requires a null completion time. Every attempted outcome requires an end time no
+earlier than its start; an interrupted attempt is `inconclusive`, not `not_attempted`. NVDA notes
+require a recorded NVDA-on-Windows environment, but both NVDA and the notes are optional. Result
+Finding links must already belong to the protocol and the same assessment. Supporting Evidence is
+non-empty, same-assessment human Evidence and is stored through immutable source records/links.
+
+Journey result outcomes do not alter Finding claims. A result supports a Finding only through a
+separate Validation with subject type `journey_result`, a linked Finding, and non-empty Evidence IDs
+drawn from that result. A supported severity claim names one exact severity; assignment still uses
+the Finding review gate.
+
+### JourneyAuditEvent
+
+A journey audit event is a versioned append-only record for protocol creation/edit/soft-delete, result
+recording, or result-backed Validation. It stores assessment/journey/entity identity, human actor,
+optional reason, before/after JSON, and occurrence time. Protocol revisions and events preserve the
+history even though the current protocol projection is editable.
+
 ## Lifecycle and integrity expectations
 
 - Records are append-oriented; corrections should preserve audit history once persistence exists.
+- Journey protocols are editable only through revisioned transactions; JourneyResult, supporting
+  Evidence links, Validation, and journey audit records are append-only.
 - Only reviewed findings become `approved` and eligible for authoritative export.
 - Approval must fail when required validation is incomplete or traceability is broken.
 - Finding lifecycle is `draft -> in_review -> approved|rejected`; review mutations require

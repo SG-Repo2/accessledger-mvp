@@ -16,7 +16,7 @@ Status values: `done`, `ready`, `planned`, `deferred`, `idea`. Priorities: P0 (r
 | MVP-401 | Conservative systemic grouping with zero occurrence loss        | P0       | done    | MVP-301             | 4            |
 | MVP-501 | Evidence-linked draft findings                                  | P0       | done    | MVP-401, MVP-302    | 5            |
 | MVP-601 | Minimal auditor review and human validation workflow            | P0       | done    | MVP-501             | 6            |
-| MVP-701 | Manual resident journey recording                               | P1       | planned | MVP-601             | 7            |
+| MVP-701 | Manual resident journey recording                               | P1       | done    | MVP-601             | 7            |
 | MVP-801 | Approved Findings Register JSON/CSV export                      | P0       | planned | MVP-601             | 8            |
 
 ## Bugs

@@ -34,14 +34,22 @@ describe('SqliteReviewRepository', () => {
       database.close();
 
       expect(migrations).toEqual([
-        { version: SQLITE_REVIEW_SCHEMA_VERSION, name: 'create_auditor_review_store' },
+        { version: 1, name: 'create_auditor_review_store' },
+        { version: SQLITE_REVIEW_SCHEMA_VERSION, name: 'create_resident_journey_store' },
       ]);
-      expect(reviewMigrations.map((migration) => migration.version)).toEqual([1]);
+      expect(reviewMigrations.map((migration) => migration.version)).toEqual([1, 2]);
       expect(tables).toEqual(
         expect.arrayContaining([
           'audit_events',
           'bundle_source_records',
           'grouping_decisions',
+          'journey_audit_events',
+          'journey_finding_links',
+          'journey_result_evidence_links',
+          'journey_result_finding_links',
+          'journey_results',
+          'journey_revisions',
+          'resident_journeys',
           'review_bundles',
           'source_records',
           'validations',

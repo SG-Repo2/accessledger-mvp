@@ -180,6 +180,11 @@ describe('shared domain contracts', () => {
       assessmentId: journey.assessmentId,
       journeyId: journey.id,
       outcome: 'completed_with_difficulty',
+      environment: {
+        platform: 'Windows 11',
+        browser: { name: 'Chrome', version: '140' },
+        assistiveTechnology: { name: 'NVDA', version: '2026.1' },
+      },
       nvdaResult: 'The link was announced without useful destination context.',
       performedBy: 'Human auditor',
       startedAt: now,
@@ -217,6 +222,16 @@ describe('shared domain contracts', () => {
         ...validation,
         claims: ['severity'],
         validatedSeverity: null,
+      }).success,
+    ).toBe(false);
+    expect(journeyResultSchema.safeParse({ ...result, schemaVersion: '2.0.0' }).success).toBe(
+      false,
+    );
+    expect(
+      journeyResultSchema.safeParse({
+        ...result,
+        outcome: 'not_attempted',
+        completedAt: now,
       }).success,
     ).toBe(false);
   });

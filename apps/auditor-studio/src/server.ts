@@ -1,6 +1,7 @@
 import { createServer, type IncomingMessage, type Server } from 'node:http';
 
-import type { AuditorStudio, AuditorAction } from './auditor-studio.js';
+import type { AuditorStudio, AuditorAction, JourneyAction } from './auditor-studio.js';
+import { renderJourneyIndexPage, renderJourneyPage } from './render-journey-page.js';
 import { renderReviewPage } from './render-review-page.js';
 
 export function createAuditorStudioServer(studio: AuditorStudio): Server {
@@ -8,6 +9,17 @@ export function createAuditorStudioServer(studio: AuditorStudio): Server {
     try {
       const url = new URL(request.url ?? '/', 'http://127.0.0.1');
       if (request.method === 'GET') {
+        if (url.pathname === '/journeys') {
+          const journeyId = url.searchParams.get('journeyId');
+          send(
+            response,
+            200,
+            journeyId === null
+              ? renderJourneyIndexPage(studio.listJourneys())
+              : renderJourneyPage(studio.loadJourney(journeyId)),
+          );
+          return;
+        }
         const findingId = url.searchParams.get('findingId');
         if (findingId === null) {
           const links = studio
@@ -20,7 +32,7 @@ export function createAuditorStudioServer(studio: AuditorStudio): Server {
           send(
             response,
             200,
-            `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Auditor Studio</title></head><body><main><h1>Findings awaiting review</h1><ul>${links}</ul></main></body></html>`,
+            `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Auditor Studio</title></head><body><main><h1>Findings awaiting review</h1><p><a href="/journeys">Resident journey protocols</a></p><ul>${links}</ul></main></body></html>`,
           );
           return;
         }
@@ -30,9 +42,19 @@ export function createAuditorStudioServer(studio: AuditorStudio): Server {
       if (request.method === 'POST') {
         const body = await readBody(request);
         const fields = Object.fromEntries(new URLSearchParams(body));
+        const action = required(fields, 'action');
+        if (url.pathname === '/journeys') {
+          const trace = studio.handleJourney(action as JourneyAction, fields);
+          response.statusCode = 303;
+          response.setHeader(
+            'Location',
+            `/journeys?journeyId=${encodeURIComponent(trace.journey.id)}`,
+          );
+          response.end();
+          return;
+        }
         const findingId = required(fields, 'findingId');
-        const action = required(fields, 'action') as AuditorAction;
-        studio.handle(findingId, action, fields);
+        studio.handle(findingId, action as AuditorAction, fields);
         response.statusCode = 303;
         response.setHeader('Location', `/?findingId=${encodeURIComponent(findingId)}`);
         response.end();

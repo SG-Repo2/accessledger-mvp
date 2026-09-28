@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { type FindingReviewService, type FindingReviewTrace } from '@accessledger/findings';
+import { type ResidentJourneyService, type ResidentJourneyTrace } from '@accessledger/journeys';
 import {
   CONTRACT_SCHEMA_VERSION,
   evidenceSchema,
@@ -16,6 +17,9 @@ export type AuditorAction =
   | 'approve'
   | 'reject';
 
+export type JourneyAction =
+  'create-journey' | 'edit-journey' | 'record-journey-result' | 'add-journey-validation';
+
 export interface AuditorStudioOptions {
   clock?: () => Date;
   idFactory?: () => string;
@@ -23,11 +27,17 @@ export interface AuditorStudioOptions {
 
 export class AuditorStudio {
   readonly #service: FindingReviewService;
+  readonly #journeyService: ResidentJourneyService;
   readonly #clock: () => Date;
   readonly #idFactory: () => string;
 
-  constructor(service: FindingReviewService, options: AuditorStudioOptions = {}) {
+  constructor(
+    service: FindingReviewService,
+    journeyService: ResidentJourneyService,
+    options: AuditorStudioOptions = {},
+  ) {
     this.#service = service;
+    this.#journeyService = journeyService;
     this.#clock = options.clock ?? (() => new Date());
     this.#idFactory = options.idFactory ?? randomUUID;
   }
@@ -38,6 +48,155 @@ export class AuditorStudio {
 
   listFindingIds(): string[] {
     return this.#service.listFindingIds();
+  }
+
+  listJourneys() {
+    return this.#journeyService.listProtocols();
+  }
+
+  loadJourney(journeyId: string): ResidentJourneyTrace {
+    return this.#journeyService.loadProtocol(journeyId);
+  }
+
+  handleJourney(
+    action: JourneyAction,
+    fields: Readonly<Record<string, string>>,
+  ): ResidentJourneyTrace {
+    const actor = required(fields, 'actor');
+    const reason = nullable(fields.reason);
+    switch (action) {
+      case 'create-journey':
+        return this.#journeyService.createProtocol(
+          {
+            assessmentId: required(fields, 'assessmentId'),
+            goal: required(fields, 'goal'),
+            startingUrl: required(fields, 'startingUrl'),
+            preconditions: lines(fields.preconditions),
+            humanTask: required(fields, 'humanTask'),
+            expectedObservableOutcome: required(fields, 'expectedObservableOutcome'),
+            relatedFindingIds: commaValues(fields.relatedFindingIds),
+          },
+          { actor, reason },
+        );
+      case 'edit-journey': {
+        const journeyId = required(fields, 'journeyId');
+        return this.#journeyService.editProtocol(
+          journeyId,
+          {
+            goal: required(fields, 'goal'),
+            startingUrl: required(fields, 'startingUrl'),
+            preconditions: lines(fields.preconditions),
+            humanTask: required(fields, 'humanTask'),
+            expectedObservableOutcome: required(fields, 'expectedObservableOutcome'),
+            relatedFindingIds: commaValues(fields.relatedFindingIds),
+          },
+          { actor, reason },
+        );
+      }
+      case 'record-journey-result': {
+        const journeyId = required(fields, 'journeyId');
+        const recordedAt = this.#clock().toISOString();
+        const outcome = oneOf(required(fields, 'outcome'), [
+          'completed',
+          'completed_with_difficulty',
+          'unable_to_complete',
+          'not_attempted',
+          'inconclusive',
+        ]);
+        const notes = required(fields, 'notes');
+        const evidence = evidenceSchema.parse({
+          schemaVersion: CONTRACT_SCHEMA_VERSION,
+          id: `journey-evidence-${this.#idFactory()}`,
+          assessmentId: this.loadJourney(journeyId).journey.assessmentId,
+          pageId: null,
+          kind: 'human_note',
+          source: { type: 'human', name: actor, version: null },
+          capturedAt: recordedAt,
+          contentType: 'application/json',
+          payload: { notes, manuallySelectedOutcome: outcome },
+          metadata: { authoredThrough: 'auditor_studio', journeyId },
+        });
+        const assistiveTechnologyName = nullable(fields.assistiveTechnologyName);
+        this.#journeyService.recordResult(
+          journeyId,
+          {
+            outcome,
+            environment: {
+              platform: required(fields, 'platform'),
+              browser: {
+                name: required(fields, 'browserName'),
+                version: nullable(fields.browserVersion),
+              },
+              assistiveTechnology:
+                assistiveTechnologyName === null
+                  ? null
+                  : {
+                      name: assistiveTechnologyName,
+                      version: nullable(fields.assistiveTechnologyVersion),
+                    },
+            },
+            nvdaResult: nullable(fields.nvdaResult),
+            performedBy: actor,
+            startedAt: required(fields, 'startedAt'),
+            completedAt: nullable(fields.completedAt),
+            notes,
+            relatedFindingIds: commaValues(fields.relatedFindingIds),
+            supportingEvidence: [evidence],
+          },
+          { actor, reason },
+        );
+        return this.loadJourney(journeyId);
+      }
+      case 'add-journey-validation': {
+        const journeyId = required(fields, 'journeyId');
+        const result = this.#journeyService.loadResult(required(fields, 'resultId'));
+        const method = oneOf(required(fields, 'method'), [
+          'manual_review',
+          'nvda',
+          'keyboard',
+          'visual',
+          'contextual',
+        ]);
+        const claims = parseClaims(fields.claims);
+        const outcome = oneOf(required(fields, 'validationOutcome'), [
+          'supported',
+          'unsupported',
+          'inconclusive',
+        ]);
+        this.#journeyService.addResultValidation(
+          required(fields, 'findingId'),
+          result.id,
+          {
+            method,
+            outcome,
+            claims,
+            validatedSeverity:
+              outcome === 'supported' && claims.includes('severity')
+                ? oneOf(required(fields, 'validatedSeverity'), [
+                    'blocker',
+                    'serious',
+                    'moderate',
+                    'minor',
+                  ])
+                : null,
+            performedBy: actor,
+            assistiveTechnology:
+              method === 'nvda' && result.environment.assistiveTechnology !== null
+                ? {
+                    ...result.environment.assistiveTechnology,
+                    platform: result.environment.platform,
+                  }
+                : null,
+            notes: required(fields, 'validationNotes'),
+            evidenceIds: commaValues(fields.evidenceIds),
+          },
+          { actor, reason },
+        );
+        return this.loadJourney(journeyId);
+      }
+      default:
+        throw new Error(`Unsupported journey action: ${String(action)}`);
+    }
   }
 
   handle(
@@ -187,4 +346,18 @@ function parseClaims(value: string | undefined): ValidationClaim[] {
   const claims = requestedClaims as ValidationClaim[];
   if (claims.length === 0) throw new Error('At least one validation claim is required.');
   return [...new Set(claims)];
+}
+
+function commaValues(value: string | undefined): string[] {
+  return (value ?? '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
+}
+
+function lines(value: string | undefined): string[] {
+  return (value ?? '')
+    .split(/\r?\n/)
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
 }

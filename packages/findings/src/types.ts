@@ -2,6 +2,7 @@ import type {
   Evidence,
   Finding,
   GroupProposal,
+  JourneyResult,
   Observation,
   ObservationOccurrence,
   Page,
@@ -34,6 +35,7 @@ export interface FindingReviewTrace extends FindingEvidenceContext {
   group: GroupProposal;
   originalGroup: GroupProposal;
   validations: readonly Validation[];
+  journeyResults: readonly JourneyResult[];
   auditHistory: readonly ReviewAuditEvent[];
   missingJudgmentFields: readonly string[];
   approvalBlockers: readonly string[];

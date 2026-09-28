@@ -11,8 +11,9 @@ Register, or make certification, conformance, or legal conclusions.
 
 `SqliteReviewRepository` accepts `:memory:` for tests or a filesystem path for retained local work.
 On construction it enables foreign keys/WAL and applies ordered SQL migrations. Schema version `1`
-creates review bundles, immutable source records, grouping decisions, validations, and audit events.
-Migration and domain schema versions are independent.
+creates review bundles, immutable source records, grouping decisions, validations, and audit events;
+schema version `2` adds ResidentJourney protocols/revisions, JourneyResult records/links, and journey
+audit history without changing migration 1. Migration and domain schema versions are independent.
 
 The repository retains original Finding/GroupProposal JSON and a current Finding projection.
 Source records cannot be updated or deleted. Group decisions, validations, and audit events are
@@ -55,6 +56,12 @@ semantically labeled native forms, representative/all-occurrence views, Evidence
 evaluations, validation and severity controls, approval blockers, and audit history. It requires no
 client-side scripting and is operable with standard keyboard form interaction.
 
+The home page also links to `/journeys`. Journey screens provide labeled native forms for protocol
+creation/edit, explicit manual result recording, and separate result-backed Validation. Finding
+review shows linked result outcome, performer, environment, and timing. The UI explains that
+`not_attempted`, `inconclusive`, and `unable_to_complete` are distinct and never chooses an outcome
+from scanner, browser, or agent state.
+
 ## Reviewer assumptions and limitations
 
 The actor/performer text identifies the accountable human in this local single-user MVP; accounts
@@ -62,6 +69,7 @@ and authentication are out of scope. Human notes entered in the UI become immuta
 Evidence. A supported claim means the reviewer has actually performed the stated method and recorded
 observable support; selecting an option is not a substitute for that work.
 
-The UI is intentionally unstyled and has no draft importer, journey section, artifact viewer, or
-concurrent merge interface. `node:sqlite` keeps installation portable and dependency-free; Node 22
-may emit its upstream experimental-feature warning. Windows execution remains to be recorded.
+The UI is intentionally unstyled and has no draft importer, artifact viewer, concurrent merge
+interface, automated journey runner, form-submission agent, or NVDA controller. `node:sqlite` keeps
+installation portable and dependency-free; Node 22 may emit its upstream experimental-feature
+warning. Windows/NVDA execution remains an external human procedure.

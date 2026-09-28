@@ -145,6 +145,19 @@ disclosures, WCAG evaluation display, missing fields, validation need, and audit
 scanner fixture deliberately contains a critical impact label; only the human Validation path can
 set Finding severity.
 
+Chunk 7 journey tests use deterministic protocols, explicit human Evidence, and SQLite migration 2.
+They cover ordered/idempotent migration without changing migration 1; protocol create/read/edit/
+safe result-free soft-delete with optimistic transactions and retained revisions/audit; all five explicit outcomes; required human
+performer; platform/browser/optional assistive-technology environment; start/end constraints;
+same-assessment protocol/result/Finding links; immutable supporting Evidence; duplicate-write
+rollback; interrupted `inconclusive` behavior distinct from `not_attempted` and
+`unable_to_complete`; optional NVDA notes restricted to a recorded NVDA-on-Windows environment;
+schema-version rejection and JSON round trips; and a happy path from a manual result through a
+separate JourneyResult Validation to the existing exact-severity gate. A missing outcome fails
+validation: no browser, scanner, navigation, network, authentication, or agent failure can select
+one. Studio tests verify labeled native protocol/result/Validation controls, all three uncertainty/
+failure distinctions, keyboard semantics, and linked-result display in Finding review.
+
 ## Product-level MVP measure
 
 The MVP is evaluated by whether an auditor can reach reliable, reviewable findings in less manual
