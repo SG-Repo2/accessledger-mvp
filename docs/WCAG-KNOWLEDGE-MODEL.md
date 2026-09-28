@@ -1,0 +1,105 @@
+# WCAG Knowledge Model
+
+## Purpose
+
+The WCAG knowledge layer gives deterministic and human review code a small, structured,
+version-aware dataset. It avoids repeatedly sending standards text to an LLM and keeps normative
+requirements separate from supporting interpretation.
+
+The initial scope is WCAG 2.1 Level A and AA. Criteria are added as implementation needs them; the
+repository does not copy the entire standard into prompts or context files.
+
+## Criterion record
+
+`WCAGCriterion` is defined in `@accessledger/shared` with:
+
+```text
+schemaVersion
+id
+title
+level
+principle
+guideline
+normativeSource
+intentSource
+automatedTestability
+evidenceRequirements[]
+knownRuleMappings[]
+manualValidationGuidance
+```
+
+- `id` is the success-criterion number, such as `4.1.2`.
+- `level` is A, AA, or AAA; the MVP dataset includes A/AA only.
+- `principle` is perceivable, operable, understandable, or robust.
+- `normativeSource` points to the authoritative W3C WCAG Recommendation.
+- `intentSource` may point to informative W3C Understanding material.
+- `automatedTestability` is `automated`, `partial`, or `manual`.
+- `evidenceRequirements` states what must exist before a conclusion is supported.
+- `manualValidationGuidance` identifies contextual/interaction checks without inventing a result.
+
+The record describes evaluation knowledge, not a finding. A criterion relationship still moves
+through candidate and evidence evaluation states.
+
+## Rule mappings
+
+Each known rule mapping records:
+
+```text
+tool
+ruleId
+toolVersionRange
+mappingType: tool_documented | reviewed
+mappingSource
+verifiedAt
+```
+
+Tool-documented mappings should be imported from stable tool metadata or official documentation and
+pinned to a compatible version range where available. Reviewed mappings are explicitly approved by
+an auditor/maintainer. Speculative LLM suggestions are not persisted as deterministic mappings;
+they remain candidates attached to analysis and require review.
+
+A scanner rule may map to multiple criteria, and a criterion may have many rules. The mapping only
+creates a candidate unless the rule result and criterion-specific evidence requirements support the
+conclusion.
+
+## Evidence evaluation
+
+For each candidate relationship:
+
+1. Resolve the criterion record and applicable version.
+2. Collect the referenced raw result and normalized technical facts.
+3. Compare available evidence with `evidenceRequirements`.
+4. Record `supported`, `unsupported`, or `uncertain` without rewriting source evidence.
+5. Queue contextual, interaction, or NVDA guidance for human validation.
+
+This prevents `scanner warning -> WCAG finding` and `agent failure -> WCAG violation` shortcuts.
+
+## Dataset layout and versioning
+
+When Chunk 3 introduces data, use a reviewable layout such as:
+
+```text
+data/wcag/
+  index.json
+  criteria/4.1.2.json
+  mappings/axe-core.json
+```
+
+`index.json` identifies the WCAG edition, dataset version, publication sources, and included
+criteria. Every record validates through shared schemas. Mapping changes are code-reviewed and
+tested against fixtures. Store links and concise requirements, not large copied W3C text.
+
+Application schema version, WCAG standard version, dataset version, and scanner version are
+separate concepts and must not be conflated.
+
+## Initial priority
+
+Early implementation should add only criteria required by fixture coverage, likely 1.1.1, 1.3.1,
+1.4.3, 2.1.1, 2.4.2, 2.4.4, 2.4.6, 2.5.3, 3.1.1, 3.3.2, 4.1.2, and 4.1.3. This is a priority
+list, not a declaration that other A/AA criteria are irrelevant or that these are fully automatable.
+
+## Authority boundary
+
+The W3C WCAG 2.1 Recommendation is normative. Understanding documents, techniques, failures, and
+tool mappings are informative. AccessLedger provides an assessment of evidence, not a standards
+certification or legal opinion.
