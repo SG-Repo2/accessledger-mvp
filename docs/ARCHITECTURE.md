@@ -129,6 +129,20 @@ export.write(approved findings) -> JSON/CSV artifacts
 Exact driver types are introduced in their owning chunk, but persisted outputs must validate
 against `@accessledger/shared` contracts. Contract changes follow the process in `AGENTS.md`.
 
+### Chunk 1 raw-capture boundary
+
+`@accessledger/browser` owns Playwright launch, navigation, page metadata capture, and resource
+lifecycle. Its runtime-only `BrowserCapture` exposes narrow script capabilities while retaining the
+concrete Playwright page internally. `@accessledger/scanner` uses those capabilities to inject and
+run axe-core. `@accessledger/evidence` orchestrates the two and creates a validated,
+JSON-serializable `RawPageAssessment` from shared Page and Evidence records.
+
+`RawPageAssessment` explicitly separates `loaded`, `navigation_failed`, and `scan_failed`
+operational outcomes. Browser and scanner failures remain raw operational evidence. The scanner
+payload is the direct JSON representation of axe output; no observation, WCAG mapping, finding, or
+severity exists at this boundary. See `RAW-CAPTURE-RUNTIME.md` for ownership and installation
+details.
+
 ## Cross-platform boundary
 
 Browser, scanner, evidence, WCAG, findings, persistence, CLI, and tests must run on macOS and

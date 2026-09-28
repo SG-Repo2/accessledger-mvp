@@ -53,6 +53,21 @@ browser accessibility semantics, interaction traces, screenshots, and human note
 are nullable only when genuinely unavailable. Binary artifacts are referenced through JSON metadata
 rather than embedded in relational records.
 
+### RawPageAssessment
+
+`RawPageAssessment` is the Chunk 1 serializable aggregate, not a replacement for Page or Evidence.
+It contains one validated Page, required raw browser Evidence, nullable raw scanner Evidence, start
+and completion timestamps, and a discriminated operational result:
+
+- `loaded`: the page loaded and axe returned raw JSON;
+- `navigation_failed`: browser launch, navigation, or page-metadata capture failed; or
+- `scan_failed`: the page loaded but axe injection or execution failed.
+
+The aggregate schema enforces matching assessment/page IDs and exact ordered Page
+`rawEvidenceIds`. Navigation failures require a failed Page and no scanner Evidence; loaded and
+scan-failed results require a loaded Page and scanner Evidence. Its request is only `assessmentId`
+plus URL. Runtime Playwright handles are never part of this contract.
+
 ### Observation
 
 An observation is a normalized technical proposition derived from evidence. It stores category,
@@ -124,6 +139,6 @@ related findings, evidence, and one outcome:
 ## Deferred modeling
 
 Ownership, remediation cost, due dates, source hashes, grouping proposals, audit-event history, raw
-browser driver types, persistence tables, and export column schemas are intentionally deferred to
-the chunks that can validate their requirements. They should extend these relationships rather than
-collapse evidence into findings.
+browser driver internals, persistence tables, and export column schemas are intentionally deferred
+to the chunks that can validate their requirements. They should extend these relationships rather
+than collapse evidence into findings.

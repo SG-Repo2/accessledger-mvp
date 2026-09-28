@@ -1,0 +1,14 @@
+{
+  "name": "@accessledger/assessment-cli",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@accessledger/evidence": "0.0.1",
+    "@accessledger/shared": "0.0.1"
+  }
+}

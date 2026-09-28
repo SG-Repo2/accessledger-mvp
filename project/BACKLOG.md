@@ -8,9 +8,9 @@ Status values: `done`, `ready`, `planned`, `deferred`, `idea`. Priorities: P0 (r
 | ID      | Description                                                     | Priority | Status  | Dependency          | Target chunk |
 | ------- | --------------------------------------------------------------- | -------- | ------- | ------------------- | ------------ |
 | MVP-000 | Foundation, durable context, architecture, and shared contracts | P0       | done    | Existing repository | 0            |
-| MVP-101 | Portable browser loading and raw page capture                   | P0       | ready   | MVP-000             | 1            |
-| MVP-102 | axe-core scan with lossless raw evidence                        | P0       | ready   | MVP-101             | 1            |
-| MVP-201 | Browser accessibility semantics evidence                        | P0       | planned | MVP-101             | 2            |
+| MVP-101 | Portable browser loading and raw page capture                   | P0       | done    | MVP-000             | 1            |
+| MVP-102 | axe-core scan with lossless raw evidence                        | P0       | done    | MVP-101             | 1            |
+| MVP-201 | Browser accessibility semantics evidence                        | P0       | ready   | MVP-101             | 2            |
 | MVP-301 | Normalize evidence into observations/occurrences                | P0       | planned | MVP-102, MVP-201    | 3            |
 | MVP-302 | Structured WCAG 2.1 criteria and versioned mappings             | P0       | planned | MVP-301             | 3            |
 | MVP-401 | Conservative systemic grouping with zero occurrence loss        | P0       | planned | MVP-301             | 4            |

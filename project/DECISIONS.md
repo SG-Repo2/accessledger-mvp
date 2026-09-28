@@ -82,3 +82,27 @@
   database.
 - **Consequences:** Chunks 1–2 may use in-memory or minimal file artifacts for tests. Chunk 3 must
   decide repositories, migrations, integrity rules, and artifact layout if persistence is required.
+
+## ADR-007 — Serializable raw-assessment aggregate with private browser ownership
+
+- **Date:** 2026-09-28
+- **Status:** Accepted
+- **Context:** Chunk 1 must connect a live Playwright page to axe-core without leaking driver
+  handles across the durable contract boundary or treating operational failures as findings.
+- **Decision:** Add `RawPageAssessment` as an additive `1.0.0` shared aggregate composed of existing
+  Page/Evidence records, timestamps, and a discriminated `loaded` / `navigation_failed` /
+  `scan_failed` operational result. Keep concrete Playwright handles private inside a runtime
+  `BrowserCapture`; expose only injection/evaluation capabilities. Serialize axe output inside the
+  browser and store that parsed JSON directly as raw scanner Evidence. Each load owns one browser,
+  context, and page, all closed on every pipeline path.
+- **Reason:** This preserves exact JSON scanner data and provenance while making the public result
+  portable, runtime-validated, and unambiguous about operational state.
+- **Alternatives considered:** Expose Playwright Page publicly; flatten browser and axe output into
+  one payload; treat scanner errors as empty successful scans; add observations in the capture
+  stage.
+- **Schema-version decision:** Keep `CONTRACT_SCHEMA_VERSION` at `1.0.0`. This is an additive
+  aggregate during the pre-release MVP and does not alter an existing persisted entity shape or
+  enum. A breaking change to Page, Evidence, or this aggregate requires a new decision and version.
+- **Consequences:** Direct BrowserLoader callers must close successful captures; the high-level
+  assessor guarantees closure. Scanner output may be large and remains intentionally unnormalized.
+  Chromium installation is a documented step separate from npm dependency installation.
