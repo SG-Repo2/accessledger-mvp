@@ -229,6 +229,28 @@ recording, or result-backed Validation. It stores assessment/journey/entity iden
 optional reason, before/after JSON, and occurrence time. Protocol revisions and events preserve the
 history even though the current protocol projection is editable.
 
+### FindingsRegisterDocument and export manifest
+
+The independently versioned Findings Register export schema begins at `1.0.0`. A document contains
+one assessment ID, generation time, exact record count, and ordered approved Finding records. Each
+record preserves the Finding contract version and stable ID, source GroupProposal ID, five-part
+content, validation need, exact severity/confidence, WCAG criteria, occurrence count, affected
+URLs/components, source Observation/Evidence IDs, concrete occurrence references, Validation
+summaries, and optional linked journey protocol/result summaries.
+
+Occurrence summaries identify their ObservationOccurrence, Observation, Page, effective URL,
+component reference, and Evidence. Validation summaries preserve subject, method, outcome, claims,
+exact validated severity when applicable, performer/time, assistive-technology context, notes, and
+Evidence IDs. Journey result summaries preserve the exact outcome enum, environment, timing,
+optional human NVDA notes, Finding/Evidence IDs, and result-subject Validation IDs. These copied
+outcomes are context and have no inference relationship to Finding severity or any legal,
+certification, conformance, or violation conclusion.
+
+`FindingsRegisterExportManifest` records schema version, format, assessment, generation time,
+record count, resolved artifact path, exact UTF-8 byte length, and lowercase SHA-256. The JSON
+document is nested. CSV uses one Finding per row and compact JSON for nested values; its column
+schema and ordering are documented in `FINDINGS-REGISTER-EXPORT.md`.
+
 ## Lifecycle and integrity expectations
 
 - Records are append-oriented; corrections should preserve audit history once persistence exists.
@@ -241,13 +263,13 @@ history even though the current protocol projection is editable.
 - Approval requires accepted grouping, complete five-part judgments and confidence, and explicit
   supported human claims, including exact evidence-backed severity.
 - Deleting a group must not cascade-delete evidence or occurrences.
-- URLs remain URL strings; filesystem artifact locations use portable relative paths.
+- URLs remain URL strings; filesystem artifact locations are resolved with portable Node path APIs.
 - Contract migrations are explicit. A public field or enum change requires documentation, tests,
   an architecture decision, and a schema-version decision.
 
 ## Deferred modeling
 
-Ownership, remediation cost, due dates, source hashes, grouping audit-event history, raw browser
-driver internals, persistence tables, and export column schemas are intentionally deferred
-to the chunks that can validate their requirements. They should extend these relationships rather
-than collapse evidence into findings.
+Ownership, remediation cost, due dates, grouping audit-event history, raw browser driver internals,
+and additional persistence projections are intentionally deferred to the chunks that can validate
+their requirements. They should extend these relationships rather than collapse evidence into
+findings.

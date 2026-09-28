@@ -158,6 +158,16 @@ validation: no browser, scanner, navigation, network, authentication, or agent f
 one. Studio tests verify labeled native protocol/result/Validation controls, all three uncertainty/
 failure distinctions, keyboard semantics, and linked-result display in Finding review.
 
+Chunk 8 export tests use approved SQLite review traces and fixed clocks. They cover stable Finding
+and nested-array order, independently versioned JSON/manifest schemas, UTF-8 JSON serialization,
+fixed CSV columns and CRLF records, commas/quotes/newlines/Unicode, nested JSON-cell round trips,
+approved-only filtering, empty exports, portable nested destinations, overwrite refusal/opt-in,
+SHA-256/byte length, exact Observation/occurrence/Page/Evidence/Validation links, broken-trace and
+incomplete/unsupported approved-record refusal, no-journey output, all five journey outcomes,
+protocol/result/Validation links, and the absence of outcome-to-severity inference. CLI tests cover
+help, argument/format rejection, manifest output, refusal reporting, overwrite selection, and
+resource closure.
+
 ## Product-level MVP measure
 
 The MVP is evaluated by whether an auditor can reach reliable, reviewable findings in less manual

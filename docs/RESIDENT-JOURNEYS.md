@@ -111,3 +111,7 @@ Chunk 8 export should consume approved Findings plus optional linked JourneyResu
 their Validation/Evidence IDs in deterministic order. It must preserve all five outcome values and
 must not translate a result outcome into severity, violation, conformance, certification, or a legal
 conclusion.
+
+The implemented Findings Register exporter follows that boundary: it loads protocol context only
+for results already linked to an approved Finding, preserves result Evidence and result-subject
+Validation IDs, and copies the outcome unchanged. See `FINDINGS-REGISTER-EXPORT.md`.

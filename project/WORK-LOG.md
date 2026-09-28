@@ -261,3 +261,47 @@ lint`; `npm run format:check`.
   No known Chunk 7 correctness defect.
 - **Next logical action:** Execute Chunk 8 (Findings Register Export) from `project/HANDOFF.md`;
   preserve approved-only traceability and never infer claims or severity from journey outcomes.
+
+## 2026-09-28 — Codex — Chunk 8
+
+- **Files changed:** Added the `@accessledger/export` workspace, shared export schemas/types, JSON/
+  CSV serializers, approved-trace eligibility recheck, assessment-scoped Finding listing, export
+  CLI/tests, lockfile workspace entry, and Findings Register export documentation. Updated
+  architecture, data model, review/journey/testing docs, backlog, decisions, current state, work
+  log, and post-MVP handoff.
+- **Implemented:** `FindingsExporter.export(assessmentId, format, destination)` through
+  `DeterministicFindingsExporter`; deterministic UTF-8 JSON/CSV; fixed schema/column order; stable
+  nested ordering; exact five-part content, severity/confidence, WCAG, count/scope, and source trace;
+  Validation summaries; optional linked journey protocol/result summaries; SHA-256/byte-length
+  manifest; portable parent creation; default overwrite refusal; explicit CLI overwrite; and valid
+  empty exports.
+- **Eligibility policy:** Non-approved Findings are omitted. Every selected approved Finding is
+  revalidated for complete trace, accepted grouping, complete judgments, validated status,
+  required supported human claims, exact severity support, valid Validation subjects, and resolved
+  human Evidence before file creation. Invalid approved data aborts the complete export.
+- **Journey policy:** All five outcome values, protocol context, environments, timing, notes,
+  supporting Evidence IDs, and result-subject Validation IDs are preserved. Outcomes are never
+  mapped to severity, resident impact, accessibility/WCAG conclusions, conformance,
+  certification, or legal conclusions.
+- **Public contract decision:** ADR-014 adds an independent Findings Register export schema version
+  `1.0.0`; the domain contract remains `1.0.0` and persistence remains version `2`. Added shared
+  export schemas/types, `@accessledger/export` public interfaces, optional assessment scoping on
+  `listFindingIds`, and `assertExportableApprovedTrace`. No SQLite migration or domain-record shape
+  changed.
+- **Application decision:** Added
+  `npm run findings:export -- <database-path> <assessment-id> <json|csv> <destination>
+[--overwrite]`. No auditor-studio integration was added because the implementation plan requires
+  only the narrow CLI/export boundary.
+- **Tests executed:** Export/CLI/persistence targeted suites; `npm run typecheck`; full `npm test`
+  with loopback permission; `npm run lint`; `npm run format:check`.
+- **Result:** All required checks passed. Root suite: 17 files / 96 tests. Chunk 8 adds 11 tests
+  covering schema/serialization, stable ordering, JSON/CSV escaping and Unicode, round-trip trace
+  IDs, approved-only/empty/no-journey behavior, portable nested paths, overwrite policy, hash/size,
+  broken/incomplete/unsupported refusal, all journey outcomes, Evidence/Validation linkage, no
+  outcome-to-severity inference, CLI help/arguments/errors/cleanup, and happy-path export.
+- **Known issues:** `generatedAt` intentionally changes bytes/hashes across real runs; CSV nested
+  fields require JSON parsing. XLSX, full reports, dashboards, accounts, multi-tenancy, monitoring,
+  and automated journey/NVDA behavior remain deferred. Node 22 emits its upstream `node:sqlite`
+  warning. No known Chunk 8 correctness defect.
+- **Next logical action:** Conduct the post-MVP acceptance and productization decision in
+  `project/HANDOFF.md`; do not begin a deferred product track until it is explicitly selected.

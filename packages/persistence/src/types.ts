@@ -49,7 +49,7 @@ export interface GroupingDecisionRecord {
 export interface ReviewRepository {
   createReviewBundle(input: ReviewBundleInput, event: ReviewAuditEvent): void;
   loadReviewBundle(findingId: string): PersistedReviewBundle | null;
-  listFindingIds(): string[];
+  listFindingIds(assessmentId?: string): string[];
   commitFinding(previous: Finding, next: Finding, event: ReviewAuditEvent): void;
   commitGroupingDecision(decision: GroupingDecisionRecord, event: ReviewAuditEvent): void;
   commitValidation(

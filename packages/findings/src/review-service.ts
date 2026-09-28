@@ -95,8 +95,8 @@ export class FindingReviewService {
     };
   }
 
-  listFindingIds(): string[] {
-    return this.#repository.listFindingIds();
+  listFindingIds(assessmentId?: string): string[] {
+    return this.#repository.listFindingIds(assessmentId);
   }
 
   startReview(findingId: string, context: ReviewActionContext): FindingReviewTrace {
@@ -403,6 +403,87 @@ export function assertCompleteTrace(
   );
   if (!sameIds(finding.affectedComponents, expectedComponents)) {
     throw new Error('Finding affected components do not match its occurrence trace.');
+  }
+}
+
+export function assertExportableApprovedTrace(trace: FindingReviewTrace): void {
+  assertCompleteTrace(trace.finding, trace.group, trace);
+  const finding = trace.finding;
+  if (finding.status !== 'approved') {
+    throw new Error(`Finding ${finding.id} is not approved and cannot be exported.`);
+  }
+  if (trace.group.reviewStatus !== 'accepted') {
+    throw new Error(`Approved Finding ${finding.id} does not have an accepted source group.`);
+  }
+  const missing = missingJudgmentFields(finding);
+  if (missing.length > 0) {
+    throw new Error(`Approved Finding ${finding.id} is incomplete: ${missing.join(', ')}.`);
+  }
+  if (finding.validationStatus !== 'validated') {
+    throw new Error(`Approved Finding ${finding.id} does not have validated review status.`);
+  }
+
+  const evidenceById = new Map(trace.evidence.map((evidence) => [evidence.id, evidence]));
+  const validSupportedClaims = new Set<ValidationClaim>();
+  for (const validation of trace.validations) {
+    if (validation.subject.type === 'observation') {
+      throw new Error(`Finding ${finding.id} has an unsupported Validation subject.`);
+    }
+    if (validation.subject.type === 'finding' && validation.subject.id !== finding.id) {
+      throw new Error(`Finding ${finding.id} has a Validation linked to another Finding.`);
+    }
+    if (
+      validation.subject.type === 'journey_result' &&
+      !trace.journeyResults.some((result) => result.id === validation.subject.id)
+    ) {
+      throw new Error(
+        `Finding ${finding.id} has a Validation linked to an unrecorded journey result.`,
+      );
+    }
+    if (validation.evidenceIds.length === 0) {
+      throw new Error(`Finding ${finding.id} has a Validation without supporting Evidence.`);
+    }
+    for (const evidenceId of validation.evidenceIds) {
+      const evidence = evidenceById.get(evidenceId);
+      if (
+        evidence === undefined ||
+        evidence.assessmentId !== finding.assessmentId ||
+        evidence.source.type !== 'human'
+      ) {
+        throw new Error(`Finding ${finding.id} has a Validation with invalid human Evidence.`);
+      }
+    }
+    if (validation.outcome === 'supported') {
+      for (const claim of validation.claims) validSupportedClaims.add(claim);
+    }
+  }
+
+  const requiredClaims: ValidationClaim[] = [
+    'grouping',
+    'condition',
+    'cause',
+    'effect',
+    'recommendation',
+    'severity',
+  ];
+  if (finding.wcagCriteria.length > 0) requiredClaims.push('wcag');
+  const missingClaims = requiredClaims.filter((claim) => !validSupportedClaims.has(claim));
+  if (missingClaims.length > 0) {
+    throw new Error(
+      `Approved Finding ${finding.id} lacks supported human Validation for: ${missingClaims.join(', ')}.`,
+    );
+  }
+  if (
+    finding.severity === null ||
+    !trace.validations.some(
+      (validation) =>
+        validation.outcome === 'supported' &&
+        validation.claims.includes('severity') &&
+        validation.validatedSeverity === finding.severity &&
+        validation.evidenceIds.length > 0,
+    )
+  ) {
+    throw new Error(`Approved Finding ${finding.id} lacks exact supported severity Validation.`);
   }
 }
 

@@ -48,6 +48,7 @@ mapping, and grouping reproducible as logic evolves.
 | `packages/scanner`       | Run established deterministic checks and preserve raw output     | Grouping or experiential severity                  |
 | `packages/accessibility` | Collect browser accessibility semantics and interaction evidence | Claim NVDA equivalence                             |
 | `packages/evidence`      | Evidence creation, integrity, storage boundary, and retrieval    | Findings prose                                     |
+| `packages/export`        | Deterministic approved Findings Register artifacts               | Reports, certification, or inferred claims         |
 | `packages/observations`  | Normalize source results into observations and occurrences       | Destructive deduplication                          |
 | `packages/grouping`      | Suggest or produce inspectable systemic groups                   | Delete occurrence evidence                         |
 | `packages/wcag`          | Structured criteria and versioned rule mappings                  | Legal or blanket conformance decisions             |
@@ -301,6 +302,29 @@ do not map automatically to severity or any other claim.
 The internal studio adds protocol create/edit, manual result recording, separate result Validation,
 protocol audit history, and linked-result views in Finding review using native semantic controls.
 It does not execute tasks, submit forms, synthesize users/speech, automate NVDA, or add export.
+
+### Chunk 8 Findings Register export boundary
+
+`@accessledger/export` exposes `FindingsExporter.export(assessmentId, format, destination)` through
+`DeterministicFindingsExporter`. It scopes repository reads by assessment, loads complete traces
+through `FindingReviewService`, omits non-approved records, and independently rechecks every
+approved record before writing. Broken trace, incomplete five-part content, unresolved grouping,
+missing exact severity/confidence, invalid Evidence, or insufficient supported human claims aborts
+the export.
+
+The independently versioned `1.0.0` export contract lives in `@accessledger/shared`. JSON is a
+nested register document; CSV is one Finding per row with a fixed header and compact JSON cells for
+arrays and nested trace summaries. Both outputs use stable ordering and UTF-8. The manifest records
+assessment/format/generation metadata, record count, resolved path, exact byte length, and SHA-256.
+Existing destinations are refused unless overwrite was explicitly enabled.
+
+Occurrence references retain Observation, occurrence, Page, URL, component, and source Evidence
+IDs. Validation summaries retain subject and Evidence links. Optional linked journey summaries are
+loaded through `ResidentJourneyService` and retain protocol context, every recorded outcome value,
+result Evidence IDs, and result-subject Validation IDs. Outcome values are copied only; no export
+code maps them to severity, resident impact, accessibility/WCAG conclusions, certification,
+conformance, or legal conclusions. `apps/assessment-cli` supplies the narrow local export command;
+the auditor studio remains unchanged.
 
 ## Cross-platform boundary
 

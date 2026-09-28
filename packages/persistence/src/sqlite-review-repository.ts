@@ -159,11 +159,16 @@ export class SqliteReviewRepository implements ReviewRepository, JourneyReposito
     };
   }
 
-  listFindingIds(): string[] {
-    return this.#database
-      .prepare('SELECT finding_id FROM review_bundles ORDER BY finding_id')
-      .all()
-      .map((row) => (row as { finding_id: string }).finding_id);
+  listFindingIds(assessmentId?: string): string[] {
+    const rows =
+      assessmentId === undefined
+        ? this.#database.prepare('SELECT finding_id FROM review_bundles ORDER BY finding_id').all()
+        : this.#database
+            .prepare(
+              'SELECT finding_id FROM review_bundles WHERE assessment_id = ? ORDER BY finding_id',
+            )
+            .all(assessmentId);
+    return rows.map((row) => (row as { finding_id: string }).finding_id);
   }
 
   commitFinding(previousInput: Finding, nextInput: Finding, eventInput: ReviewAuditEvent): void {

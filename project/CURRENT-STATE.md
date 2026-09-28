@@ -4,84 +4,91 @@ Updated: 2026-09-28
 
 ## Completed
 
-Chunks 0 (Foundation), 1 (Browser + Scanner), 2 (Accessibility Evidence), 3 (Observation
-Normalization + WCAG Mapping), 4 (Deduplication / Grouping), 5 (Draft Findings), 6 (Auditor Review
-
-- Validation), and 7 (Resident Journey Recording) are complete. The local MVP now retains
-  evidence-first human review, guarded state transitions, exact severity support, revisioned manual
-  journey protocols/results, and append-only audit history in SQLite.
+Chunks 0–8 are complete. The local MVP now captures and normalizes browser/scanner evidence, maps
+reviewable WCAG candidates, groups without occurrence loss, drafts traceable Findings, retains
+human review and manual journey records, and exports approved Findings as deterministic working
+register artifacts.
 
 ## Working functionality
 
-- All Chunk 1–5 capture, semantics, normalization, mapping, grouping, drafting, CLI, and
-  traceability behavior remains intact.
-- `@accessledger/persistence` provides persistence schema version `2`, ordered migrations,
-  `ReviewRepository`, `JourneyRepository`, and `SqliteReviewRepository` using Node SQLite. Migration
-  1 is unchanged. Immutable sources and original draft/group JSON are retained; group decisions,
-  Validation, journey revisions/results, and audit history are append-only where appropriate.
-- Finding updates use optimistic whole-record comparison. Each edit/transition and audit event is
-  atomic; Validation, human Evidence, validation-status update, and audit event are one transaction.
-- `FindingReviewService` creates/loads complete review traces, starts review, records accepted/
-  rejected/split grouping decisions without member loss, edits only allowed fields, adds human
-  Validation, assigns exact supported severity, and approves/rejects through service-side gates.
-- Legal lifecycle is `draft -> in_review -> approved|rejected`. Approval requires an accepted
-  group, intact complete trace, complete five-part judgments plus confidence, supported human claim
-  coverage, and severity matching a supported Validation.
-- Validation carries explicit claim types and nullable exact `validatedSeverity`; a supported
-  severity claim requires that level. NVDA-method records require assistive-technology details.
-- `ReviewAuditEvent` stores versioned actor/action/reason/before/after history.
-- `ResidentJourneyService` creates/loads/edits/safely soft-deletes generic human protocols with
-  revision history, records explicit manual results with performer/environment/timing/all five
-  outcomes, attaches immutable human Evidence, and enforces same-assessment Finding links.
-- `JourneyResult` NVDA observations are optional and require a recorded NVDA-on-Windows environment.
-  `not_attempted` has no end time; all attempted outcomes, including interrupted `inconclusive`, do.
-- Journey results support Finding claims only through separate result-subject Validation records.
-  Exact severity still uses `FindingReviewService.assignSeverity`; outcome names never assign it.
-- `apps/auditor-studio` renders representative/all occurrences, source/human Evidence, WCAG
-  support/candidates, missing fields, validation need, review controls, approval blockers, and audit
-  history plus protocol/result/Validation journey controls and linked results through keyboard-
-  operable native HTML controls. Start with
-  `npm run auditor:studio -- <database-path>` after seeding through `createReview`.
+- All Chunk 1–7 capture, semantics, normalization, mapping, grouping, drafting, persistence, review,
+  Validation, studio, and resident-journey behavior remains intact.
+- `@accessledger/export` provides `FindingsExporter` and `DeterministicFindingsExporter` over the
+  existing `FindingReviewService` and `ResidentJourneyService` read boundaries.
+- Assessment-scoped export omits draft, in-review, and rejected records, then revalidates every
+  approved Finding before any file write. Broken trace, incomplete content, unresolved grouping,
+  missing exact severity/confidence, invalid human Evidence, or insufficient supported claims
+  aborts the export.
+- JSON exports are nested, schema-valid register documents. CSV is one Finding per row with fixed
+  columns, CRLF records, quoted UTF-8 cells, doubled quotes, and compact JSON cells for arrays and
+  nested trace records.
+- Stable ordering covers Findings, criteria, set-like IDs/strings, occurrences, Validations,
+  journeys, and journey results. Fixed source data plus a fixed generation time produces identical
+  bytes and SHA-256.
+- Exports preserve stable Finding/GroupProposal/Observation/Occurrence/Page/Evidence/Validation/
+  Journey/Result IDs, five-part content, exact severity/confidence, WCAG criteria, scope/counts,
+  human Validation summaries, and optional protocol/result summaries.
+- Every JourneyResult outcome is copied exactly as recorded with Evidence and result-subject
+  Validation IDs. No outcome-to-severity, violation, impact, conformance, certification, or legal
+  inference exists.
+- `npm run findings:export -- <database-path> <assessment-id> <json|csv> <destination>
+[--overwrite]` supplies the narrow local CLI. It refuses a missing database and existing output
+  by default, creates destination parents portably, and prints the manifest.
+- `apps/auditor-studio` remains the minimal internal review/journey interface; Chunk 8 required no
+  studio download/navigation change.
 
 ## Public contracts and versions
 
-- Public contract schema remains `1.0.0` under ADR-013's coordinated pre-release decision.
-- Validation adds required `claims[]` and `validatedSeverity`; `ReviewAuditEvent` is new.
-- `@accessledger/findings` adds `FindingReviewService`, complete trace/edit/validation types, and
-  trace/approval enforcement.
-- `@accessledger/persistence` adds review repository/bundle/decision contracts,
-  `JourneyRepository`, `SqliteReviewRepository`, migration metadata, and persistence schema version
-  `2`.
-- `@accessledger/journeys` adds `ResidentJourneyService`, create/edit/record/validation inputs, and
-  complete journey trace types.
-- JourneyResult adds required environment and timing/NVDA refinements; `JourneyAuditEvent` is new;
-  Finding review traces add linked JourneyResult records.
-- Finding drafting policy and grouping algorithm remain `1.0.0`; WCAG dataset remains
-  `2026.09.28-1`; workspace packages remain `0.0.1`.
+- Public domain contract schema remains `1.0.0`; persistence schema remains `2`.
+- Findings Register export schema is independently versioned `1.0.0` through
+  `FINDINGS_REGISTER_EXPORT_SCHEMA_VERSION`.
+- `@accessledger/shared` adds Zod schemas/types for export format, Validation/occurrence/journey
+  summaries, Finding record, JSON document, and manifest.
+- `@accessledger/export` publicly exposes the exporter interface/implementation, options/source
+  boundaries, JSON/CSV serializers, and fixed CSV column list.
+- `ReviewRepository.listFindingIds(assessmentId?)` and
+  `FindingReviewService.listFindingIds(assessmentId?)` add optional assessment scoping.
+- `assertExportableApprovedTrace` is the public Finding-domain eligibility recheck used by export.
+- The manifest carries schema/format/assessment/generation metadata, record count, resolved path,
+  exact UTF-8 byte length, and lowercase SHA-256.
 
 ## Not implemented / known limitations
 
-Findings Register export, customer dashboards, multi-tenancy, accounts/authentication, billing,
-polished reports, speech simulation, autonomous journeys/remediation, automated form submission,
-and automated/remote NVDA are deliberately unimplemented. Protocol deletion is soft and limited to
-result-free records; results/revisions/audit are never physically deleted. The studio has no JSON importer,
-artifact binary viewer, styling layer, or concurrent merge UI. It assumes an accountable human name
-in a local single-user workflow. Node 22 prints its upstream `node:sqlite` experimental warning;
-Windows/NVDA execution remains an external procedure. No known Chunk 7 correctness defect remains.
+XLSX, polished/full Board Brief or Assessment Report generation, customer dashboards,
+multi-tenancy, accounts/authentication, billing, production monitoring, remediation costing,
+autonomous journeys, synthetic users/speech, automated form submission, and automated/remote NVDA
+remain deliberately out of scope. CSV consumers must parse documented JSON cells for nested
+records. `generatedAt` intentionally changes artifact bytes/hashes across real runs. The studio
+still has no importer, binary artifact viewer, styling layer, or concurrent merge UI. Node 22 may
+print its upstream `node:sqlite` experimental warning; Windows/NVDA remains an external human
+procedure. No known Chunk 8 correctness defect remains.
 
 ## Validation
 
-Targeted Chunk 7 suites pass, covering ordered migration/idempotence, transaction rollback,
-protocol create/edit/history, all outcomes, required performer, environment/timing, link integrity,
-interrupted/inconclusive behavior, optional NVDA, immutable supporting Evidence, separate result
-Validation/exact severity, no automatic outcome, schema versions/serialization, semantic UI, and a
-happy path. Required root commands pass as recorded in `project/WORK-LOG.md`.
+Chunk 8 targeted tests cover schema/serialization, stable ordering, JSON/CSV escaping and Unicode,
+round-trip identifiers, approved-only/empty exports, nested portable destinations, overwrite
+behavior, hashes, no-journey/all-outcome journey cases, Evidence/Validation linkage, tampered trace,
+incomplete/unsupported record refusal, no outcome-to-severity inference, CLI help/arguments/
+manifest/errors/resource closure, and a complete approved export path.
+
+Required root commands pass:
+
+```text
+npm run typecheck
+npm test                 # 17 files / 96 tests
+npm run lint
+npm run format:check
+```
+
+The full test run requires permission to bind the deterministic loopback fixture server. The only
+runtime warning is Node 22's upstream `node:sqlite` experimental notice.
 
 ## Versions and next work
 
-- Last completed chunk: 7
-- Next recommended chunk: 8 — Findings Register Export
+- Last completed chunk: 8
+- MVP status: implementation complete
+- Next recommended work: post-MVP acceptance and productization decision; do not silently expand
+  the MVP into reports, dashboards, monitoring, accounts, or automation
 - Blockers: none
 
-Follow `project/HANDOFF.md` exactly. Chunk 8 may consume approved Findings and optional linked
-journey results but must preserve traceability and the human-only claim boundary.
+Follow `project/HANDOFF.md` for the exact post-MVP decision prompt and retained limitations.

@@ -73,3 +73,8 @@ The UI is intentionally unstyled and has no draft importer, artifact viewer, con
 interface, automated journey runner, form-submission agent, or NVDA controller. `node:sqlite` keeps
 installation portable and dependency-free; Node 22 may emit its upstream experimental-feature
 warning. Windows/NVDA execution remains an external human procedure.
+
+Chunk 8 reads this retained review state without mutation through `FindingReviewService`. The
+exporter omits non-approved records and rechecks complete traceability, complete judgments, exact
+severity, and supported human Validation before writing. See `FINDINGS-REGISTER-EXPORT.md`; no
+download or report-generation behavior was added to the internal studio.

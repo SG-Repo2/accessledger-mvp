@@ -324,3 +324,47 @@
   exist; retained rows/revisions/audit history are never physically removed. Chunk 8 may export
   linked result summaries but must preserve uncertainty and must not infer claims from outcome
   names.
+
+## ADR-014 — Deterministic, independently versioned Findings Register export
+
+- **Date:** 2026-09-28
+- **Status:** Accepted
+- **Context:** Chunk 8 must produce portable working-register artifacts without fact drift while
+  preserving the full approved Finding trace, explicit human Validation, and optional journey
+  context. CSV must remain useful without flattening away nested IDs, and retained/tampered records
+  must not bypass review gates merely because their stored status says approved.
+- **Decision:** Add `@accessledger/export` with
+  `FindingsExporter.export(assessmentId, format, destination)` and a deterministic implementation
+  over `FindingReviewService` plus `ResidentJourneyService`. Add independently versioned `1.0.0`
+  export document/record/manifest schemas to `@accessledger/shared`. Emit nested UTF-8 JSON and
+  one-Finding-per-row UTF-8 CSV whose fixed columns use compact JSON for nested values. Return a
+  manifest with generation metadata, record count, resolved path, exact byte length, and SHA-256.
+  Refuse existing destinations unless overwrite is explicitly enabled.
+- **Eligibility decision:** Scope reads by assessment and omit `draft`, `in_review`, and `rejected`
+  Findings. Before writing, revalidate every selected approved trace, accepted grouping, complete
+  five-part content, exact severity/confidence, validated status, required supported human claims,
+  exact supported severity, Validation subjects, and human Evidence. Any invalid approved record
+  aborts the export. Preserve unsupported/inconclusive Validation history as history only; it never
+  satisfies a support gate.
+- **Ordering decision:** Sort Findings by stable ID; criteria numerically; set-like strings
+  lexically; occurrences by ID; Validations by performance time/ID; journeys by ID; and results by
+  start time/ID. Preserve authored protocol precondition order. Fixed generation time plus equal
+  source records yields byte-identical output.
+- **Journey decision:** Export only results already linked to the Finding, with protocol context,
+  exact one-of-five outcome, environment/timing/notes, supporting Evidence IDs, and related
+  result-Validation IDs. Copy outcomes without mapping them to severity, accessibility/WCAG or
+  resident-impact claims, conformance, certification, or legal conclusions.
+- **Application decision:** Add a narrow assessment CLI command with help, explicit JSON/CSV
+  format, destination, and optional overwrite. Do not add studio download/navigation because the
+  implementation plan does not require it and the CLI proves the boundary.
+- **Alternatives considered:** Export current Finding JSON without revalidation; flatten all nested
+  trace fields into lossy strings; add XLSX; infer severity from journey outcome; add a customer
+  dashboard; persist export artifacts or introduce a new SQLite migration.
+- **Schema-version decision:** The export artifact has its own `1.0.0` version. Retain public domain
+  contract `1.0.0` under the coordinated pre-release policy and persistence schema version `2`; no
+  stored domain entity or SQLite table changed. Future incompatible export columns/nesting require
+  an export schema version decision.
+- **Consequences:** Consumers can validate JSON directly and reconstruct CSV nested records from
+  documented JSON cells. `generatedAt` intentionally changes bytes/hashes across real runs. The
+  output is a working Findings Register, not a polished report, XLSX workbook, certification,
+  legal opinion, dashboard, account boundary, or monitoring system.
