@@ -1,5 +1,5 @@
 {
-  "name": "@accessledger/evidence",
+  "name": "@accessledger/accessibility",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -16,9 +16,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@accessledger/accessibility": "0.0.1",
     "@accessledger/browser": "0.0.1",
-    "@accessledger/scanner": "0.0.1",
     "@accessledger/shared": "0.0.1"
   }
 }

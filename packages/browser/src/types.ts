@@ -1,4 +1,9 @@
-import type { JsonValue, RawPageAssessmentError } from '@accessledger/shared';
+import type {
+  AccessibilitySemanticsError,
+  AccessibilityTargetDescriptor,
+  JsonValue,
+  RawPageAssessmentError,
+} from '@accessledger/shared';
 
 export type BrowserLoadRequest = {
   url: string;
@@ -23,6 +28,24 @@ export type BrowserCaptureData = {
   navigation: BrowserNavigationData;
 };
 
+export type BrowserAccessibilityTreeResult =
+  | {
+      targetId: string;
+      status: 'captured';
+      rawNode: JsonValue;
+    }
+  | {
+      targetId: string;
+      status: 'error';
+      error: AccessibilitySemanticsError;
+    };
+
+export type BrowserAccessibilityTreeSnapshot = {
+  apiName: 'Chrome DevTools Protocol Accessibility';
+  apiVersion: string | null;
+  results: BrowserAccessibilityTreeResult[];
+};
+
 /**
  * A live, non-serializable browser capability. The Playwright Page is deliberately private to the
  * browser package; downstream scanners can inject and evaluate scripts without receiving it.
@@ -32,6 +55,9 @@ export interface BrowserCapture {
   readonly closed: boolean;
   injectScript(content: string): Promise<void>;
   evaluate<T extends JsonValue>(expression: string): Promise<T>;
+  captureAccessibilityTree(
+    targets: readonly AccessibilityTargetDescriptor[],
+  ): Promise<BrowserAccessibilityTreeSnapshot>;
   close(): Promise<void>;
 }
 

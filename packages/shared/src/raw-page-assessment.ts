@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+import {
+  accessibilitySemanticsEvidenceSchema,
+  accessibilityTargetDescriptorSchema,
+} from './accessibility-evidence.js';
 import { entityIdSchema, schemaVersionSchema, timestampSchema, urlSchema } from './common.js';
 import { evidenceSchema } from './evidence.js';
 import { pageSchema } from './page.js';
@@ -7,6 +11,7 @@ import { pageSchema } from './page.js';
 export const rawPageAssessmentRequestSchema = z.object({
   assessmentId: entityIdSchema,
   url: urlSchema,
+  accessibilityTargets: z.array(accessibilityTargetDescriptorSchema).optional(),
 });
 
 export const rawPageAssessmentErrorSchema = z.object({
@@ -39,14 +44,17 @@ export const rawPageAssessmentSchema = z
     page: pageSchema,
     browserEvidence: evidenceSchema,
     scannerEvidence: evidenceSchema.nullable(),
+    accessibilityEvidence: z.array(accessibilitySemanticsEvidenceSchema),
     operationalResult: rawPageAssessmentOperationalResultSchema,
     startedAt: timestampSchema,
     completedAt: timestampSchema,
   })
   .superRefine((result, context) => {
-    const evidence = [result.browserEvidence, result.scannerEvidence].filter(
-      (item) => item !== null,
-    );
+    const evidence = [
+      result.browserEvidence,
+      result.scannerEvidence,
+      ...result.accessibilityEvidence,
+    ].filter((item) => item !== null);
     const evidenceIds = evidence.map((item) => item.id);
 
     if (
@@ -72,6 +80,31 @@ export const rawPageAssessmentSchema = z
       });
     }
 
+    for (const item of result.accessibilityEvidence) {
+      const rawEvidenceIds = [result.browserEvidence, result.scannerEvidence]
+        .filter((rawEvidence) => rawEvidence !== null)
+        .map((rawEvidence) => rawEvidence.id);
+      if (JSON.stringify(item.metadata.rawEvidenceIds) !== JSON.stringify(rawEvidenceIds)) {
+        context.addIssue({
+          code: 'custom',
+          path: ['accessibilityEvidence'],
+          message: 'Accessibility evidence must link the aggregate raw evidence IDs in order.',
+        });
+      }
+      if (
+        item.metadata.targetId !== item.payload.target.id ||
+        item.metadata.sourceEvidenceId !== item.payload.target.sourceEvidenceId ||
+        (item.metadata.sourceEvidenceId !== null &&
+          !rawEvidenceIds.includes(item.metadata.sourceEvidenceId))
+      ) {
+        context.addIssue({
+          code: 'custom',
+          path: ['accessibilityEvidence'],
+          message: 'Accessibility target metadata must match and reference aggregate raw evidence.',
+        });
+      }
+    }
+
     for (const item of evidence) {
       if (item.assessmentId !== result.page.assessmentId || item.pageId !== result.page.id) {
         context.addIssue({
@@ -94,6 +127,7 @@ export const rawPageAssessmentSchema = z
       if (
         result.page.loadStatus !== 'failed' ||
         result.scannerEvidence !== null ||
+        result.accessibilityEvidence.length !== 0 ||
         !['browser_launch', 'navigation', 'page_metadata'].includes(
           result.operationalResult.error.stage,
         )
@@ -101,7 +135,8 @@ export const rawPageAssessmentSchema = z
         context.addIssue({
           code: 'custom',
           path: ['operationalResult'],
-          message: 'Navigation failure requires a failed Page and no scanner evidence.',
+          message:
+            'Navigation failure requires a failed Page and no scanner or accessibility evidence.',
         });
       }
       return;

@@ -24,22 +24,77 @@ describe('scan CLI', () => {
     expect(JSON.parse(output.join(''))).toEqual(result);
   });
 
-  it.each([[], ['https://example.gov/', 'https://example.gov/other'], ['not-a-url']])(
-    'rejects invalid arguments %j without scanning',
-    async (...args) => {
-      const errors: string[] = [];
-      const assess = vi.fn();
+  it('forwards repeated CSS targets through the existing assessment request', async () => {
+    const result = makeResult('loaded');
+    const assess = vi.fn(async () => result);
 
-      const exitCode = await runScanCli(args, {
+    const exitCode = await runScanCli(
+      [
+        'https://example.gov/',
+        '--target',
+        '.site-search-button',
+        '--target',
+        '#label_1',
+        '--target',
+        '.slick-prev',
+      ],
+      {
         assess,
-        stderr: (text) => errors.push(text),
-      });
+        createAssessmentId: () => 'assessment-cli',
+        stdout: () => undefined,
+      },
+    );
 
-      expect(exitCode).toBe(1);
-      expect(assess).not.toHaveBeenCalled();
-      expect(errors.join('')).not.toHaveLength(0);
-    },
-  );
+    expect(exitCode).toBe(0);
+    expect(assess).toHaveBeenCalledWith({
+      assessmentId: 'assessment-cli',
+      url: 'https://example.gov/',
+      accessibilityTargets: [
+        {
+          schemaVersion: CONTRACT_SCHEMA_VERSION,
+          id: 'cli-target-1',
+          strategy: 'css',
+          selector: '.site-search-button',
+          sourceEvidenceId: null,
+        },
+        {
+          schemaVersion: CONTRACT_SCHEMA_VERSION,
+          id: 'cli-target-2',
+          strategy: 'css',
+          selector: '#label_1',
+          sourceEvidenceId: null,
+        },
+        {
+          schemaVersion: CONTRACT_SCHEMA_VERSION,
+          id: 'cli-target-3',
+          strategy: 'css',
+          selector: '.slick-prev',
+          sourceEvidenceId: null,
+        },
+      ],
+    });
+  });
+
+  it.each([
+    [],
+    ['https://example.gov/', 'https://example.gov/other'],
+    ['https://example.gov/', '--target'],
+    ['https://example.gov/', '--target', '  '],
+    ['https://example.gov/', '--unknown', '#main'],
+    ['not-a-url'],
+  ])('rejects invalid arguments %j without scanning', async (...args) => {
+    const errors: string[] = [];
+    const assess = vi.fn();
+
+    const exitCode = await runScanCli(args, {
+      assess,
+      stderr: (text) => errors.push(text),
+    });
+
+    expect(exitCode).toBe(1);
+    expect(assess).not.toHaveBeenCalled();
+    expect(errors.join('')).not.toHaveLength(0);
+  });
 
   it('prints operational failure JSON and returns a non-zero exit code', async () => {
     const output: string[] = [];
@@ -105,6 +160,7 @@ function makeResult(status: 'loaded' | 'navigation_failed'): RawPageAssessment {
       metadata: {},
     },
     scannerEvidence,
+    accessibilityEvidence: [],
     operationalResult: failed
       ? {
           status: 'navigation_failed',

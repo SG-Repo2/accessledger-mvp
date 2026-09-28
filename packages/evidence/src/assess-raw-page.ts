@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
+import { BrowserAccessibilityEvidenceCollector } from '@accessledger/accessibility';
 import { PlaywrightBrowserLoader, type BrowserLoader } from '@accessledger/browser';
 import { AxeCoreScanner, type AccessibilityScanner } from '@accessledger/scanner';
 import {
@@ -13,7 +14,9 @@ import {
 } from '@accessledger/shared';
 
 type Clock = () => Date;
-type IdFactory = (recordType: 'page' | 'browser-evidence' | 'scanner-evidence') => string;
+type IdFactory = (
+  recordType: 'page' | 'browser-evidence' | 'scanner-evidence' | 'accessibility-evidence',
+) => string;
 
 export type RawPageAssessorOptions = {
   browserLoader?: BrowserLoader;
@@ -78,6 +81,7 @@ export class RawPageAssessor {
         page,
         browserEvidence,
         scannerEvidence: null,
+        accessibilityEvidence: [],
         operationalResult: {
           status: 'navigation_failed',
           error: loaded.error,
@@ -130,6 +134,22 @@ export class RawPageAssessor {
             : { status: 'failed', error: scannerCapture.error },
         metadata: { captureStatus: scannerCapture.status },
       };
+      const rawEvidenceIds = [browserEvidence.id, scannerEvidence.id];
+      const accessibilityCollector = new BrowserAccessibilityEvidenceCollector(
+        {
+          assessmentId: input.assessmentId,
+          pageId,
+          rawEvidenceIds,
+        },
+        {
+          clock: this.#clock,
+          idFactory: () => this.#idFactory('accessibility-evidence'),
+        },
+      );
+      const accessibilityEvidence = await accessibilityCollector.collect(
+        capture,
+        input.accessibilityTargets ?? [],
+      );
       const page: Page = {
         schemaVersion: CONTRACT_SCHEMA_VERSION,
         id: pageId,
@@ -141,7 +161,7 @@ export class RawPageAssessor {
         loadStatus: 'loaded',
         loadedAt: capture.data.loadedAt,
         failureReason: null,
-        rawEvidenceIds: [browserEvidence.id, scannerEvidence.id],
+        rawEvidenceIds: [...rawEvidenceIds, ...accessibilityEvidence.map((item) => item.id)],
         createdAt: startedAt,
         updatedAt: completedAt,
       };
@@ -151,6 +171,7 @@ export class RawPageAssessor {
         page,
         browserEvidence,
         scannerEvidence,
+        accessibilityEvidence,
         operationalResult:
           scannerCapture.status === 'completed'
             ? { status: 'loaded' }

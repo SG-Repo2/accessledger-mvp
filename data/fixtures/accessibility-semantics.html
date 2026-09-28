@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Accessibility semantics fixture</title>
+  </head>
+  <body>
+    <main>
+      <h1>Account preferences</h1>
+
+      <label for="email">Email address</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        value="person@example.gov"
+        aria-describedby="email-help"
+        required
+      />
+      <p id="email-help">Used for service notices.</p>
+
+      <span id="updates-label">Receive updates</span>
+      <span id="updates-help">Sends a weekly digest.</span>
+      <div
+        id="updates"
+        role="checkbox"
+        tabindex="0"
+        aria-checked="true"
+        aria-labelledby="updates-label"
+        aria-describedby="updates-help"
+      ></div>
+
+      <button id="toggle" type="button" aria-expanded="false" aria-controls="details-panel">
+        Show account details
+      </button>
+      <section id="details-panel">Account details</section>
+
+      <button id="empty-action" type="button"></button>
+      <button id="hidden-action" type="button" hidden>Hidden action</button>
+      <button id="detached-action" type="button">Detached action</button>
+    </main>
+    <script>
+      document.querySelector('#detached-action').remove();
+    </script>
+  </body>
+</html>

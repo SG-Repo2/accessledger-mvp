@@ -106,3 +106,30 @@
 - **Consequences:** Direct BrowserLoader callers must close successful captures; the high-level
   assessor guarantees closure. Scanner output may be large and remains intentionally unnormalized.
   Chromium installation is a documented step separate from npm dependency installation.
+
+## ADR-008 — Versioned target locators and browser-semantics evidence
+
+- **Date:** 2026-09-28
+- **Status:** Accepted
+- **Context:** Chunk 2 needs reproducible browser accessibility semantics for controlled elements
+  without exposing Playwright handles or presenting Chromium's tree as NVDA behavior.
+- **Decision:** Add a versioned CSS `AccessibilityTargetDescriptor`, a specialized
+  `AccessibilitySemanticsEvidence` contract, and an `AccessibilityEvidenceCollector.collect`
+  boundary. `BrowserCapture` privately uses a temporary Chrome DevTools Protocol Accessibility
+  session and returns serialized AX nodes only. The collector records explicit availability,
+  per-target errors, browser/API provenance, `assistiveTechnologyOutput: false`, Page linkage, and
+  browser/scanner evidence linkage. Extend `RawPageAssessment` additively with optional target input
+  and ordered accessibility evidence output while reusing its existing lifecycle.
+- **Reason:** This preserves reproducibility and traceability while making the distinction between
+  browser semantics, scanner output, human validation, and NVDA behavior machine-readable.
+- **Alternatives considered:** Expose Playwright Page/Locator handles; use DOM/ARIA attributes as a
+  substitute for computed semantics; label the Chromium tree as screen-reader output; open a second
+  browser after raw assessment; introduce observations or WCAG conclusions in the collector.
+- **Schema-version decision:** Keep `CONTRACT_SCHEMA_VERSION` at `1.0.0`. The contracts are additive
+  during the pre-release MVP: new target/evidence schemas, an optional request field, and a required
+  aggregate evidence array whose producer and existing fixtures were updated together. A breaking
+  change to a persisted entity or released aggregate still requires a version increment.
+- **Consequences:** Collection currently depends on the pinned Chromium/CDP implementation and CSS
+  selectors. Selectors are evidence locators, not durable identity. Unexposed fields remain
+  explicitly unavailable, platform/AT behavior still requires human validation, and Chunk 3 may
+  normalize these records without changing their source meaning.

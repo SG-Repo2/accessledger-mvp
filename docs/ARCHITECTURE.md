@@ -143,6 +143,27 @@ payload is the direct JSON representation of axe output; no observation, WCAG ma
 severity exists at this boundary. See `RAW-CAPTURE-RUNTIME.md` for ownership and installation
 details.
 
+### Chunk 2 accessibility-semantics boundary
+
+`@accessledger/accessibility` consumes the live `BrowserCapture` through
+`AccessibilityEvidenceCollector.collect(page, targets)`. A target is a versioned, serializable CSS
+locator with an opaque ID and optional source-evidence reference; it is an evidence locator, not a
+promise of durable element identity. Playwright Page and CDP session handles remain private to
+`@accessledger/browser`.
+
+The browser package resolves each controlled target and obtains its partial accessibility node from
+the Chromium DevTools Protocol Accessibility domain. The collector reduces that serialized node to
+available role, name, description, value, focusability, selected states, and IDREF relationships.
+Every absent field is marked unavailable. Hidden, detached/missing, ambiguous, unexposed, and
+browser-API failures are typed per-target evidence results rather than WCAG conclusions.
+
+`RawPageAssessment` can accept optional target descriptors and adds ordered
+`accessibilityEvidence`. Each record references its Page through `pageId`, lists the browser/scanner
+raw evidence IDs in metadata, and optionally identifies the exact source evidence that supplied the
+target. Provenance labels the result `browser_accessibility_semantics`, includes Chromium,
+Playwright, and protocol versions, and sets `assistiveTechnologyOutput: false`. These records are
+not NVDA output, synthesized speech, resident experience, or human validation.
+
 ## Cross-platform boundary
 
 Browser, scanner, evidence, WCAG, findings, persistence, CLI, and tests must run on macOS and

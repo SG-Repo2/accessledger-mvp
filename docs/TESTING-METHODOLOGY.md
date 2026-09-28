@@ -64,6 +64,12 @@ Browser accessibility semantics are useful evidence but are not an NVDA simulati
 records identify the human, method, platform/assistive technology where applicable, time, outcome,
 notes, and supporting evidence.
 
+Browser-semantics fixtures may assert what the pinned Chromium accessibility API exposes: computed
+role/name/description/value, focusability, states, and relationships. Tests and records must label
+that source and version, preserve unavailable fields and target errors, and explicitly distinguish
+the result from assistive-technology output. They must not turn a missing node, automation error, or
+browser tree value into a claim about NVDA speech or resident experience.
+
 ## Conclusion vocabulary
 
 At the observation/WCAG evaluation layer:

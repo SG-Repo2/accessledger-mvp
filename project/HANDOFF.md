@@ -1,18 +1,17 @@
-# Handoff — Start Chunk 2 Only
+# Handoff — Start Chunk 3 Only
 
 ## Last completed work
 
-Chunk 1 (Browser + Scanner) is complete. One URL can be loaded with Playwright/Chromium, scanned
-with axe-core, and returned as a runtime-validated, JSON-serializable `RawPageAssessment` containing
-Page, raw browser Evidence, raw scanner Evidence when scanning was attempted, and typed operational
-state. Navigation/scan failures remain operational evidence and no Chunk 2+ interpretation exists.
+Chunk 2 (Accessibility Evidence) is complete. Controlled targets can be collected through the
+existing live `BrowserCapture` and emitted as validated, JSON-serializable
+`Evidence(kind="accessibility_semantics")`. The implementation records browser-exposed role, name,
+description, value, focusability, states, relationships, unavailable fields, and typed target
+errors. It does not create observations, WCAG mappings, findings, severity, synthesized speech, or
+NVDA claims.
 
-A developer-only `npm run scan -- <URL>` wrapper now invokes that same pipeline, prints its complete
-JSON result, and exits non-zero for invalid input or operational failure. It adds no scanner logic or
-public contract.
-
-All root checks pass: 6 test files / 21 tests. The browser/scanner acceptance subset is 2 files / 9
-tests, and the CLI wrapper has 5 tests.
+All root checks pass: 7 test files / 27 tests. Collector, integrated assessor, and CLI tests cover
+browser semantics, error behavior, round-trip serialization, traceability, resource cleanup, and
+optional target forwarding.
 
 ## Runtime versions and installation
 
@@ -20,6 +19,7 @@ tests, and the CLI wrapper has 5 tests.
 - npm: `10.9.9`
 - Playwright: `1.63.0`
 - Installed acceptance Chromium: Playwright build `1243`, browser `153.0.8010.12`, macOS arm64
+- Chrome DevTools Protocol: `1.3`
 - axe-core: `4.13.0`
 
 After `npm install`, install the platform browser separately with:
@@ -28,97 +28,103 @@ After `npm install`, install the platform browser separately with:
 npm run playwright:install
 ```
 
-Browser binaries are not committed or installed implicitly. Full details are in
-`docs/RAW-CAPTURE-RUNTIME.md`.
+The developer CLI accepts `npm run scan -- <URL> [--target "<selector>" ...]`. Each repeated flag
+creates an ordered CSS target descriptor and exercises the existing Chunk 2 collector. With no
+targets it preserves the original behavior and returns an empty `accessibilityEvidence` array. See
+`docs/RAW-CAPTURE-RUNTIME.md` for lifecycle and provenance details.
 
-Run a manual raw scan with exactly one URL:
+## Public contracts and interfaces
 
-```text
-npm run scan -- https://example.gov/
-```
+`@accessledger/shared` now exports these Chunk 2 schemas and inferred types:
 
-The complete serialized `RawPageAssessment` is written to stdout. Only a `loaded` operational
-result exits zero; typed navigation/scan failures still print JSON and exit non-zero.
+- `accessibilityTargetDescriptorSchema` / `AccessibilityTargetDescriptor`
+- `accessibilityCollectionContextSchema` / `AccessibilityCollectionContext`
+- `accessibilityTextFieldSchema`, `accessibilityPrimitiveFieldSchema`, and
+  `accessibilityBooleanFieldSchema`
+- `accessibilityRelationshipTargetSchema` and `accessibilityRelationshipFieldSchema`
+- `accessibilitySemanticsSchema` / `AccessibilitySemantics`
+- `accessibilitySemanticsProvenanceSchema`
+- `accessibilitySemanticsErrorSchema` / `AccessibilitySemanticsError`
+- `accessibilitySemanticsPayloadSchema` / `AccessibilitySemanticsPayload`
+- `accessibilitySemanticsEvidenceMetadataSchema`
+- `accessibilitySemanticsEvidenceSchema` / `AccessibilitySemanticsEvidence`
 
-## Important public interfaces
+`RawPageAssessmentRequest` has optional `accessibilityTargets`; `RawPageAssessment` has required,
+ordered `accessibilityEvidence`. Page `rawEvidenceIds` contains browser, scanner, then accessibility
+evidence IDs. Each semantics record's metadata separately preserves the ordered browser/scanner raw
+evidence IDs and nullable exact source evidence ID.
 
-`@accessledger/shared` exports:
+`@accessledger/browser` extends the runtime-only `BrowserCapture` with
+`captureAccessibilityTree(targets)`, returning `BrowserAccessibilityTreeSnapshot` and per-target
+`BrowserAccessibilityTreeResult` JSON. No Playwright/CDP handles cross the boundary.
 
-- `rawPageAssessmentRequestSchema` / `RawPageAssessmentRequest`
-- `rawPageAssessmentErrorSchema` / `RawPageAssessmentError`
-- `rawPageAssessmentOperationalResultSchema` / `RawPageAssessmentOperationalResult`
-- `rawPageAssessmentSchema` / `RawPageAssessment`
+`@accessledger/accessibility` exports:
 
-`@accessledger/browser` exports `BrowserLoader`, runtime-only `BrowserCapture`, load/capture types,
-`PlaywrightBrowserLoader`, loader options, and its version/timeout constants. `BrowserCapture`
-retains the concrete Playwright Page privately and currently exposes `injectScript`, JSON-value
-`evaluate`, idempotent `close`, captured data, and closed state.
+- `AccessibilityEvidenceCollector.collect(page, targets)`
+- `BrowserAccessibilityEvidenceCollector`
+- `BrowserAccessibilityEvidenceCollectorOptions`
 
-`@accessledger/scanner` exports `AccessibilityScanner`, `ScannerCapture`, `AxeCoreScanner`, and its
-options. `@accessledger/evidence` exports `RawPageAssessor`, `RawPageAssessorOptions`, and
-`assessRawPage(request, options)`.
+`@accessledger/evidence` keeps `RawPageAssessor` and `assessRawPage`; both now run requested target
+collection inside the existing `try/finally` lifecycle before closing the capture.
 
-The default navigation timeout is 15 seconds. Each load owns one browser/context/page. The
-high-level assessor closes them in `finally`; direct BrowserLoader callers must close a successful
-capture themselves.
+## Target and payload behavior
 
-## Fixture server and tests
+A target descriptor has `schemaVersion: "1.0.0"`, opaque `id`, `strategy: "css"`, non-empty
+`selector`, and nullable `sourceEvidenceId`. Target IDs are unique within one collection. Selectors
+are reproducible evidence locators for the captured page, not guaranteed durable element identity.
 
-Run the inspection-only fixture server with:
+Collected payloads distinguish `available` values from `unavailable` values with reason
+`not_exposed_or_not_applicable`. In particular, an empty computed accessible name is stored as
+available `""`, not as unavailable. State fields currently cover busy, disabled, focused, invalid,
+read-only, required, checked, expanded, modal, pressed, and selected. Relationship fields cover
+active descendant, controls, described-by, details, error-message, flow-to, labelled-by, and owns.
 
-```text
-npm run fixtures:serve
-```
+Typed error codes are `target_not_found_or_detached`, `multiple_targets_matched`, `hidden_target`,
+`accessibility_node_unavailable`, and `browser_api_error`. Errors remain source evidence; they are
+not accessibility violations.
 
-It prints an ephemeral `127.0.0.1` origin. Tests manage their own server and cover
-`good-form.html`, `unlabeled-input.html`, `empty-button.html`, `broken-aria.html`, `/redirect`, and
-`/close-connection`. The server and paths use Node APIs and an explicit fixture allow-list.
+## Browser API and NVDA boundary
 
-An axe success stores the parsed JSON result directly in scanner Evidence payload, for example:
+The implementation uses a temporary Chromium CDP session and
+`Accessibility.getPartialAXTree` after resolving exactly one attached, rendered CSS target. It
+detaches the CDP session after collection and closes the owning Playwright page/context/browser via
+the existing assessor lifecycle.
 
-```json
-{
-  "testEngine": { "name": "axe-core", "version": "4.13.0" },
-  "violations": [
-    {
-      "id": "button-name",
-      "impact": "critical",
-      "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/button-name?application=axeAPI",
-      "nodes": [
-        {
-          "target": ["#empty-action"],
-          "html": "<button id=\"empty-action\" type=\"button\"></button>"
-        }
-      ]
-    }
-  ]
-}
-```
+Provenance uses classification `browser_accessibility_semantics`, source/API name
+`Chrome DevTools Protocol Accessibility`, pinned browser/automation/protocol versions, and
+`assistiveTechnologyOutput: false`. These values may differ from platform accessibility APIs and
+NVDA's heuristics, modes, announcements, and settings. They do not prove speech, focus-order
+quality, task completion, resident experience, WCAG conformance, or severity.
 
-The actual payload also retains passes, incomplete, inapplicable, tags, help text, failure
-summaries, and check data. A navigation failure has failed Page + browser Evidence + null scanner
-Evidence. A scan failure has loaded Page + browser Evidence + scanner Evidence with the raw
-operational error.
+## Fixture and test coverage
 
-## Decisions and limits
+`data/fixtures/accessibility-semantics.html` covers a labelled/described/value-bearing required
+textbox, labelled/described checked custom checkbox, expanded/controls button, unnamed button,
+hidden button, and element detached before collection. Tests prove computed roles/names/
+descriptions/value, focusability, states, IDREF relationships, explicit unavailable fields,
+hidden/detached errors, JSON round trips, raw-evidence/Page traceability, browser-semantic labeling,
+and resource closure.
 
-ADR-007 records the additive `RawPageAssessment` contract, retained `1.0.0` schema version, private
-browser ownership, and in-browser JSON serialization of axe output. No persistence was added. No
-accessibility semantics, observations, WCAG mapping, grouping, findings, UI, resident automation,
-severity, LLM, or NVDA behavior was implemented.
+The fixture server remains portable Node code and uses an explicit allow-list. Managed sandboxes
+may require permission for loopback binding and Chromium launch. Windows execution remains
+unrecorded; there are no known Chunk 2 defects.
 
-There are no known Chunk 1 defects. The acceptance host was macOS arm64; portable Node/Playwright
-APIs are used, but Windows execution has not been recorded. Managed sandboxes may require
-permission for loopback binding and Chromium launch.
+## Decision and limits
+
+ADR-008 records the target/evidence contracts, Chromium/CDP boundary, existing-capture lifecycle,
+explicit browser-not-AT classification, and decision to retain schema `1.0.0` for additive
+pre-release contracts. No persistence, observation, WCAG mapping, grouping, finding, UI, journey,
+severity, LLM, speech, or NVDA implementation was added.
 
 ## What to do next
 
-Implement **Chunk 2 — Accessibility Evidence** exactly as specified in
-`docs/MVP-IMPLEMENTATION-PLAN.md`. Use the existing browser lifecycle and raw Evidence contracts,
-make only narrow extensions needed for browser semantics collection, and stop before Chunk 3.
+Implement **Chunk 3 — Observation Normalization + WCAG Mapping** exactly as specified in
+`docs/MVP-IMPLEMENTATION-PLAN.md`. Consume the existing raw scanner and accessibility evidence,
+preserve every Page/Evidence reference, make a persistence decision only if Chunk 3 requires it,
+and stop before Chunk 4 grouping.
 
 ## Exact recommended prompt for the next agent
 
 ```text
-Read AGENTS.md, project/CURRENT-STATE.md, project/HANDOFF.md, docs/ARCHITECTURE.md, the Chunk 2 section of docs/MVP-IMPLEMENTATION-PLAN.md, docs/TESTING-METHODOLOGY.md, docs/DATA-MODEL.md, docs/RAW-CAPTURE-RUNTIME.md, and relevant entries in project/DECISIONS.md. Implement Chunk 2 only: Accessibility Evidence. Use npm and preserve the existing TypeScript/ESM/workspace setup. Reuse the Chunk 1 BrowserCapture lifecycle without exposing Playwright handles. Define and test any necessary serializable target descriptor and the AccessibilityEvidenceCollector.collect boundary before export. Collect reproducible browser-exposed role, name, description, value, states, focusability, and relationships for controlled targets; explicitly record unavailable fields and detached/hidden-target errors; include browser/API provenance and link accessibility_semantics Evidence to the Page and existing raw evidence. Add deterministic fixtures/tests for known roles, names, states, missing names, hidden and detached elements, JSON serialization, traceability, resource cleanup, and proof that results are browser semantics—not NVDA output. Do not begin Chunk 3: do not normalize observations, evaluate or map WCAG, group occurrences, draft findings, use LLM analysis, implement the auditor UI or resident automation, assign severity, simulate speech, or automate NVDA. Run npm run typecheck, npm test, npm run lint, and npm run format:check, then update project/CURRENT-STATE.md, project/WORK-LOG.md, project/BACKLOG.md, project/DECISIONS.md if needed, and project/HANDOFF.md. Report files changed, public contracts, tests, decisions, unresolved issues, and the exact prompt for the next Chunk 3 agent.
+Read AGENTS.md, project/CURRENT-STATE.md, project/HANDOFF.md, docs/ARCHITECTURE.md, the Chunk 3 section of docs/MVP-IMPLEMENTATION-PLAN.md, docs/TESTING-METHODOLOGY.md, docs/DATA-MODEL.md, docs/WCAG-KNOWLEDGE-MODEL.md, docs/RAW-CAPTURE-RUNTIME.md, and relevant entries in project/DECISIONS.md. Implement Chunk 3 only: Observation Normalization + WCAG Mapping. Use npm and preserve the existing TypeScript/ESM/workspace setup. Consume validated raw browser/scanner and accessibility_semantics Evidence without changing its source meaning. Define and test the ObservationNormalizer.normalize and WcagKnowledge/WcagMapper boundaries before export. Normalize only deterministic covered fixture facts into Observation and ObservationOccurrence records while preserving every Page ID, Evidence ID, selector, source detail, and concrete occurrence. Add a small versioned WCAG 2.1 A/AA knowledge dataset and inspectable, documented tool/rule mappings with provenance; evaluate candidate mappings as supported, unsupported, or uncertain from explicit evidence requirements, and preserve unknown rules and insufficient evidence. Make and document a lightweight persistence decision only if Chunk 3 actually requires persistence. Do not begin Chunk 4: do not group or deduplicate occurrences, draft findings, implement the auditor UI or resident automation, assign severity, use LLM analysis, simulate speech, automate NVDA, or claim certification/legal conformance. Add deterministic positive, negative, preservation, unknown-rule, insufficient-evidence, dataset-version, and traceability tests. Run npm run typecheck, npm test, npm run lint, and npm run format:check, then update project/CURRENT-STATE.md, project/WORK-LOG.md, project/BACKLOG.md, project/DECISIONS.md if needed, and project/HANDOFF.md. Report files changed, public contracts, tests, decisions, unresolved issues, and the exact prompt for the next Chunk 4 agent.
 ```

@@ -3,7 +3,11 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { PlaywrightBrowserLoader } from '@accessledger/browser';
 import { AxeCoreScanner, type AccessibilityScanner } from '@accessledger/scanner';
-import { rawPageAssessmentSchema, type JsonValue } from '@accessledger/shared';
+import {
+  CONTRACT_SCHEMA_VERSION,
+  rawPageAssessmentSchema,
+  type JsonValue,
+} from '@accessledger/shared';
 
 import {
   startFixtureServer,
@@ -122,6 +126,59 @@ describe('assessRawPage', () => {
     const parsed = rawPageAssessmentSchema.parse(JSON.parse(JSON.stringify(result)));
     expect(parsed).toEqual(result);
     expect(parsed.scannerEvidence?.payload).toEqual(rawResult);
+  });
+
+  it('collects accessibility evidence in the existing lifecycle with complete traceability', async () => {
+    if (!fixtureServer) throw new Error('Fixture server is unavailable.');
+    const browsers: Browser[] = [];
+    const result = await assessRawPage(
+      {
+        assessmentId: 'assessment-accessibility',
+        url: `${fixtureServer.origin}/accessibility-semantics.html`,
+        accessibilityTargets: [
+          {
+            schemaVersion: CONTRACT_SCHEMA_VERSION,
+            id: 'email-target',
+            strategy: 'css',
+            selector: '#email',
+            sourceEvidenceId: 'scanner-evidence-1',
+          },
+        ],
+      },
+      {
+        browserLoader: trackingLoader(browsers),
+        idFactory: (recordType) => `${recordType}-1`,
+      },
+    );
+
+    expect(result.operationalResult).toEqual({ status: 'loaded' });
+    expect(result.accessibilityEvidence).toHaveLength(1);
+    expect(result.page.rawEvidenceIds).toEqual([
+      'browser-evidence-1',
+      'scanner-evidence-1',
+      'accessibility-evidence-1',
+    ]);
+    expect(result.accessibilityEvidence[0]).toMatchObject({
+      id: 'accessibility-evidence-1',
+      assessmentId: 'assessment-accessibility',
+      pageId: 'page-1',
+      kind: 'accessibility_semantics',
+      metadata: {
+        targetId: 'email-target',
+        rawEvidenceIds: ['browser-evidence-1', 'scanner-evidence-1'],
+        sourceEvidenceId: 'scanner-evidence-1',
+      },
+      payload: {
+        collectionStatus: 'collected',
+        provenance: {
+          classification: 'browser_accessibility_semantics',
+          assistiveTechnologyOutput: false,
+        },
+      },
+    });
+    expect(rawPageAssessmentSchema.parse(JSON.parse(JSON.stringify(result)))).toEqual(result);
+    expect(browsers).toHaveLength(1);
+    expect(browsers[0]?.isConnected()).toBe(false);
   });
 
   it('records navigation failure as operational evidence without scanner output', async () => {

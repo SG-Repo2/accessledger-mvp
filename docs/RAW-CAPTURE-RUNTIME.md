@@ -32,6 +32,18 @@ Run the existing Chunk 1 pipeline manually with exactly one URL:
 npm run scan -- https://example.gov/
 ```
 
+To exercise the Chunk 2 collector against controlled elements on that page, repeat `--target` with
+a CSS selector:
+
+```text
+npm run scan -- https://example.gov/ --target ".site-search-button" --target "#label_1"
+```
+
+The CLI assigns ordered `cli-target-N` IDs, uses `strategy: "css"`, and leaves
+`sourceEvidenceId: null` because these are operator-supplied locators. Invalid, empty, or incomplete
+target arguments fail before browser launch. Omitting `--target` preserves the original request and
+returns an empty `accessibilityEvidence` array.
+
 The developer-only CLI prints the complete serialized `RawPageAssessment` JSON to stdout. It exits
 with status `0` only when `operationalResult.status` is `loaded`; invalid arguments, invalid URLs,
 navigation failures, scan failures, and unexpected runtime errors exit non-zero. Typed operational
@@ -52,8 +64,9 @@ resources acquired before any browser-launch, navigation, or metadata failure re
 use `BrowserLoader.load()` directly, rather than `assessRawPage()`, must close successful captures.
 
 The concrete Playwright `Page` is private. A `BrowserCapture` exposes only script injection and
-JSON-value evaluation capabilities needed by deterministic scanners, and no live handle appears in
-`RawPageAssessment` or another serializable contract.
+JSON-value evaluation capabilities needed by deterministic scanners plus a narrow serialized
+accessibility-tree capture capability. It never returns a Page, Locator, ElementHandle, or CDP
+session, and no live handle appears in `RawPageAssessment` or another serializable contract.
 
 ## Evidence behavior
 
@@ -69,15 +82,48 @@ produce failed Page plus raw browser Evidence and no scanner Evidence. Scan fail
 Page and produce scanner Evidence containing only the operational error. Neither failure is an
 accessibility conclusion.
 
+## Accessibility semantics collection
+
+Pass optional versioned CSS target descriptors to `assessRawPage`, or use
+`BrowserAccessibilityEvidenceCollector.collect(capture, targets)` directly with a Page/raw-evidence
+context. The high-level assessor runs collection after browser and scanner evidence creation and
+before closing the existing capture. It does not open a second browser. No target descriptors means
+no accessibility API session is opened.
+
+For each target, the Chromium implementation resolves exactly one attached and rendered element,
+opens a temporary Chrome DevTools Protocol session, and calls
+`Accessibility.getPartialAXTree`. The CDP session is detached after collection, and the owning
+capture still closes its page, context, and browser in the existing `finally` path.
+
+The collector records role, computed name, computed description, value, focusability, selected AX
+states, and IDREF relationships when Chromium exposes them. Absence is stored as
+`not_exposed_or_not_applicable`; empty accessible names remain available empty strings. It records
+typed errors for missing/detached, multiply matched, hidden, unexposed, and browser-API targets.
+CSS selectors are reproducible locators for controlled captures, not durable node identity.
+
+The evidence provenance name is `Chrome DevTools Protocol Accessibility`, includes the browser,
+Playwright, and protocol versions, uses classification `browser_accessibility_semantics`, and sets
+`assistiveTechnologyOutput` to `false`. Chromium accessibility-tree data may differ from NVDA's
+platform API consumption, heuristics, announcements, modes, and user settings. It cannot establish
+speech output, focus order quality, task completion, resident experience, WCAG conformance, or
+severity.
+
 ## Public exports
 
 - `@accessledger/shared`: `rawPageAssessmentRequestSchema`, `rawPageAssessmentErrorSchema`,
-  `rawPageAssessmentOperationalResultSchema`, `rawPageAssessmentSchema`, and their inferred types.
+  `rawPageAssessmentOperationalResultSchema`, `rawPageAssessmentSchema`, accessibility target,
+  context, semantic-field, payload, provenance, error, and specialized Evidence schemas plus their
+  inferred types.
 - `@accessledger/browser`: `BrowserLoader`, `BrowserCapture`, load/capture types,
-  `PlaywrightBrowserLoader`, its options, and Playwright name/version/timeout constants.
+  serialized accessibility-tree result types, `PlaywrightBrowserLoader`, its options, and
+  Playwright name/version/timeout constants.
 - `@accessledger/scanner`: `AccessibilityScanner`, `ScannerCapture`, `AxeCoreScanner`, and options.
-- `@accessledger/evidence`: `RawPageAssessor`, its options, and `assessRawPage`.
+- `@accessledger/accessibility`: `AccessibilityEvidenceCollector`,
+  `BrowserAccessibilityEvidenceCollector`, and its options.
+- `@accessledger/evidence`: `RawPageAssessor`, its options, and `assessRawPage`, now returning
+  ordered `accessibilityEvidence` when targets are supplied.
 
-The aggregate accepts only `assessmentId` and URL. Default IDs and timestamps are generated at
-runtime; tests can inject clocks, ID factories, loaders, and scanners without changing serialized
-records.
+The aggregate accepts `assessmentId`, URL, and optional accessibility targets. Default IDs and
+timestamps are generated at runtime; tests can inject clocks, ID factories, loaders, and scanners
+without changing serialized records. The developer scan command accepts repeated optional CSS
+targets; without them it returns an empty `accessibilityEvidence` array.

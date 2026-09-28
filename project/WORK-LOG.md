@@ -55,3 +55,45 @@
 - **Known issues:** None beyond the existing separate Playwright browser installation and
   unrecorded Windows execution noted in current state.
 - **Next logical action:** Execute Chunk 2 from the unchanged exact prompt in `project/HANDOFF.md`.
+
+## 2026-09-28 — Codex — Chunk 2
+
+- **Files changed:** Added the `@accessledger/accessibility` workspace and controlled accessibility
+  fixture; added shared target/semantics contracts; narrowly extended the private BrowserCapture
+  capability and raw-assessment orchestration; updated browser/evidence/shared/CLI tests, lockfile,
+  architecture/data/testing/runtime documentation, backlog, decisions, current state, and handoff.
+- **Implemented:** Versioned CSS evidence locators; Chromium CDP partial accessibility-tree capture;
+  typed collector boundary; browser-exposed role, name, description, value, focusability, selected
+  state and relationship extraction; explicit unavailable fields; typed hidden/detached/ambiguous/
+  unexposed/API errors; Page/raw-evidence traceability; browser/API provenance; JSON validation; and
+  existing-capture resource cleanup.
+- **Public contract decision:** Added `AccessibilityTargetDescriptor`, collection context, semantic
+  field/payload/error/provenance, and specialized accessibility Evidence contracts. Extended
+  `RawPageAssessment` with optional target input and ordered semantics output. ADR-008 retains
+  schema `1.0.0` for these additive pre-release changes and records the browser-not-NVDA boundary.
+- **Runtime provenance:** Playwright `1.63.0`, Chromium build `1243` / `153.0.8010.12`, CDP protocol
+  `1.3`, and axe-core `4.13.0` on macOS arm64.
+- **Tests executed:** Targeted shared/accessibility/evidence acceptance suites; `npm run typecheck`;
+  full `npm test`; `npm run lint`; `npm run format:check`.
+- **Result:** All required checks passed. Root suite: 7 files / 23 tests. New tests cover known
+  semantics, missing names, unavailable fields, hidden/detached targets, round-trip serialization,
+  Page/raw-evidence links, non-NVDA provenance, and browser closure.
+- **Known issues:** No known Chunk 2 defects. CSS locators are not durable identity; absent AX fields
+  cannot distinguish unexposed from inapplicable; collection is currently Chromium/CDP-specific;
+  and Windows execution remains unrecorded.
+- **Next logical action:** Execute Chunk 3 (Observation Normalization + WCAG Mapping) from
+  `project/HANDOFF.md`; do not begin grouping or later chunks.
+
+## 2026-09-28 — Codex — Chunk 2 scan CLI target follow-up
+
+- **Files changed:** Updated the assessment CLI parser/tests; raw-runtime, current-state, work-log,
+  and handoff documentation; and formatter exclusions for local `*-scan.json` capture artifacts.
+- **Implemented:** Repeated optional `--target "<selector>"` arguments become versioned,
+  deterministic `cli-target-N` CSS descriptors and pass through the existing
+  `RawPageAssessmentRequest.accessibilityTargets` input. Operator-supplied targets have null source
+  evidence IDs. No-target invocation and normal RawPageAssessment JSON output are unchanged.
+- **Tests:** Added focused forwarding and invalid-target argument coverage, then ran all required
+  root validation commands. Root suite: 7 files / 27 tests.
+- **Scope:** No collector, schema, architecture, WCAG, observation, grouping, finding, severity,
+  LLM, UI, journey, speech, or NVDA behavior changed. No Chunk 3 work began.
+- **Next logical action:** Execute Chunk 3 from the exact prompt in `project/HANDOFF.md`.

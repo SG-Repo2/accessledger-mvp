@@ -55,18 +55,36 @@ rather than embedded in relational records.
 
 ### RawPageAssessment
 
-`RawPageAssessment` is the Chunk 1 serializable aggregate, not a replacement for Page or Evidence.
-It contains one validated Page, required raw browser Evidence, nullable raw scanner Evidence, start
-and completion timestamps, and a discriminated operational result:
+`RawPageAssessment` is the serializable page-capture aggregate, not a replacement for Page or
+Evidence. It contains one validated Page, required raw browser Evidence, nullable raw scanner
+Evidence, ordered accessibility-semantics Evidence when targets were requested, start and
+completion timestamps, and a discriminated operational result:
 
 - `loaded`: the page loaded and axe returned raw JSON;
 - `navigation_failed`: browser launch, navigation, or page-metadata capture failed; or
 - `scan_failed`: the page loaded but axe injection or execution failed.
 
 The aggregate schema enforces matching assessment/page IDs and exact ordered Page
-`rawEvidenceIds`. Navigation failures require a failed Page and no scanner Evidence; loaded and
-scan-failed results require a loaded Page and scanner Evidence. Its request is only `assessmentId`
-plus URL. Runtime Playwright handles are never part of this contract.
+`rawEvidenceIds`. Accessibility evidence must link the aggregate browser/scanner evidence and its
+target metadata. Navigation failures require a failed Page, no scanner Evidence, and no
+accessibility Evidence; loaded and scan-failed results require a loaded Page and scanner Evidence.
+Its request is `assessmentId`, URL, and optional accessibility target descriptors. Runtime
+Playwright handles are never part of this contract.
+
+### AccessibilityTargetDescriptor and accessibility semantics
+
+An `AccessibilityTargetDescriptor` is a versioned CSS evidence locator with an opaque target ID,
+selector, and nullable `sourceEvidenceId`. Selectors can reproduce a controlled collection but are
+not durable DOM identity. Target IDs must be unique within a collection, and a non-null source
+evidence ID must belong to the collection's browser/scanner evidence context.
+
+`AccessibilitySemanticsEvidence` specializes `Evidence(kind="accessibility_semantics")`. Its
+payload is either `collected`, with browser-exposed role, name, description, value, focusability,
+selected states, and relationships, or `error`, with a typed target/API error. Each semantic field
+is explicitly `available` or `unavailable`; an available empty name is distinct from an unavailable
+name. Its provenance records browser, automation, and Chrome DevTools Protocol versions and
+explicitly says the record is browser semantics, not assistive-technology output. Metadata retains
+the target ID, ordered raw evidence IDs, and optional exact source evidence ID.
 
 ### Observation
 

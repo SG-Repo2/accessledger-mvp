@@ -14,6 +14,7 @@ const fixturesDirectory = join(
 );
 
 const fixtureNames = new Set([
+  'accessibility-semantics.html',
   'good-form.html',
   'unlabeled-input.html',
   'empty-button.html',

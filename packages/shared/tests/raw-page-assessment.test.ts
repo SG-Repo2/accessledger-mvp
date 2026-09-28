@@ -81,6 +81,7 @@ function makeLoadedAggregate(assessmentId: string, url: string) {
       payload: { violations: [] },
       metadata: {},
     },
+    accessibilityEvidence: [],
     operationalResult: { status: 'loaded' },
     startedAt: now,
     completedAt: now,
