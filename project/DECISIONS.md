@@ -235,3 +235,45 @@
 - **Consequences:** Existing Finding fixtures/producers must provide source group and validation
   need. Chunk 6 can load a draft's exact proposal and evidence context, but must add audit-safe
   persistence and enforce reviewed state transitions before final approval.
+
+## ADR-012 — Transactional SQLite review store and evidence-gated approval
+
+- **Date:** 2026-09-28
+- **Status:** Accepted
+- **Context:** Chunk 6 introduces the first state that must survive process boundaries: reviewer
+  edits, grouping decisions, human Validation, Finding transitions, and audit history. These writes
+  must retain original records and must not partially commit.
+- **Decision:** Use local SQLite through Node's `node:sqlite` API behind a narrow synchronous
+  `ReviewRepository`. Use explicit ordered SQL migrations beginning at persistence schema version
+  `1`, `BEGIN IMMEDIATE` transactions, foreign keys, and current-Finding optimistic comparison.
+  Store immutable source entities once; retain original Finding and GroupProposal JSON; project the
+  current Finding; append grouping decisions, Validation records, and versioned ReviewAuditEvent
+  records. Enforce source and history immutability with repository APIs plus SQLite triggers.
+- **Review policy:** Enforce `draft -> in_review -> approved|rejected` in the service. Allow
+  five-part edits, confidence, and source-candidate WCAG selection only while `in_review`. Preserve
+  group members for accepted/rejected/split decisions. Require same-assessment human Evidence for
+  Validation. Severity must exactly match a supported Validation severity claim. Approval requires
+  accepted grouping, intact complete trace, completed Cause/Effect/Recommendation/severity/
+  confidence, and supported human claims for grouping, Condition, Cause, Effect, Recommendation,
+  severity, and WCAG when present.
+- **Public contracts:** Add `Validation.claims`, `Validation.validatedSeverity`, and versioned
+  `ReviewAuditEvent`. NVDA-method Validation requires assistive-technology details. Add
+  `FindingReviewService`, `ReviewRepository`, `SqliteReviewRepository`, complete-trace and edit/
+  validation input types, and persistence schema version `1`.
+- **Reason:** SQLite is portable and sufficient for the proven single-user local access pattern.
+  JSON domain payloads preserve the existing Zod contract boundary, while transactions and
+  append-only history make review changes auditable without designing a remote multi-user system.
+  Explicit claim/severity support prevents scanner impact, grouping confidence, browser semantics,
+  agent failure, or assisted prose from silently becoming human conclusions.
+- **Alternatives considered:** JSON files with rewrite/locking conventions; a remote database; an
+  ORM before query needs exist; mutable group/source rows; UI-only transition enforcement; using
+  scanner impact as severity.
+- **Schema-version decision:** Retain public `CONTRACT_SCHEMA_VERSION` `1.0.0`. The Validation fields
+  and ReviewAuditEvent are coordinated pre-release additions made before any persisted review data
+  exists. Persistence migrations have their own version sequence beginning at `1`; future table or
+  data changes add migrations without rewriting migration 1. A breaking public-contract change
+  after retained/released data requires a contract version increment and data migration.
+- **Consequences:** Node must provide `node:sqlite`; Node 22 may print its upstream experimental-
+  feature warning. The current repository is intentionally local/synchronous and not multi-user.
+  A later journey migration can append tables and reuse Validation/human Evidence without changing
+  immutable Chunk 6 records.

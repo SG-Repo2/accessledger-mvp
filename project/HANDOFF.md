@@ -1,86 +1,66 @@
-# Handoff — Start Chunk 6 Only
+# Handoff — Start Chunk 7 Only
 
 ## Last completed work
 
-Chunk 5 (Draft Findings) is complete. Eligible, fully traced GroupProposal records can now become
-neutral deterministic Finding records with `status="draft"`. No final approval, auditor UI,
-persisted review history, human/NVDA workflow, journey, export, LLM, speech, or automated NVDA
-behavior was added.
+Chunk 6 (Auditor Review + Validation) is complete. A complete Chunk 5 draft trace can now be stored,
+reviewed, edited, validated, assigned evidence-supported severity, and approved or rejected through
+service-side policy and a minimal internal UI. No journey recording or export was added.
 
-All required root checks pass: 11 test files / 64 tests. New coverage includes eligibility and
-refusal paths, stable drafts, exact occurrence count, multi-page scope, supported-versus-candidate
-WCAG behavior, missing/broken trace rejection, nullable fields, schema version, serialization, and
-prohibited-language/scanner-impact isolation.
+## Persistence and repository boundary
 
-## Public contracts and interfaces
+`@accessledger/persistence` uses Node SQLite with ordered migrations. Persistence schema version `1`
+creates review bundles, immutable source records, append-only grouping decisions, append-only
+Validation, and append-only audit events. Original Finding/GroupProposal JSON is retained alongside
+the mutable current Finding projection. Transactions use `BEGIN IMMEDIATE`; current Finding JSON is
+optimistically compared to reject stale writes. SQLite triggers reject source/history changes.
 
-`@accessledger/shared` retains contract schema `1.0.0`. Finding now also requires:
+Do not edit migration 1. Chunk 7 journey storage must be a new ordered migration and must preserve
+all Chunk 6 data. Keep public domain records as runtime-validated JSON at repository boundaries.
 
-- `sourceGroupProposalId`, preserving the direct Finding-to-GroupProposal link; and
-- `validationNeed`, stating what human review must resolve.
+## Public contracts and services
 
-`@accessledger/findings` exports:
+Public contract schema remains `1.0.0`. Validation now requires explicit `claims[]` and nullable
+`validatedSeverity`; a supported severity claim must carry exactly one severity. NVDA-method
+Validation requires assistive-technology details. `ReviewAuditEvent` is a versioned append-only
+record.
 
-- `FindingDrafter.draft(group, evidenceContext) -> Finding`
-- `DeterministicFindingDrafter`
-- `FindingEvidenceContext` containing exact Observation, ObservationOccurrence,
-  WcagCandidateEvaluation, Page, and Evidence records
-- `FINDING_DRAFTING_POLICY_VERSION` (`1.0.0`)
+`FindingReviewService` exposes review creation, complete-trace loading, `draft -> in_review`, group
+accept/reject/split, restricted Finding edits, human Validation addition, exact supported severity,
+and terminal approval/rejection. `FindingReviewTrace` returns original/current records, all source
+and human evidence, Validation, missing judgment fields, approval blockers, and audit history.
 
-## Drafting policy and template
+## Approval and safety policy
 
-Eligible inputs are:
+Approval requires accepted grouping, intact Observation/occurrence/WCAG/Page/Evidence trace,
+complete five-part fields and confidence, supported human Validation claims for every required
+claim, and assigned severity matching an exact supported Validation. Group members and source
+records never change. Scanner impact, grouping confidence, browser semantics, agent failure, and LLM
+output cannot become resident impact, NVDA behavior, severity, certification, conformance, or legal
+conclusions.
 
-- an accepted repeat proposal;
-- an accepted singleton with at least one WCAG criterion supported by its evaluation; or
-- a pending high-confidence repeat candidate.
+## Internal workflow and startup
 
-Rejected, split, ambiguous, pending singleton, pending medium/low-confidence repeat, and unsupported
-singleton inputs fail. The drafter also fails on duplicate, missing, extra, unrelated,
-cross-assessment, or mismatched source records. It requires WCAG evaluation coverage for every
-member Observation.
+`apps/auditor-studio` is server-rendered native HTML. It shows representative/all occurrences, raw
+and human Evidence, WCAG evaluations, missing fields, validation needs, actions, blockers, and audit
+history. Start a pre-seeded database with:
 
-The title template is `Review <humanized category> evidence`. The Condition template reports the
-collected source, rule/category, exact occurrence count, and inspected URL count. Affected URLs use
-final URL with requested URL fallback. Components use exact fingerprint, selector, markup, or an
-explicit occurrence-locator-unavailable fallback. WCAG criteria appear only when supported for
-every member Observation. Candidate, uncertain, unsupported, or mixed mappings remain outside
-`wcagCriteria` and in the validation need.
+```text
+npm run auditor:studio -- ./accessledger-review.sqlite
+```
 
-Every draft uses `validationStatus="required"` and explicit human-review text. Cause, Effect,
-Recommendation, severity, and Finding confidence are null. Grouping confidence and scanner impact
-are never converted into Finding judgment. No LLM assistant exists because deterministic templates
-meet Chunk 5 needs.
+The server binds to `127.0.0.1:4178` by default. Review bundles are inserted through
+`FindingReviewService.createReview`; there is no importer or account/authentication layer.
 
-## Traceability and integrity
+## Known limitations and Chunk 7 integration points
 
-The draft stores the source GroupProposal ID plus exact group-derived Observation and Evidence ID
-indexes. `occurrenceCount` is the exact member-ledger length. The service validates every
-occurrence-to-Observation/Page reference, every member Evidence ledger, every assessment boundary,
-all evaluation Evidence, and the exact top-level context before producing a Finding. Finding IDs
-are SHA-256-derived from drafting-policy version and stable GroupProposal ID.
-
-## Persistence and decisions
-
-ADR-011 records eligibility, deterministic templates, public contract additions, schema-version,
-no-LLM, and no-persistence decisions. Chunk 5 remains a pure JSON-serializable transformation.
-Chunk 6 now has the first concrete persistence need: retained reviewer edits, grouping decisions,
-validation records, audit history, and service-enforced state transitions. Make and document that
-repository/database/migration/transaction decision before building the review workflow.
-
-## Limitations and Chunk 6 requirements
-
-Draft prose is intentionally functional, with one conservative template rather than issue-specific
-polish. Cross-member WCAG support is intentionally strict. Component fallback text identifies the
-occurrence when source evidence has no locator. Windows execution remains unrecorded.
-
-Chunk 6 must provide the smallest evidence-first, keyboard-operable internal workflow for complete
-trace loading, group decisions, allowed five-part edits, Validation creation, evidence-gated
-severity, and approve/reject transitions. Preserve Evidence, Observation, occurrence, proposal, and
-original draft truth. Do not begin journeys or export.
+The studio is intentionally unstyled and local/single-user. Node 22 may emit the upstream
+`node:sqlite` experimental warning. Windows execution remains unrecorded. Chunk 7 should add journey
+protocol/result persistence, services, and studio sections using the existing human Evidence,
+Validation, transaction, and audit conventions. Journey results may support validation/severity but
+must never be inferred from browser/scanner/agent failure.
 
 ## Exact recommended prompt for the next agent
 
 ```text
-Read AGENTS.md, project/CURRENT-STATE.md, project/HANDOFF.md, docs/ARCHITECTURE.md, the Chunk 6 section of docs/MVP-IMPLEMENTATION-PLAN.md, docs/TESTING-METHODOLOGY.md, docs/DATA-MODEL.md, docs/RESIDENT-JOURNEYS.md only for the human-validation boundary, and relevant entries in project/DECISIONS.md. Implement Chunk 6 only: Auditor Review + Validation. Use npm and preserve the existing TypeScript/ESM/workspace setup. Consume Chunk 5 draft Findings together with their source GroupProposal and complete Observation, ObservationOccurrence, WcagCandidateEvaluation, Page, Evidence, and Validation trace. First make and document the concrete lightweight persistence, repository, migration, transaction, and audit-history decision required for retained reviewer edits and state transitions; prefer SQLite unless repository evidence supports another portable local choice. Define service-side review operations for loading a complete trace, recording accept/reject/split grouping decisions without deleting members, editing only allowed Finding fields, adding human Validation records, assigning severity only when supporting human evidence exists, and enforcing valid Finding transitions through in_review to approved or rejected. Build the smallest keyboard-operable, semantically labeled internal auditor workflow needed to inspect representative and all occurrences, raw evidence, WCAG support/candidates, missing judgment fields, validation needs, and audit history. Approval must fail for broken traceability, unresolved grouping, required validation not supported, or unsupported required claims. Preserve immutable Evidence and source records; never convert scanner impact, grouping confidence, browser semantics, agent failure, or LLM output into resident impact, NVDA behavior, severity, legal conclusions, certification, or conformance. Do not begin Chunk 7 or 8: no resident-journey implementation, export, customer dashboard, multi-tenancy, billing, polished reports, speech simulation, autonomous remediation, or automated NVDA control. Add deterministic repository/migration/transaction, complete-trace loading, edit persistence, grouping decision, validation gating, severity gating, invalid-transition, immutable-source, audit-history, keyboard/semantic UI, schema-version, serialization, and happy-path approval tests. Run npm run typecheck, npm test, npm run lint, and npm run format:check, then update project/CURRENT-STATE.md, project/WORK-LOG.md, project/BACKLOG.md, project/DECISIONS.md, relevant architecture/data/testing documentation, and project/HANDOFF.md. Report files changed, public contracts, persistence and transition design, reviewer workflow, tests, decisions, unresolved issues, and the exact prompt for the next Chunk 7 agent.
+Read AGENTS.md, project/CURRENT-STATE.md, project/HANDOFF.md, docs/ARCHITECTURE.md, the Chunk 7 section of docs/MVP-IMPLEMENTATION-PLAN.md, docs/AUDITOR-REVIEW.md, docs/RESIDENT-JOURNEYS.md, docs/TESTING-METHODOLOGY.md, docs/DATA-MODEL.md, and relevant entries in project/DECISIONS.md. Implement Chunk 7 only: Resident Journey Recording. Use npm and preserve the existing TypeScript/ESM/workspace setup. Build on FindingReviewService, the human Evidence/Validation claim boundary, and SqliteReviewRepository. Add a new ordered SQLite migration without changing migration 1, with transactional repositories for creating and editing human-authored ResidentJourney protocols and appending JourneyResult records while preserving audit history and link integrity. Define service operations for generic journey protocols, performer/environment/timing, all allowed outcomes, optional human NVDA observations, immutable supporting Evidence, related Finding links, and separate Validation records when a result supports a finding claim or exact severity. Extend the internal auditor studio only enough to create/edit protocols, record a manual result, distinguish not_attempted and inconclusive from unable_to_complete, and show linked results in finding review using keyboard-operable semantically labeled controls. Never infer a journey outcome, resident impact, NVDA behavior, severity, accessibility violation, legal conclusion, certification, or conformance from browser/scanner/agent failure; do not add autonomous browsing, synthetic users/speech, automated form submission, or remote/automated NVDA control. Do not begin Chunk 8: no Findings Register export, customer dashboard, multi-tenancy, billing, or polished reports. Add deterministic migration/repository/transaction, CRUD/recording, every outcome state, required performer, environment/timing, link-integrity, interrupted/inconclusive, optional-NVDA, supporting-evidence, validation/severity integration, no-automatic-outcome, audit-history, keyboard/semantic UI, schema-version, serialization, and happy-path tests. Run npm run typecheck, npm test, npm run lint, and npm run format:check, then update project/CURRENT-STATE.md, project/WORK-LOG.md, project/BACKLOG.md, project/DECISIONS.md, relevant architecture/data/testing/journey documentation, and project/HANDOFF.md. Report files changed, public contracts, persistence/migration design, journey workflow, validation/severity integration, tests, decisions, unresolved issues, and the exact prompt for the next Chunk 8 agent.
 ```

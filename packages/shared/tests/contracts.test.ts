@@ -196,6 +196,8 @@ describe('shared domain contracts', () => {
       subject: { type: 'journey_result', id: result.id },
       method: 'nvda',
       outcome: 'supported',
+      claims: ['condition'],
+      validatedSeverity: null,
       performedBy: 'Human auditor',
       performedAt: now,
       assistiveTechnology: { name: 'NVDA', version: null, platform: 'Windows' },
@@ -204,6 +206,19 @@ describe('shared domain contracts', () => {
     });
 
     expect(validation.assistiveTechnology?.name).toBe('NVDA');
+    expect(
+      validationSchema.safeParse({
+        ...validation,
+        assistiveTechnology: { name: 'NVDA', version: null, platform: null },
+      }).success,
+    ).toBe(false);
+    expect(
+      validationSchema.safeParse({
+        ...validation,
+        claims: ['severity'],
+        validatedSeverity: null,
+      }).success,
+    ).toBe(false);
   });
 
   it('rejects unversioned contracts and findings without traceable evidence', () => {

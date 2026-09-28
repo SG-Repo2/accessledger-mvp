@@ -102,18 +102,23 @@ Windows-specific implementation behind the cross-platform validation interface.
 
 ## Persistence strategy
 
-The MVP should use a local, lightweight database after its access patterns are proven; SQLite
-remains the expected default. Chunk 3 did not require persistence: normalization and mapping are
-pure, deterministic transformations over validated records, and their outputs validate as
-JSON-serializable public contracts. A later chunk must make a separate storage decision when a real
-repository, transaction, or query requirement exists. Persistence uses repositories defined around
-shared domain records, migrations, and explicit transactions. Large binary artifacts such as
-screenshots may be stored in a portable artifact directory with database metadata and content
-hashes. Paths must be resolved with Node `path` APIs and stored as portable relative references
-when possible.
+Chunk 6 uses SQLite through the Node `node:sqlite` API for the first proven durable access pattern:
+reviewer edits, grouping decisions, Validation records, guarded Finding transitions, and audit
+history. `@accessledger/persistence` owns ordered SQL migrations and a narrow synchronous review
+repository. The initial persistence schema version is `1`; migrations run in explicit
+`BEGIN IMMEDIATE` transactions and are recorded in `schema_migrations`.
 
-No persistence layer exists through Chunk 5. JSON-serializable schemas define the boundary without
-prematurely choosing tables or an ORM.
+Immutable Observation, ObservationOccurrence, WcagCandidateEvaluation, Page, and Evidence JSON is
+stored once in `source_records`. The original Finding and GroupProposal are retained alongside the
+current Finding projection. Group decisions, Validation records, and audit events are append-only;
+SQLite triggers reject updates/deletes. A Finding update and its audit event, or a Validation plus
+human Evidence, derived validation status, and audit event, commit atomically. Optimistic comparison
+of the complete current Finding JSON rejects stale reviewer writes. No ORM, remote service, account,
+or multi-tenant boundary is introduced.
+
+SQLite paths are supplied by the caller and resolved with Node path APIs by the local application.
+Large binary artifacts remain a future portable artifact-directory concern; only their immutable
+Evidence metadata belongs in SQLite. See `AUDITOR-REVIEW.md` and ADR-012.
 
 ## Package interfaces by stage
 
@@ -236,6 +241,31 @@ backward chain and the reason for review are explicit.
 Drafting is a deterministic, JSON-serializable transformation and creates no review state that must
 survive process boundaries. No LLM layer or persistence was added. Chunk 6's audit-safe edits and
 state transitions are the first concrete persistence requirement.
+
+### Chunk 6 auditor-review boundary
+
+`@accessledger/findings` exposes `FindingReviewService` over a `ReviewRepository`. It creates a
+review bundle only from a complete Chunk 5 trace, reloads and rechecks that trace on every operation,
+and permits review mutations only while a Finding is `in_review`. The only legal terminal paths are
+`draft -> in_review -> approved` and `draft -> in_review -> rejected`.
+
+The service records accepted, rejected, or split grouping decisions as append-only projections; it
+never edits the proposal member ledger. Finding edits are restricted to the five-part fields,
+Finding confidence, and source-candidate WCAG criteria. Severity has a separate operation and must
+exactly match a supported human Validation severity claim. Validation records identify explicit
+claim types and, for severity, the exact validated level. NVDA-method records require assistive-
+technology details; no adapter or simulated output is provided.
+
+Approval requires an accepted group, complete source trace, all five-part judgment fields,
+confidence, exact supported severity, and supported human Validation claims for grouping,
+Condition, WCAG when present, Cause, Effect, Recommendation, and severity. Candidate WCAG criteria
+must come from the source evaluations. Scanner impact, grouping confidence, browser semantics,
+agent behavior, and LLM text have no promotion path into these judgments.
+
+`apps/auditor-studio` is a small server-rendered internal interface. Native links, forms, labels,
+fieldsets, tables, buttons, and disclosure elements expose the representative occurrence, every
+member occurrence, raw/human Evidence, WCAG evaluations, missing fields, validation needs, review
+actions, and audit history without requiring direct database use. It is not a customer dashboard.
 
 ## Cross-platform boundary
 

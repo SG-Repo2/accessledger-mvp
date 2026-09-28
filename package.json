@@ -13,6 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "scan": "tsx apps/assessment-cli/src/scan.ts",
+    "auditor:studio": "tsx apps/auditor-studio/src/start.ts",
     "fixtures:serve": "tsx packages/browser/tests/support/serve-fixtures.ts",
     "playwright:install": "playwright install chromium",
     "lint": "eslint .",

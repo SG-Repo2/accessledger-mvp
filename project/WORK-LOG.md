@@ -185,3 +185,39 @@
   ID if no locator evidence exists; Windows execution remains unrecorded. No known Chunk 5 defect.
 - **Next logical action:** Execute Chunk 6 (Auditor Review + Validation) from `project/HANDOFF.md`;
   do not begin journeys, export, customer-facing reporting, or automated NVDA control.
+
+## 2026-09-28 — Codex — Chunk 6
+
+- **Files changed:** Added `@accessledger/persistence` and `@accessledger/auditor-studio`; added the
+  Finding review service, shared Validation claim/severity and ReviewAuditEvent contracts, review
+  fixtures/tests, root startup script, lockfile workspace entries, auditor-review documentation,
+  and required architecture/data/testing/backlog/decision/current-state/handoff updates.
+- **Persistence decision:** ADR-012 selects local SQLite through `node:sqlite`, ordered migration
+  schema version `1`, immutable per-bundle source links, retained original Finding/GroupProposal,
+  current Finding projection, append-only grouping/Validation/audit records, SQLite immutability
+  triggers, `BEGIN IMMEDIATE` transactions, and optimistic whole-Finding comparison. No ORM or
+  remote/multi-tenant store was added.
+- **Implemented:** Complete trace create/load and revalidation; allowed five-part/confidence/source-
+  candidate edits; accepted/rejected/split grouping decisions without member loss; explicit human
+  Validation claims; exact severity support; `draft -> in_review -> approved|rejected`; atomic
+  audit history; and a native server-rendered evidence-first auditor UI.
+- **Approval policy:** Requires accepted grouping, intact exact trace, Cause/Effect/Recommendation/
+  severity/confidence, supported human claims for all required judgments, and a severity exactly
+  matching supported human Validation. Scanner impact, grouping confidence, browser semantics,
+  agent failure, and LLM output have no judgment-promotion path.
+- **Public contract decision:** Validation adds required `claims[]` and `validatedSeverity`; adds
+  `ReviewAuditEvent`, `FindingReviewService`, review trace/edit/input contracts, repository
+  contracts, `SqliteReviewRepository`, and persistence schema version `1`. Public contract schema
+  remains `1.0.0` as a coordinated pre-release change before retained review data.
+- **Tests executed:** Targeted Chunk 6/shared suites; `npm run typecheck`; full `npm test` with
+  loopback/Chromium access; `npm run lint`; `npm run format:check`.
+- **Result:** All required checks passed. Root suite: 14 files / 75 tests. Chunk 6 targeted suites:
+  4 files / 16 tests. Coverage includes migrations, exact bundle source links, rollback,
+  immutable-source/original record retention, complete trace, edits, all grouping decisions,
+  validation/severity/approval gates, invalid transitions, tampered trace rejection, audit history,
+  schema/serialization, semantic keyboard UI, and happy-path approval.
+- **Known issues:** The local studio has no importer, binary artifact viewer, styling, account/auth,
+  or concurrent merge UI. Node 22 emits the upstream `node:sqlite` experimental warning. Windows
+  execution remains unrecorded. No known Chunk 6 correctness defect.
+- **Next logical action:** Execute Chunk 7 (Resident Journey Recording) from `project/HANDOFF.md`;
+  add a new migration and do not begin export or autonomous/automated resident/NVDA behavior.

@@ -1,0 +1,91 @@
+import { FindingReviewService } from '@accessledger/findings';
+import { SqliteReviewRepository } from '@accessledger/persistence';
+import { describe, expect, it } from 'vitest';
+
+import { reviewFixture, reviewNow } from '../../../tests/support/review-fixture.js';
+import { AuditorStudio, renderReviewPage } from '../src/index.js';
+
+describe('Auditor Studio', () => {
+  it('renders an evidence-first, keyboard-operable semantic review page', () => {
+    const { repository, service, studio } = setup();
+    const fixture = reviewFixture();
+    service.createReview(fixture, { actor: 'Auditor Example' });
+    service.startReview(fixture.finding.id, { actor: 'Auditor Example' });
+    const html = renderReviewPage(studio.load(fixture.finding.id));
+
+    expect(html).toContain('<main id="review-main">');
+    expect(html).toContain('href="#review-main">Skip to finding review');
+    expect(html).toContain('<h2 id="representative-heading">Representative occurrence</h2>');
+    expect(html).toContain(
+      '<caption>Every retained member of the source grouping proposal</caption>',
+    );
+    expect(html).toContain('<h2 id="evidence-heading">Raw and human evidence</h2>');
+    expect(html).toContain('<h2 id="wcag-heading">WCAG support and candidates</h2>');
+    expect(html).toContain('<h2 id="validations-heading">Human validations</h2>');
+    expect(html).toContain('<summary>Grouping signals</summary>');
+    expect(html).toContain('<h2 id="history-heading">Audit history</h2>');
+    expect(html).toContain('<button type="submit">Approve finding</button>');
+    expect(html).not.toMatch(/onclick=|tabindex="[1-9]|accesskey=/i);
+
+    const labelTargets = [...html.matchAll(/<label for="([^"]+)"/g)].map((match) => match[1]);
+    expect(labelTargets.length).toBeGreaterThan(10);
+    for (const target of labelTargets) expect(html).toContain(`id="${target}"`);
+    repository.close();
+  });
+
+  it('routes native form actions through the service and stores authored human evidence', () => {
+    const { repository, service, studio } = setup();
+    const fixture = reviewFixture();
+    service.createReview(fixture, { actor: 'Auditor Example' });
+    studio.handle(fixture.finding.id, 'start-review', { actor: 'Auditor Example' });
+    studio.handle(fixture.finding.id, 'add-validation', {
+      actor: 'Auditor Example',
+      method: 'keyboard',
+      outcome: 'supported',
+      claims: 'condition,severity',
+      validatedSeverity: 'minor',
+      notes: 'Keyboard review observed a lesser but reproducible impact.',
+      assistiveTechnologyName: '',
+      assistiveTechnologyVersion: '',
+      platform: '',
+    });
+    const trace = studio.handle(fixture.finding.id, 'assign-severity', {
+      actor: 'Auditor Example',
+      severity: 'minor',
+    });
+
+    expect(trace.finding.severity).toBe('minor');
+    expect(trace.validations[0]).toMatchObject({
+      method: 'keyboard',
+      claims: ['condition', 'severity'],
+      validatedSeverity: 'minor',
+    });
+    expect(trace.evidence.some((record) => record.source.type === 'human')).toBe(true);
+    repository.close();
+  });
+});
+
+function setup(): {
+  repository: SqliteReviewRepository;
+  service: FindingReviewService;
+  studio: AuditorStudio;
+} {
+  const repository = new SqliteReviewRepository(':memory:');
+  const service = new FindingReviewService(repository, {
+    clock: () => new Date(reviewNow),
+    idFactory: sequenceIds(),
+  });
+  return {
+    repository,
+    service,
+    studio: new AuditorStudio(service, {
+      clock: () => new Date(reviewNow),
+      idFactory: sequenceIds(),
+    }),
+  };
+}
+
+function sequenceIds(): () => string {
+  let value = 0;
+  return () => String(++value).padStart(4, '0');
+}

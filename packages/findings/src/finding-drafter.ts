@@ -245,6 +245,13 @@ function validateContext(
   return context;
 }
 
+export function assertValidFindingEvidenceContext(
+  groupInput: GroupProposal,
+  evidenceContext: FindingEvidenceContext,
+): void {
+  validateContext(groupProposalSchema.parse(groupInput), evidenceContext);
+}
+
 function supportedCriteriaForAllObservations(
   observationIds: string[],
   evaluations: WcagCandidateEvaluation[],

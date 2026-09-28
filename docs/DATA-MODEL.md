@@ -158,8 +158,28 @@ supported evaluation for it.
 ### Validation
 
 A validation identifies one subject (`observation`, `finding`, or `journey_result`), method,
-supported/unsupported/inconclusive outcome, human performer and time, optional assistive technology,
-notes, and evidence. `nvda` is a method used by a human; it is not an automated persona.
+supported/unsupported/inconclusive outcome, explicit reviewed claims, human performer and time,
+optional assistive technology, notes, and Evidence. Finding-review claims are `grouping`,
+`condition`, `wcag`, `cause`, `effect`, `recommendation`, and `severity`. A supported severity claim
+also records exactly one `validatedSeverity`; no other Validation may populate that field. The
+`nvda` method requires assistive-technology details and remains a method used by a human, not an
+automated persona.
+
+### ReviewAuditEvent
+
+A review audit event is a versioned append-only record containing the assessment/Finding, affected
+entity, typed action, human actor, optional reason, timestamp, and JSON before/after snapshots.
+Actions cover review creation/start, grouping decisions, allowed edits, Validation addition,
+severity assignment, and approval/rejection. Audit snapshots do not replace the immutable domain
+records they reference.
+
+### Review persistence projection
+
+SQLite persistence schema version `1` stores the immutable source records, immutable original draft
+Finding and GroupProposal, mutable current Finding projection, append-only grouping decisions,
+append-only Validation records, and append-only audit events. The current GroupProposal review
+status is projected from the newest decision while its original members and indexes remain intact.
+Public domain JSON is runtime-validated on every repository read.
 
 ### ResidentJourney
 
@@ -182,6 +202,10 @@ related findings, evidence, and one outcome:
 - Records are append-oriented; corrections should preserve audit history once persistence exists.
 - Only reviewed findings become `approved` and eligible for authoritative export.
 - Approval must fail when required validation is incomplete or traceability is broken.
+- Finding lifecycle is `draft -> in_review -> approved|rejected`; review mutations require
+  `in_review`, and approved/rejected Findings are terminal in Chunk 6.
+- Approval requires accepted grouping, complete five-part judgments and confidence, and explicit
+  supported human claims, including exact evidence-backed severity.
 - Deleting a group must not cascade-delete evidence or occurrences.
 - URLs remain URL strings; filesystem artifact locations use portable relative paths.
 - Contract migrations are explicit. A public field or enum change requires documentation, tests,

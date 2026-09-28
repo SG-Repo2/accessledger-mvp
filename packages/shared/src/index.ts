@@ -8,5 +8,6 @@ export * from './journey.js';
 export * from './observation.js';
 export * from './page.js';
 export * from './raw-page-assessment.js';
+export * from './review.js';
 export * from './validation.js';
 export * from './wcag.js';

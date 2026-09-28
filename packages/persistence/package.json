@@ -1,5 +1,5 @@
 {
-  "name": "@accessledger/findings",
+  "name": "@accessledger/persistence",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -16,7 +16,6 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@accessledger/persistence": "0.0.1",
     "@accessledger/shared": "0.0.1"
   }
 }

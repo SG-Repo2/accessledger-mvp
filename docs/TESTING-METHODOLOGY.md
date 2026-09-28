@@ -134,6 +134,17 @@ certification, conformance, scanner-impact, or experiential-severity language in
 Drafting tests do not treat grouping confidence or a scanner impact label as Finding confidence or
 severity.
 
+Chunk 6 review tests use deterministic SQLite databases and labeled human Evidence. They cover
+ordered/idempotent migration, transaction rollback, immutable-source and append-only history
+enforcement, complete trace loading, original-versus-current record retention, allowed edit
+persistence, grouping accept/reject/split decisions with unchanged members, required-validation and
+exact-severity gates, unsupported claims, invalid transitions, externally broken trace detection,
+schema-version/JSON round trips, audit order, and a complete approval path. Auditor UI tests verify
+native keyboard controls, programmatic labels, headings/landmarks, occurrence tables, raw Evidence
+disclosures, WCAG evaluation display, missing fields, validation need, and audit history. The raw
+scanner fixture deliberately contains a critical impact label; only the human Validation path can
+set Finding severity.
+
 ## Product-level MVP measure
 
 The MVP is evaluated by whether an auditor can reach reliable, reviewable findings in less manual
