@@ -156,3 +156,32 @@
   not persisted; and Windows execution remains unrecorded. No known Chunk 4 defect.
 - **Next logical action:** Execute Chunk 5 (Draft Findings) from `project/HANDOFF.md`; do not begin
   final approval, auditor UI/validation, journeys, export, severity inference, or NVDA automation.
+
+## 2026-09-28 — Codex — Chunk 5
+
+- **Files changed:** Added the `@accessledger/findings` workspace with its public boundary,
+  deterministic drafter, and acceptance tests; added Finding source-group and validation-need
+  fields; updated the lockfile, architecture, data model, testing methodology, backlog, decisions,
+  current state, work log, and handoff.
+- **Implemented:** Conservative eligibility for accepted proposals and pending high-confidence
+  repeat candidates; supported-WCAG gating for accepted singletons; exact context and referential
+  validation; stable policy-derived Finding IDs; neutral source/rule/category Condition template;
+  exact occurrence, URL, component, Observation, and Evidence scope; supported-for-all-member WCAG
+  criteria; explicit human-review need; and null unsupported judgment fields.
+- **Public contract decision:** Finding adds required `sourceGroupProposalId` and `validationNeed`.
+  ADR-011 retains contract schema `1.0.0` for the additive pre-release change and introduces
+  independent drafting-policy version `1.0.0`.
+- **Persistence/LLM decision:** Neither was required. Drafting remains a pure deterministic,
+  JSON-serializable transformation. Chunk 6's retained edits, review events, and guarded state
+  transitions establish the first concrete persistence requirement.
+- **Tests executed:** Targeted findings/shared suites; `npm run typecheck`; full `npm test`;
+  `npm run lint`; `npm run format:check`.
+- **Result:** All required checks passed. Root suite: 11 files / 64 tests. Chunk 5 tests cover
+  eligibility, refusal paths, stable output, exact counts, multi-page scope, WCAG support/candidate
+  behavior, trace failures, null fields, schema/JSON handling, and prohibited-language/scanner-
+  impact isolation.
+- **Known issues:** Draft language is intentionally functional rather than polished; criterion
+  support is conservative across every member; component descriptions fall back to an occurrence
+  ID if no locator evidence exists; Windows execution remains unrecorded. No known Chunk 5 defect.
+- **Next logical action:** Execute Chunk 6 (Auditor Review + Validation) from `project/HANDOFF.md`;
+  do not begin journeys, export, customer-facing reporting, or automated NVDA control.

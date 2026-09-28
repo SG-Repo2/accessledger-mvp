@@ -5,68 +5,66 @@ Updated: 2026-09-28
 ## Completed
 
 Chunks 0 (Foundation), 1 (Browser + Scanner), 2 (Accessibility Evidence), 3 (Observation
-Normalization + WCAG Mapping), and 4 (Deduplication / Grouping) are complete. The repository now
-produces conservative, inspectable, versioned grouping proposals from validated observations and
-occurrences without losing or rewriting any source record.
+Normalization + WCAG Mapping), 4 (Deduplication / Grouping), and 5 (Draft Findings) are complete.
+The repository now turns eligible, fully traced GroupProposal records into neutral deterministic
+draft Findings without inventing unsupported judgments.
 
 ## Working functionality
 
-- All Chunk 1–3 browser, scanner, evidence, semantics, normalization, WCAG, CLI, traceability, and
-  lifecycle behavior remains intact.
-- `@accessledger/grouping` exports `GroupingEngine`, `ConservativeGroupingEngine`, grouping context
-  types, and `GROUPING_ALGORITHM_VERSION` `1.0.0`.
-- `GroupingEngine.propose(observations, occurrences, context)` validates public records, unique IDs,
-  one-assessment scope, occurrence-to-observation/page references, and complete occurrence coverage.
-  It refuses to silently drop an Observation with no occurrence.
-- Proposals have stable content-derived IDs, exact member ledgers, ordered Observation/occurrence/
-  Page/Evidence indexes, structured matching signals, visible rationale, grouping-only confidence,
-  ambiguity links, and pending/accepted/rejected/split review status.
-- Exact normalized component fingerprints create high-confidence repeat candidates across Pages.
-  Without fingerprints, exact selector and component structure can group only on the same Page or
-  under an explicit shared template ID. Source type/name/version, rule, and category must match.
-- Weak partial matches remain separate ambiguous singleton proposals; unrelated inputs remain
-  ordinary singletons. Similar records with conflicting explicit fingerprints stay separate.
-- Input Observation and ObservationOccurrence records are not mutated, deleted, rewritten, or
-  collapsed. Every occurrence appears in exactly one proposal member ledger.
-- No persistence was required or added. Grouping is a deterministic, JSON-serializable
-  transformation; SQLite remains deferred until repository/query/transaction needs exist.
+- All Chunk 1–4 browser, scanner, evidence, semantics, normalization, WCAG, grouping, CLI,
+  traceability, and lifecycle behavior remains intact.
+- `@accessledger/findings` exports `FindingDrafter`, `DeterministicFindingDrafter`, exact evidence-
+  context types, and `FINDING_DRAFTING_POLICY_VERSION` `1.0.0`.
+- `FindingDrafter.draft(group, evidenceContext)` validates the GroupProposal and the exact
+  Observation, ObservationOccurrence, WcagCandidateEvaluation, Page, and Evidence records. Missing,
+  unrelated, cross-assessment, duplicated, or ledger-mismatched trace records fail explicitly.
+- Accepted repeat proposals may draft. Accepted singletons require a supported WCAG criterion.
+  Pending proposals may draft only when they are high-confidence repeat candidates. Rejected,
+  split, ambiguous, pending singleton, pending medium/low repeat, and unsupported singleton inputs
+  are rejected.
+- Draft IDs are stable from policy version plus GroupProposal ID. Drafts carry the source proposal
+  ID, exact occurrence count, deterministic multi-page URL/component scope, exact Observation and
+  Evidence indexes, explicit validation need, and only criteria supported for every member
+  Observation.
+- Deterministic templates describe collected source/rule/category evidence without certification,
+  conformance, legal, or resident-impact conclusions. Cause, Effect, Recommendation, severity, and
+  Finding confidence remain null. Grouping confidence and scanner impact never populate them.
+- No LLM layer was necessary. No persistence was required for this pure JSON-serializable
+  transformation; Chunk 6's auditable review changes are the first proven persistence need.
 
 ## Public contracts and versions
 
-- Contract schema remains `1.0.0` under ADR-010's additive pre-release decision.
-- Shared exports now include `GroupProposal`, `GroupProposalMember`, grouping signals, ambiguity,
-  proposal kind, grouping confidence, and review-status Zod schemas/types.
-- Proposal schema refinements enforce unique occurrence membership, kind/member cardinality,
-  ambiguity shape, in-member signal references, and exact ordered member-derived ID indexes.
-- Grouping algorithm version is independently `1.0.0`.
-- WCAG dataset remains `2026.09.28-1`, targeting WCAG 2.1 A/AA with current criterion 4.1.2.
+- Contract schema remains `1.0.0` under ADR-011's additive pre-release decision.
+- Finding adds required `sourceGroupProposalId` and `validationNeed` fields.
+- Finding drafting policy version is independently `1.0.0`.
+- Grouping algorithm remains `1.0.0`; WCAG dataset remains `2026.09.28-1` for WCAG 2.1 A/AA.
 - Workspace packages remain `0.0.1`.
 
 ## Not implemented / known limitations
 
-Findings and drafting, persisted review history, auditor UI, journey recording, export, LLM
-analysis, severity, interaction simulation, speech output, and NVDA are deliberately unimplemented.
-Chunk 3 currently emits null component fingerprints, and template IDs are optional caller context,
-so real pipeline output will conservatively produce more singleton/ambiguous proposals until those
-signals are supplied. Selector/HTML normalization is intentionally lightweight rather than a full
-DOM/CSS parser; nonnumeric generated selectors can cause false negatives. Cross-page structural
-similarity without an explicit shared template does not merge. Windows execution remains
-unrecorded. There are no known Chunk 4 defects.
+Persisted review/audit history, auditor UI, final approval, editable five-part findings, human/NVDA
+validation workflow, journey recording, export, severity assignment, interaction simulation,
+speech output, and automated NVDA are deliberately unimplemented. Draft prose is intentionally
+plain and currently covers any valid source/rule/category through one conservative template rather
+than polished issue-specific language. A supported criterion is included only when every grouped
+Observation supports it; mixed support remains for human resolution. Component scope uses the exact
+fingerprint, selector, markup, or an explicit unavailable-locator fallback. Windows execution
+remains unrecorded. There are no known Chunk 5 defects.
 
 ## Validation
 
 All required root commands pass: `npm run typecheck`, `npm test`, `npm run lint`, and
-`npm run format:check`. The root suite passes 10 files / 52 tests. Chunk 4 coverage includes
-positive, negative, 236-occurrence repeated-component, cross-page template, unstable-selector,
-ambiguous, singleton, zero-occurrence-loss, traceability, deterministic rerun, schema-version,
-serialization, rejected/split preservation, and invalid-reference tests. The controlled grouping
-fixtures retain 236/236 repeated members and classify all labeled merge/non-merge/review cases as
-expected; this is fixture acceptance evidence, not a production precision/recall claim.
+`npm run format:check`. The root suite passes 11 files / 64 tests. Chunk 5 coverage includes
+eligibility, rejected/split/ambiguous and weak input refusal, unsupported singleton refusal, stable
+drafts, exact counts, multi-page scope, supported-versus-candidate WCAG handling, missing/broken
+trace rejection, null judgment fields, schema version, serialization, and prohibited-language/
+scanner-impact isolation.
 
 ## Versions and next work
 
-- Last completed chunk: 4
-- Next recommended chunk: 5 — Draft Findings
+- Last completed chunk: 5
+- Next recommended chunk: 6 — Auditor Review + Validation
 - Blockers: none
 
-Follow `project/HANDOFF.md` exactly and do not begin Chunk 6 during the next task.
+Follow `project/HANDOFF.md` exactly. Chunk 6 must make and document the repository/migration/
+transaction decision required for audit-safe edits and state transitions; do not begin Chunk 7.

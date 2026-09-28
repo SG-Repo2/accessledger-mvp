@@ -199,3 +199,39 @@
   Current null fingerprints and optional template context intentionally create more singletons and
   ambiguous review cases. Review history and persistence remain deferred until a real workflow
   proves their requirements.
+
+## ADR-011 — Deterministic, conservative draft findings with explicit source and validation need
+
+- **Date:** 2026-09-28
+- **Status:** Accepted
+- **Context:** Chunk 5 must create useful draft Findings from GroupProposal records without
+  promoting uncertain grouping, candidate WCAG mappings, scanner impact, or source prose into an
+  unsupported conclusion. The original Finding contract did not directly identify its source group
+  or explain why validation was required.
+- **Decision:** Add `sourceGroupProposalId` and `validationNeed` to the Finding contract and add the
+  deterministic `FindingDrafter.draft(group, evidenceContext)` boundary. Draft from accepted repeat
+  proposals, accepted singletons with a supported WCAG criterion, or pending high-confidence repeat
+  candidates only. Reject rejected, split, ambiguous, pending weak, pending singleton, unsupported
+  singleton, incomplete, and broken-trace inputs. Include a WCAG criterion only when it is supported
+  for every member Observation. Derive stable IDs from drafting-policy version `1.0.0` and the
+  GroupProposal ID. Generate neutral source/rule/category/count prose and require human review.
+  Cause, Effect, Recommendation, severity, and Finding confidence remain null.
+- **Persistence decision:** Chunk 5 remains a pure transformation. Drafts validate and round-trip as
+  JSON, and there is no cross-session edit, query, transaction, or audit-event requirement yet.
+  Chunk 6's retained reviewer edits and state transitions are the first proven persistence need.
+- **LLM decision:** Do not add an LLM assistant. Deterministic templates satisfy the current
+  requirements without introducing an additional provenance, isolation, or overwrite boundary.
+- **Reason:** Strict context validation preserves the full evidence chain, and conservative
+  eligibility prevents grouping confidence from masquerading as technical or experiential
+  support. Explicit source-group and validation-need fields make the draft reviewable without
+  hiding important state in prose.
+- **Alternatives considered:** Draft every singleton; promote all candidate criteria; copy scanner
+  impact into severity; use an LLM for prose; encode source-group or validation need only inside the
+  Condition; add SQLite solely to retain transient deterministic output.
+- **Schema-version decision:** Retain `CONTRACT_SCHEMA_VERSION` at `1.0.0`. The two required Finding
+  fields and the new package boundary are additive pre-release changes before persisted production
+  Finding data exists. A breaking change after persistence or external release requires an explicit
+  version increment.
+- **Consequences:** Existing Finding fixtures/producers must provide source group and validation
+  need. Chunk 6 can load a draft's exact proposal and evidence context, but must add audit-safe
+  persistence and enforce reviewed state transitions before final approval.

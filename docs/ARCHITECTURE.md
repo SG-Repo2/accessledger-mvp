@@ -69,8 +69,9 @@ and metadata without interpreting it as a WCAG failure.
 Normalization creates an `Observation` for an evidence-supported technical proposition and one or
 more `ObservationOccurrence` records for the concrete affected locations. An occurrence references
 its page and exact evidence. Grouping associates observations without overwriting or collapsing
-those records. A `Finding` must reference at least one observation and one evidence item; relational
-integrity beyond record shape belongs in the persistence/service layer.
+those records. A `Finding` must reference its source GroupProposal, at least one Observation, and at
+least one Evidence item; relational integrity beyond record shape belongs in the service or future
+persistence layer.
 
 All persisted public entities carry `schemaVersion`. IDs are opaque non-empty strings so storage
 implementations may choose UUIDs or another stable strategy without changing contracts.
@@ -111,7 +112,7 @@ screenshots may be stored in a portable artifact directory with database metadat
 hashes. Paths must be resolved with Node `path` APIs and stored as portable relative references
 when possible.
 
-No persistence layer exists through Chunk 4. JSON-serializable schemas define the boundary without
+No persistence layer exists through Chunk 5. JSON-serializable schemas define the boundary without
 prematurely choosing tables or an ORM.
 
 ## Package interfaces by stage
@@ -210,6 +211,31 @@ explicitly declared shared template. Partial matches remain separate ambiguous s
 with related occurrence IDs; unmatched occurrences remain ordinary singletons. Grouping never
 modifies or deletes an input record. This implementation does not create Findings, WCAG claims,
 severity, experiential language, or approval decisions.
+
+### Chunk 5 draft-finding boundary
+
+`@accessledger/findings` exposes
+`FindingDrafter.draft(group, evidenceContext) -> Finding(status="draft")` through
+`DeterministicFindingDrafter`. The evidence context is the exact set of referenced Observations,
+ObservationOccurrences, Pages, Evidence, and WCAG candidate evaluations. The drafter validates the
+complete chain and rejects missing, unrelated, cross-assessment, or mismatched records.
+
+The conservative policy accepts an explicitly accepted repeat proposal, or an accepted singleton
+with a WCAG criterion supported by its evidence evaluation. A still-pending proposal may draft only
+when it is a high-confidence repeat candidate. Rejected, split, ambiguous, pending singleton,
+pending medium/low-confidence repeat, and unsupported singleton inputs fail explicitly.
+
+Finding IDs are derived from drafting-policy version `1.0.0` and the stable GroupProposal ID. A
+fixed template records the source tool/rule/category, exact occurrence and URL counts, affected URL
+and component locators, exact Observation/Evidence indexes, only WCAG criteria supported for every
+member Observation, and an explicit human-review need. Cause, Effect, Recommendation, severity,
+and Finding confidence remain null; grouping confidence and scanner impact never populate them.
+The public Finding record now carries its source GroupProposal ID and validation-need text so the
+backward chain and the reason for review are explicit.
+
+Drafting is a deterministic, JSON-serializable transformation and creates no review state that must
+survive process boundaries. No LLM layer or persistence was added. Chunk 6's audit-safe edits and
+state transitions are the first concrete persistence requirement.
 
 ## Cross-platform boundary
 

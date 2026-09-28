@@ -21,7 +21,7 @@ Assessment 1--* Observation 1--* ObservationOccurrence
 ObservationOccurrence *--1 Page
 ObservationOccurrence *--* Evidence
 GroupProposal *--* ObservationOccurrence, Observation, Page, and Evidence
-Finding *--* Observation and *--* Evidence
+Finding *--1 source GroupProposal and *--* Observation and *--* Evidence
 Validation *--1 Observation | Finding | JourneyResult
 ResidentJourney 1--* JourneyResult
 Finding *--* ResidentJourney (related IDs)
@@ -140,9 +140,9 @@ severity, WCAG support, or resident impact.
 A finding is a reviewable systemic issue with:
 
 ```text
-id, schemaVersion, assessmentId, title, status, wcagCriteria[]
+id, schemaVersion, assessmentId, sourceGroupProposalId, title, status, wcagCriteria[]
 condition, cause, effect, recommendation
-severity, confidence, validationStatus
+severity, confidence, validationStatus, validationNeed
 affectedUrls[], affectedComponents[], affectedJourneys[]
 occurrenceCount, observationIds[], evidenceIds[]
 createdAt, updatedAt
@@ -150,7 +150,10 @@ createdAt, updatedAt
 
 `condition` is required. `cause`, `effect`, `recommendation`, `severity`, and `confidence` are
 nullable because missing judgment must never be fabricated. A finding requires at least one
-observation and evidence reference. Criteria may be empty while a draft is under evaluation.
+observation and evidence reference. `sourceGroupProposalId` preserves the drafting boundary, and
+`validationNeed` states what a human must verify. Criteria may be empty while a draft is under
+evaluation; deterministic drafting includes a criterion only when every member Observation has a
+supported evaluation for it.
 
 ### Validation
 

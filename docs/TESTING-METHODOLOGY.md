@@ -125,6 +125,15 @@ preservation. The fixture cases currently retain 236/236 members and classify ev
 non-merge, and review case as expected; that small controlled result is acceptance evidence, not a
 claim of production precision or recall.
 
+Chunk 5 drafting tests use exact in-memory GroupProposal and evidence-context fixtures. They cover
+accepted and pending-high-confidence eligibility, explicit rejection of rejected/split/ambiguous/
+pending-weak and unsupported-singleton inputs, stable IDs/output, exact occurrence counts,
+multi-page URL/component scope, supported-versus-candidate WCAG behavior, complete and broken trace
+handling, nullable judgment fields, schema-version rejection, JSON round trips, and absence of
+certification, conformance, scanner-impact, or experiential-severity language in generated prose.
+Drafting tests do not treat grouping confidence or a scanner impact label as Finding confidence or
+severity.
+
 ## Product-level MVP measure
 
 The MVP is evaluated by whether an auditor can reach reliable, reviewable findings in less manual
