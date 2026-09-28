@@ -20,6 +20,7 @@ Assessment 1--* Page 1--* Evidence
 Assessment 1--* Observation 1--* ObservationOccurrence
 ObservationOccurrence *--1 Page
 ObservationOccurrence *--* Evidence
+GroupProposal *--* ObservationOccurrence, Observation, Page, and Evidence
 Finding *--* Observation and *--* Evidence
 Validation *--1 Observation | Finding | JourneyResult
 ResidentJourney 1--* JourneyResult
@@ -119,6 +120,21 @@ was `satisfied`, `contradicted`, or `insufficient`. A known mapping produces `su
 `unsupported`, or `uncertain`; an unknown source rule is preserved as `unknown_rule` with an
 uncertain evaluation and no invented criterion.
 
+### GroupProposal
+
+A group proposal is a versioned, reviewable association and never a destructive deduplication. It
+stores `schemaVersion`, an independent grouping-algorithm version, stable proposal ID, assessment,
+kind (`repeat_candidate`, `singleton`, or `ambiguous`), review status, grouping-only confidence,
+visible rationale, timestamps, and structured deterministic signals.
+
+Each proposal has an exact member ledger containing Observation ID, ObservationOccurrence ID, Page
+ID, and the union of parent-observation and occurrence Evidence IDs. Ordered top-level Observation,
+occurrence, Page, and Evidence ID indexes must exactly match those members. Repeat candidates have
+at least two members; singleton and ambiguous proposals have exactly one. Ambiguous proposals link
+related occurrences without treating them as members. Review can accept, reject, or mark a proposal
+split without removing its original member ledger. Grouping confidence is not Finding confidence,
+severity, WCAG support, or resident impact.
+
 ### Finding
 
 A finding is a reviewable systemic issue with:
@@ -170,7 +186,7 @@ related findings, evidence, and one outcome:
 
 ## Deferred modeling
 
-Ownership, remediation cost, due dates, source hashes, grouping proposals, audit-event history, raw
-browser driver internals, persistence tables, and export column schemas are intentionally deferred
+Ownership, remediation cost, due dates, source hashes, grouping audit-event history, raw browser
+driver internals, persistence tables, and export column schemas are intentionally deferred
 to the chunks that can validate their requirements. They should extend these relationships rather
 than collapse evidence into findings.

@@ -5,6 +5,7 @@ import {
   assessmentSchema,
   evidenceSchema,
   findingSchema,
+  groupProposalSchema,
   journeyResultSchema,
   observationOccurrenceSchema,
   observationSchema,
@@ -235,6 +236,65 @@ describe('shared domain contracts', () => {
         createdAt: now,
         updatedAt: now,
       }).success,
+    ).toBe(false);
+  });
+
+  it('validates an inspectable grouping proposal without collapsing occurrence traceability', () => {
+    const proposal = groupProposalSchema.parse({
+      schemaVersion: CONTRACT_SCHEMA_VERSION,
+      groupingAlgorithmVersion: '1.0.0',
+      id: 'group-proposal-1',
+      assessmentId: 'assessment-1',
+      kind: 'repeat_candidate',
+      reviewStatus: 'pending',
+      groupingConfidence: 'high',
+      rationale: 'Members share a reviewed deterministic identity signal.',
+      members: [
+        {
+          observationId: 'observation-1',
+          occurrenceId: 'occurrence-1',
+          pageId: 'page-1',
+          evidenceIds: ['evidence-1'],
+        },
+        {
+          observationId: 'observation-2',
+          occurrenceId: 'occurrence-2',
+          pageId: 'page-2',
+          evidenceIds: ['evidence-2'],
+        },
+      ],
+      memberObservationIds: ['observation-1', 'observation-2'],
+      memberOccurrenceIds: ['occurrence-1', 'occurrence-2'],
+      pageIds: ['page-1', 'page-2'],
+      evidenceIds: ['evidence-1', 'evidence-2'],
+      signals: [
+        {
+          type: 'source_identity',
+          strength: 'required',
+          value: 'scanner:axe-core:4.13.0',
+          occurrenceIds: ['occurrence-1', 'occurrence-2'],
+        },
+        {
+          type: 'source_rule',
+          strength: 'required',
+          value: 'button-name',
+          occurrenceIds: ['occurrence-1', 'occurrence-2'],
+        },
+        {
+          type: 'component_fingerprint',
+          strength: 'identity',
+          value: 'header-action',
+          occurrenceIds: ['occurrence-1', 'occurrence-2'],
+        },
+      ],
+      ambiguity: null,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    expect(proposal.members).toHaveLength(2);
+    expect(
+      groupProposalSchema.safeParse({ ...proposal, memberOccurrenceIds: ['occurrence-1'] }).success,
     ).toBe(false);
   });
 });

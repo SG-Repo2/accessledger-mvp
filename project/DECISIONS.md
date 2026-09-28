@@ -166,3 +166,36 @@
   deduplication. Coverage is intentionally narrow; adding rules, criteria, operators, or source
   versions requires reviewed dataset/code changes and deterministic tests. Browser semantics remain
   browser evidence, not NVDA or resident experience.
+
+## ADR-010 — Conservative, inspectable grouping proposals without persistence
+
+- **Date:** 2026-09-28
+- **Status:** Accepted
+- **Context:** Chunk 4 must reduce repeated technical noise without deleting occurrences or turning
+  uncertain similarity into a false systemic merge. Chunk 3 does not currently generate component
+  fingerprints or page-template identities for every source.
+- **Decision:** Add a versioned `GroupProposal` shared contract and deterministic
+  `GroupingEngine.propose` boundary. Retain an exact member ledger and redundant validated indexes
+  for every Observation, ObservationOccurrence, Page, and Evidence ID. Exact normalized component
+  fingerprints may group across Pages. Otherwise, require exact source issue, selector structure,
+  component structure, and same-Page or explicit shared-template context. Preserve partial matches
+  as separate ambiguous singleton proposals and unmatched inputs as singletons. Use content-derived
+  proposal IDs, explicit grouping signals/rationale, grouping-only confidence, and pending,
+  accepted, rejected, or split review status.
+- **Persistence decision:** Chunk 4 remains a pure deterministic transformation over validated
+  records. Proposals validate and round-trip as JSON; no repository, cross-session review workflow,
+  transaction, or query requirement exists yet. Add no tables, migrations, ORM, or artifact layout.
+- **Reason:** False negatives leave work for an auditor, while false merges can hide distinct
+  technical causes and weaken traceability. Exact membership and inspectable signals make a future
+  review decision reversible without altering source records.
+- **Alternatives considered:** Delete duplicate occurrences; group solely by rule; group cross-page
+  selector similarity without template context; treat every weak match as one low-confidence group;
+  add SQLite only to retain transient proposals.
+- **Schema-version decision:** Retain `CONTRACT_SCHEMA_VERSION` at `1.0.0`. `GroupProposal` and its
+  supporting enums/records are additive pre-release contracts. The independent grouping algorithm
+  version begins at `1.0.0`; either version must change deliberately when its compatibility boundary
+  changes.
+- **Consequences:** Chunk 5 can consume exact repeat proposals without reconstructing traceability.
+  Current null fingerprints and optional template context intentionally create more singletons and
+  ambiguous review cases. Review history and persistence remain deferred until a real workflow
+  proves their requirements.

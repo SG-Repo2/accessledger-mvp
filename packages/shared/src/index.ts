@@ -3,6 +3,7 @@ export * from './accessibility-evidence.js';
 export * from './common.js';
 export * from './evidence.js';
 export * from './finding.js';
+export * from './grouping.js';
 export * from './journey.js';
 export * from './observation.js';
 export * from './page.js';

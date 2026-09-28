@@ -10,9 +10,10 @@ The non-negotiable invariant is:
 
 ```text
 Finding
-  -> grouped Observation
-    -> ObservationOccurrence records
-      -> Evidence
+  -> accepted/high-confidence GroupProposal
+    -> Observation
+      -> ObservationOccurrence records
+        -> Evidence
         -> Page
           -> raw browser/scanner result
 ```
@@ -110,7 +111,7 @@ screenshots may be stored in a portable artifact directory with database metadat
 hashes. Paths must be resolved with Node `path` APIs and stored as portable relative references
 when possible.
 
-No persistence layer exists through Chunk 3. JSON-serializable schemas define the boundary without
+No persistence layer exists through Chunk 4. JSON-serializable schemas define the boundary without
 prematurely choosing tables or an ORM.
 
 ## Package interfaces by stage
@@ -188,6 +189,27 @@ Known candidates remain `supported`, `unsupported`, or `uncertain`; unknown rule
 uncertain trace with no fabricated criterion. The mapper does not mutate observations or create
 findings. Dataset version, contract schema version, WCAG edition, and source-tool version remain
 independent.
+
+### Chunk 4 grouping boundary
+
+`@accessledger/grouping` exposes
+`GroupingEngine.propose(observations, occurrences, context) -> GroupProposal[]` through
+`ConservativeGroupingEngine`. The context supplies validated Pages and optional explicit Page-to-
+template IDs. The engine validates one-assessment referential integrity and refuses to silently
+drop an Observation that has no occurrence.
+
+Proposals use stable content-derived IDs and grouping algorithm version `1.0.0`. Every proposal
+contains an exact member ledger plus ordered Observation, ObservationOccurrence, Page, and Evidence
+ID indexes. It also records structured source, fingerprint, selector, component, role/name, page,
+and template signals; a visible rationale; grouping-only confidence; and pending/accepted/rejected/
+split review status. Proposal schema refinements ensure the ID indexes exactly match members.
+
+Exact normalized component fingerprints can create high-confidence cross-page repeat candidates.
+Without a fingerprint, selector and component structures must both match inside the same Page or an
+explicitly declared shared template. Partial matches remain separate ambiguous singleton proposals
+with related occurrence IDs; unmatched occurrences remain ordinary singletons. Grouping never
+modifies or deletes an input record. This implementation does not create Findings, WCAG claims,
+severity, experiential language, or approval decisions.
 
 ## Cross-platform boundary
 

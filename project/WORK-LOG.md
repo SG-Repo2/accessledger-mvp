@@ -127,3 +127,32 @@
   unrecorded. No known Chunk 3 defect.
 - **Next logical action:** Execute Chunk 4 (Deduplication / Grouping) from `project/HANDOFF.md`; do
   not begin findings, severity, UI, journeys, export, LLM analysis, or NVDA automation.
+
+## 2026-09-28 — Codex — Chunk 4
+
+- **Files changed:** Added the `@accessledger/grouping` workspace with its public boundary,
+  deterministic engine, and acceptance tests; added shared GroupProposal contracts and tests;
+  updated the lockfile, architecture, data model, testing methodology, backlog, decisions, current
+  state, work log, and handoff.
+- **Implemented:** Conservative same-source grouping; normalized component-fingerprint identity;
+  same-Page or explicit-template structural grouping; stable content-derived proposal IDs;
+  deterministic member ordering; exact Observation/occurrence/Page/Evidence member ledgers;
+  structured signals and rationale; grouping-only confidence; ambiguous and singleton preservation;
+  pending/accepted/rejected/split states; and strict referential/zero-loss validation.
+- **Public contract decision:** Added `GroupProposal`, member, signal, ambiguity, kind, grouping
+  confidence, and review-status schemas/types. ADR-010 retains contract schema `1.0.0` for additive
+  pre-release records and introduces independent grouping algorithm version `1.0.0`.
+- **Persistence decision:** No persistence was required or added. Grouping remains a pure,
+  JSON-serializable transformation; SQLite stays deferred until a concrete cross-session review,
+  query, or transaction need exists.
+- **Tests executed:** Targeted grouping/shared suites; `npm run typecheck`; full `npm test` with
+  loopback/Chromium permission; `npm run lint`; `npm run format:check`.
+- **Result:** All required checks passed. Root suite: 10 files / 52 tests. The labeled deterministic
+  cases retained 236/236 members and passed expected merge, non-merge, ambiguity, singleton,
+  traceability, rerun, serialization, schema-version, and rejected/split behaviors.
+- **Known issues:** Chunk 3 currently supplies null component fingerprints and no template identity;
+  lightweight selector/HTML normalization favors false negatives, especially for generated
+  nonnumeric IDs; cross-page structure requires explicit shared identity context; review history is
+  not persisted; and Windows execution remains unrecorded. No known Chunk 4 defect.
+- **Next logical action:** Execute Chunk 5 (Draft Findings) from `project/HANDOFF.md`; do not begin
+  final approval, auditor UI/validation, journeys, export, severity inference, or NVDA automation.

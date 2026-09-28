@@ -116,6 +116,15 @@ detail retention, Page/Evidence traceability, unknown-rule retention, insufficie
 unsupported candidates, JSON round trips, source-version scope, and dataset version. The WCAG
 mapper tests compare explicit facts only; scanner impact labels are never converted into severity.
 
+Chunk 4 grouping tests use deterministic labeled records rather than live pages. They cover a
+236-occurrence repeated component, similar-but-distinct fingerprints, same-template cross-page
+repeats, unstable selectors with stable fingerprints, ambiguous cross-page matches without a
+template, ordinary singletons, mixed-outcome zero-loss accounting, exact Page/Evidence traceability,
+deterministic reruns, schema version rejection, JSON round trips, and rejected/split review-state
+preservation. The fixture cases currently retain 236/236 members and classify every labeled merge,
+non-merge, and review case as expected; that small controlled result is acceptance evidence, not a
+claim of production precision or recall.
+
 ## Product-level MVP measure
 
 The MVP is evaluated by whether an auditor can reach reliable, reviewable findings in less manual
