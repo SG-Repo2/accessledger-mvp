@@ -97,12 +97,18 @@ data/wcag/
 criteria. Every record validates through shared schemas. Mapping changes are code-reviewed and
 tested against fixtures. Store links and concise requirements, not large copied W3C text.
 
-The initial dataset version is `2026.09.28-1`. It targets WCAG 2.1 A/AA and intentionally includes
-only 4.1.2 Name, Role, Value because that is the only criterion needed by the current deterministic
-fixture coverage. It contains axe-core 4.13.x mappings for `button-name`, `label`, and
-`aria-valid-attr-value`, plus a reviewed mapping for a Chromium button with an explicitly available
-empty computed name. Deque's versioned rule pages are the mapping sources; the W3C Recommendation
-is normative and the Understanding page is informative.
+The current dataset version is `2026.09.29-1`. It targets WCAG 2.1 A/AA and intentionally includes
+only 4.1.2 Name, Role, Value because that is the only criterion needed by current deterministic
+fixture coverage. It contains axe-core 4.13.x mappings for `button-name`, `label`,
+`aria-valid-attr-value`, and `aria-prohibited-attr`, plus a reviewed mapping for a Chromium button
+with an explicitly available empty computed name. The prohibited-attribute mapping is reviewed
+against the W3C ACT rule as well as the tool rule: it requires complete node facts but remains
+uncertain until separate evidence establishes a user-interface component, criterion-relevant
+information, and that the required information is not programmatically available. This is required
+because the ACT rule identifies WCAG 4.1.2 as a secondary, less-strict requirement and explicitly
+notes that some rule failures satisfy the criterion. Deque's versioned rule pages and the W3C ACT
+rule are mapping sources; the W3C Recommendation is normative and Understanding/ACT material is
+supporting guidance.
 
 Application schema version, WCAG standard version, dataset version, and scanner version are
 separate concepts and must not be conflated.

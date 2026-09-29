@@ -193,14 +193,18 @@ not NVDA output, synthesized speech, resident experience, or human validation.
 
 `@accessledger/observations` exposes `ObservationNormalizer.normalize({ page, evidence })`. The
 deterministic implementation validates scope before processing and currently covers axe-core
-`button-name`, `label`, and `aria-valid-attr-value` violations plus a collected Chromium button
-whose computed name is explicitly available and empty. It creates one Observation per covered raw
-rule result and one `ObservationOccurrence` per concrete axe node or semantics target. It does not
-group repeated locations. Raw selectors, HTML, node/check detail, semantics, target descriptors,
-provenance, Page IDs, and all evidence-chain IDs are retained without changing the raw records.
-Passes, browser operational evidence, semantics errors, and facts outside this allow-list remain
-explicit ignored inputs and do not become accessibility conclusions. Unknown source rules are
-retained separately with their Evidence ID and tool/version instead of being silently discarded.
+`button-name`, `label`, `aria-valid-attr-value`, and narrowly validated `aria-prohibited-attr`
+violations plus a collected Chromium button whose computed name is explicitly available and empty.
+The prohibited-attribute path requires every node to retain a concrete target, parseable HTML with
+the same non-empty ARIA attribute, element and computed-role check data, and axe engine provenance
+that exactly matches the Evidence source. It creates one Observation per covered raw rule result and
+one `ObservationOccurrence` per concrete axe node or semantics target. It does not group repeated
+locations. Raw selectors, HTML, node/check detail, semantics, target descriptors, provenance, Page
+IDs, and all evidence-chain IDs are retained without changing the raw records. Passes, browser
+operational evidence, semantics errors, covered rules missing required facts, and facts outside this
+allow-list remain explicit ignored inputs and do not become accessibility conclusions. Unknown
+source rules are retained separately with their Evidence ID and tool/version instead of being
+silently discarded.
 
 `@accessledger/wcag` exposes `WcagKnowledge.getCriterion(id)` and
 `WcagMapper.evaluate(observation)`. `JsonWcagKnowledge` loads and runtime-validates the reviewable
@@ -209,7 +213,10 @@ version and explicit fact requirements, and emits separate `WcagCandidateEvaluat
 Known candidates remain `supported`, `unsupported`, or `uncertain`; unknown rules produce an
 uncertain trace with no fabricated criterion. The mapper does not mutate observations or create
 findings. Dataset version, contract schema version, WCAG edition, and source-tool version remain
-independent.
+independent. The `aria-prohibited-attr` mapping is only a WCAG 4.1.2 candidate: scanner/node facts
+alone leave it uncertain until separate evidence establishes user-interface-component
+applicability, relevance of the prohibited attribute, and absence of the required programmatic
+information. Axe impact, WCAG tags, and the rule assertion do not satisfy those requirements.
 
 ### Chunk 4 grouping boundary
 

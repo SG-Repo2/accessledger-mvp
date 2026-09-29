@@ -6,6 +6,8 @@ import {
   CONTRACT_SCHEMA_VERSION,
   accessibilitySemanticsEvidenceSchema,
   evidenceSchema,
+  observationOccurrenceSchema,
+  observationSchema,
   pageSchema,
   type AccessibilitySemantics,
   type Evidence,
@@ -279,6 +281,145 @@ describe('DeterministicObservationNormalizer', () => {
     expect(result.unrecognizedRules).toEqual([]);
   });
 
+  it('normalizes aria-prohibited-attr only from complete versioned node facts and preserves the exact trace', () => {
+    const node = ariaProhibitedNode();
+    const violation = {
+      id: 'aria-prohibited-attr',
+      impact: 'serious',
+      tags: ['best-practice'],
+      help: 'Elements must only use permitted ARIA attributes',
+      helpUrl: 'https://dequeuniversity.com/rules/axe/4.13/aria-prohibited-attr',
+      nodes: [node],
+    } satisfies JsonValue;
+    const evidence = scannerEvidence({
+      testEngine: { name: 'axe-core', version: '4.13.0' },
+      violations: [violation],
+      passes: [],
+      incomplete: [],
+      inapplicable: [],
+    });
+
+    const result = normalizer().normalize({ page: fixturePage(), evidence: [evidence] });
+
+    expect(result.observations).toHaveLength(1);
+    expect(result.occurrences).toHaveLength(1);
+    expect(result.ignoredEvidence).toEqual([]);
+    expect(result.unrecognizedRules).toEqual([]);
+    expect(result.observations[0]).toMatchObject({
+      source: { type: 'scanner', name: 'axe-core', version: '4.13.0' },
+      sourceRuleId: 'aria-prohibited-attr',
+      category: 'aria_semantics',
+      candidateWcagCriteria: ['4.1.2'],
+      evidenceIds: ['scanner-evidence'],
+      facts: {
+        result: 'violation',
+        occurrenceCount: 1,
+        sourceEngineName: 'axe-core',
+        sourceEngineVersion: '4.13.0',
+        sourceVersionMatchesPayload: true,
+        deterministicFactCoverage: 'complete',
+        elementNames: ['time'],
+        computedRoles: ['(no computed role)'],
+        prohibitedAttributes: ['aria-label'],
+        prohibitedAttributeOccurrenceCount: 1,
+      },
+    });
+    expect(result.occurrences[0]).toMatchObject({
+      pageId: 'page-fixture',
+      evidenceIds: ['scanner-evidence'],
+      selector: '#event-date',
+      htmlSnippet: '<time id="event-date" tabindex="0" aria-label="Date, Sep. 28">Sep. 28</time>',
+      componentFingerprint: null,
+      observedAt: now,
+    });
+    expect(result.occurrences[0]?.sourceDetail).toEqual({
+      kind: 'axe_node',
+      rule: violation,
+      node,
+    });
+    expect(observationSchema.parse(JSON.parse(JSON.stringify(result.observations[0])))).toEqual(
+      result.observations[0],
+    );
+    expect(
+      observationOccurrenceSchema.parse(JSON.parse(JSON.stringify(result.occurrences[0]))),
+    ).toEqual(result.occurrences[0]);
+  });
+
+  it.each<[string, Record<string, JsonValue>]>([
+    ['missing matching check detail', { ...ariaProhibitedNode(), none: [] }],
+    [
+      'missing prohibited attribute in HTML',
+      {
+        ...ariaProhibitedNode(),
+        html: '<time id="event-date" tabindex="0">Sep. 28</time>',
+      },
+    ],
+    ['missing affected target', { ...ariaProhibitedNode(), target: [] }],
+  ])('does not normalize aria-prohibited-attr with %s', (_label, node) => {
+    const evidence = scannerEvidence({
+      testEngine: { name: 'axe-core', version: '4.13.0' },
+      violations: [{ id: 'aria-prohibited-attr', nodes: [node] }],
+    });
+
+    const result = normalizer().normalize({ page: fixturePage(), evidence: [evidence] });
+
+    expect(result.observations).toEqual([]);
+    expect(result.occurrences).toEqual([]);
+    expect(result.ignoredEvidence).toEqual([
+      { evidenceId: 'scanner-evidence', reason: 'no_covered_deterministic_fact' },
+    ]);
+    expect(result.unrecognizedRules).toEqual([]);
+  });
+
+  it('requires the aria-prohibited-attr payload engine version to match source provenance', () => {
+    const evidence = scannerEvidence({
+      testEngine: { name: 'axe-core', version: '4.12.0' },
+      violations: [{ id: 'aria-prohibited-attr', nodes: [ariaProhibitedNode()] }],
+    });
+
+    const result = normalizer().normalize({ page: fixturePage(), evidence: [evidence] });
+
+    expect(result.observations).toEqual([]);
+    expect(result.ignoredEvidence).toEqual([
+      { evidenceId: 'scanner-evidence', reason: 'no_covered_deterministic_fact' },
+    ]);
+  });
+
+  it('keeps region unrecognized because a node snippet does not preserve landmark ancestry', () => {
+    const evidence = scannerEvidence({
+      testEngine: { name: 'axe-core', version: '4.13.0' },
+      violations: [
+        {
+          id: 'region',
+          nodes: [
+            {
+              any: [{ id: 'region', data: { isIframe: false } }],
+              all: [],
+              none: [],
+              target: ['a[href$="#site-nav"]'],
+              html: '<a href="#site-nav">Back to navigation</a>',
+            },
+          ],
+        },
+      ],
+    });
+
+    const result = normalizer().normalize({ page: fixturePage(), evidence: [evidence] });
+
+    expect(result.observations).toEqual([]);
+    expect(result.ignoredEvidence).toEqual([
+      { evidenceId: 'scanner-evidence', reason: 'no_covered_deterministic_fact' },
+    ]);
+    expect(result.unrecognizedRules).toEqual([
+      {
+        evidenceId: 'scanner-evidence',
+        tool: 'axe-core',
+        toolVersion: '4.13.0',
+        ruleId: 'region',
+      },
+    ]);
+  });
+
   it('is deterministic with injected IDs and time and rejects cross-page evidence', () => {
     const evidence = scannerEvidence({
       violations: [
@@ -349,6 +490,32 @@ function scannerEvidence(payload: JsonValue): Evidence {
     payload,
     metadata: {},
   });
+}
+
+function ariaProhibitedNode(): Record<string, JsonValue> {
+  return {
+    any: [],
+    all: [],
+    none: [
+      {
+        id: 'aria-prohibited-attr',
+        data: {
+          role: null,
+          nodeName: 'time',
+          messageKey: 'noRoleSingular',
+          prohibited: ['aria-label'],
+        },
+        relatedNodes: [],
+        impact: 'serious',
+        message: 'aria-label attribute cannot be used on a time with no valid role attribute.',
+      },
+    ],
+    impact: 'serious',
+    target: ['#event-date'],
+    html: '<time id="event-date" tabindex="0" aria-label="Date, Sep. 28">Sep. 28</time>',
+    failureSummary:
+      'Fix all of the following: aria-label attribute cannot be used on a time with no valid role attribute.',
+  };
 }
 
 function accessibilityEvidence(name: string) {

@@ -115,6 +115,12 @@ fully local source payloads. They prove positive and negative behavior, exact no
 detail retention, Page/Evidence traceability, unknown-rule retention, insufficient evidence,
 unsupported candidates, JSON round trips, source-version scope, and dataset version. The WCAG
 mapper tests compare explicit facts only; scanner impact labels are never converted into severity.
+The `aria-prohibited-attr` cases additionally require matching source/payload engine versions,
+complete target/HTML/check-detail preservation, and positive, negative, unsupported, uncertain,
+out-of-version, and end-to-end preparation coverage. Its WCAG 4.1.2 candidate remains uncertain
+when component applicability, attribute relevance, or programmatic exposure evidence is absent.
+The `region` fixture remains unrecognized because an isolated node snippet does not preserve the
+landmark ancestry needed to reproduce that best-practice assertion.
 
 Chunk 4 grouping tests use deterministic labeled records rather than live pages. They cover a
 236-occurrence repeated component, similar-but-distinct fingerprints, same-template cross-page

@@ -210,6 +210,80 @@ describe('assessment preparation CLI', () => {
     }
   });
 
+  it('preserves an uncertain aria-prohibited-attr trace without drafting or accepting its singleton', () => {
+    const loaded = loadedAssessment();
+    const assessment = rawPageAssessmentSchema.parse({
+      ...loaded,
+      scannerEvidence: {
+        ...loaded.scannerEvidence!,
+        payload: {
+          testEngine: { name: 'axe-core', version: '4.13.0' },
+          violations: [
+            {
+              id: 'aria-prohibited-attr',
+              nodes: [
+                {
+                  any: [],
+                  all: [],
+                  none: [
+                    {
+                      id: 'aria-prohibited-attr',
+                      data: {
+                        role: null,
+                        nodeName: 'time',
+                        messageKey: 'noRoleSingular',
+                        prohibited: ['aria-label'],
+                      },
+                    },
+                  ],
+                  target: ['#event-date'],
+                  html: '<time id="event-date" tabindex="0" aria-label="Date, Sep. 28">Sep. 28</time>',
+                },
+              ],
+            },
+            {
+              id: 'region',
+              nodes: [
+                {
+                  any: [{ id: 'region', data: { isIframe: false } }],
+                  all: [],
+                  none: [],
+                  target: ['a[href$="#site-nav"]'],
+                  html: '<a href="#site-nav">Back to navigation</a>',
+                },
+              ],
+            },
+          ],
+        },
+      },
+    });
+    const repository = new SqliteReviewRepository(':memory:');
+    try {
+      const counts = prepareAssessmentForReview(
+        assessment,
+        createAssessmentPreparationStages(assessment, repository),
+      );
+
+      expect(counts).toEqual({
+        observations: 1,
+        occurrences: 1,
+        wcagEvaluations: 1,
+        supportedWcagEvaluations: 0,
+        unsupportedWcagEvaluations: 0,
+        uncertainWcagEvaluations: 1,
+        groupingProposals: 1,
+        ineligibleGroupingProposals: 1,
+        draftFindings: 0,
+        persistedReviewBundles: 0,
+        ignoredNormalizationInputs: 1,
+        unrecognizedRules: 1,
+      });
+      expect(new FindingReviewService(repository).listFindingIds('assessment-prepare')).toEqual([]);
+    } finally {
+      repository.close();
+    }
+  });
+
   it('closes the preparation session when persistence fails', () => {
     const directory = mkdtempSync(join(tmpdir(), 'accessledger-prepare-close-'));
     try {

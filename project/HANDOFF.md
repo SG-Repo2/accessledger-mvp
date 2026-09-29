@@ -1,77 +1,94 @@
-# Handoff — Assessment Preparation Acceptance Gap
+# Handoff — Pre-Finding Group Review Is the Acceptance Blocker
 
-## Completed operator command
+## Verified Naperville preparation state
 
-The assessment CLI now supports:
+The saved `naperville-scan.json` still contains an npm banner before its valid JSON object. The
+payload itself was parsed without modification and run through the same
+`createAssessmentPreparationStages` / `prepareAssessmentForReview` composition used by
+`npm run assessment:prepare`.
 
-```text
-npm run assessment:prepare -- <scan-json-path> <database-path>
-```
-
-It reads and validates `RawPageAssessment` JSON, refuses `navigation_failed` and `scan_failed`,
-composes `DeterministicObservationNormalizer`, `EvidenceBasedWcagMapper`,
-`ConservativeGroupingEngine`, `DeterministicFindingDrafter`, and
-`FindingReviewService.createReview`, initializes the existing SQLite schema, and closes the
-repository on every post-open path. The manifest includes resolved input/database paths and counts
-for observations, occurrences, WCAG states, groups, ineligible groups, drafts, persisted bundles,
-ignored evidence, and unknown rules.
-
-Stable IDs and the scan completion time are supplied through existing public dependency-injection
-options. Preparing an already-present deterministic Finding ID is refused before bundle insertion.
-No public domain contract, WCAG dataset, domain policy, SQLite schema, or migration changed.
-
-## Manual workflow
-
-Save pure scan JSON by suppressing npm's banner, then prepare and open it:
+Before this normalization work, the payload produced:
 
 ```text
-npm run --silent scan -- https://www.naperville.il.us/ --target ".site-search-button" --target "#label_1" --target ".slick-prev" > naperville-scan.json
-npm run assessment:prepare -- ./naperville-scan.json ./naperville.sqlite
-npm run auditor:studio -- ./naperville.sqlite
+observations: 0
+occurrences: 0
+ignored normalization inputs: 5
+unrecognized rules: 2
+grouping proposals: 0
+draft Findings: 0
+persisted review bundles: 0
 ```
 
-After a human completes review and approval, export remains unchanged:
+After this work, it produces:
 
 ```text
-npm run findings:export -- ./naperville.sqlite <assessment-id> json ./output/naperville-findings.json
+observations: 1
+occurrences: 8
+ignored normalization inputs: 4
+unrecognized rules: 1
+WCAG evaluations: 1 uncertain / 0 supported / 0 unsupported
+grouping proposals: 5
+ineligible grouping proposals: 5
+draft Findings: 0
+persisted review bundles: 0
 ```
 
-The currently uncommitted `naperville-scan.json` in the working tree begins with npm command-banner
-text and is therefore intentionally rejected as malformed JSON. It is user-owned and was not
-modified by this work. A read-only diagnostic of its JSON portion found 0 observations, 0
-occurrences, 0 groups, 0 drafts, 5 ignored normalization inputs, and 2 unrecognized scanner rules.
-Thus, even after regenerating pure JSON, that particular scan currently produces an empty review
-database because its findings are outside the deliberately narrow normalization coverage.
+The five proposals are all pending: two medium-confidence `repeat_candidate` records containing
+three and two occurrences, and three low-confidence `singleton` records. No proposal is currently
+eligible for `DeterministicFindingDrafter.draft`.
 
-## Blocking workflow gap
+## Added normalization and mapping
 
-Current production normalization sets every `ObservationOccurrence.componentFingerprint` to null.
-The grouping engine therefore emits pending low/medium-confidence singleton, ambiguous, or
-structural-repeat proposals from raw scans. The Finding drafter correctly accepts pending proposals
-only for high-confidence fingerprint repeats; otherwise it requires a human-accepted group. The
-review repository/studio begins at a draft Finding, so no public persisted queue currently lets a
-human accept a GroupProposal before drafting.
+`aria-prohibited-attr` is now a narrowly supported axe-core technical observation. Normalization
+requires every node to retain:
 
-The CLI does not bypass this boundary. Ordinary current raw scans can initialize a valid database
-but will persist zero review bundles. Tests prove a non-zero path by supplying a valid
-fingerprint-bearing normalization result through the existing public interface, and prove the full
-trace is then retained with no severity, confidence, Validation, or unsupported-WCAG inference.
+- a concrete target and parseable HTML;
+- a matching non-empty ARIA attribute in that HTML;
+- matching `aria-prohibited-attr` check data with element name, computed role (including explicit
+  null), and prohibited attributes; and
+- axe engine name/version matching the Evidence source provenance.
 
-The next decision must choose one explicitly reviewed fix: add evidence-supported component
-fingerprints in normalization, or introduce a pre-Finding GroupProposal review/persistence boundary.
-Auto-accepting groups in the CLI is not an acceptable fix. A persistence solution requires a new
-migration; a normalization solution changes domain logic and needs fixture-backed design review.
+The Naperville rule has eight `<time tabindex="0" aria-label="…">` nodes. Each carries
+`nodeName: "time"`, `role: null`, `prohibited: ["aria-label"]`, an exact selector, HTML, and the
+complete raw violation/node detail. One Observation and all eight occurrences retain the Page,
+Evidence, selector, HTML, source detail, tool version, and rule version chain.
 
-## Verification
+WCAG dataset `2026.09.29-1` adds a reviewed 4.1.2 candidate mapping. It does not treat axe impact,
+tags, prose, or the rule result as a final criterion conclusion. A supported evaluation additionally
+requires separate facts that the target is a WCAG user-interface component, the prohibited
+attribute carries criterion-relevant information, and that required information is not
+programmatically available. Those facts are absent from the Naperville payload, so its candidate is
+correctly `uncertain`.
 
-All required root checks pass:
+## Inputs that remain ignored or unsupported
 
-```text
-npm run typecheck
-npm test                 # 18 files / 104 tests
-npm run lint
-npm run format:check
-```
+- Playwright `raw_browser_result` is operational load evidence, not a normalization source.
+- `.site-search-button` is a collected Chromium button named `Search`; it is a negative/non-
+  violation example for the empty-button-name normalizer.
+- `#label_1` is a collected Chromium tab named `City Events`; it is outside the intentionally
+  narrow browser-semantics normalizer and contains no supported deterministic failure.
+- `.slick-prev` is a collected Chromium button named `Previous`; it is another negative/non-
+  violation empty-name input.
+- axe-core `region` remains unrecognized. The one node retains a target and link snippet, but not
+  the DOM ancestry/landmark context needed to reproduce the assertion. Deque documents it as a best
+  practice rather than a WCAG rule, and landmark usefulness is contextual. No mapping was added.
 
-Node 22 may print its upstream `node:sqlite` experimental warning. The full browser suite may need
-permission to bind its deterministic loopback fixture server.
+## Next decision
+
+The immediate normalization blocker is resolved narrowly enough to expose real Naperville
+proposals. Component fingerprints remain null, but the two structural repeats already have
+inspectable medium-confidence membership. The next blocker is the missing pre-Finding
+GroupProposal review/persistence workflow: a human has no durable boundary at which to accept those
+proposals before drafting, while persistence currently begins with a Finding.
+
+Do not auto-accept groups or infer fingerprints. The next design should introduce the smallest
+reviewable pre-Finding grouping boundary, with a migration only if durable proposal decisions are
+actually required. Preserve the existing drafting, severity, validation, approval, and WCAG gates.
+
+## Contracts and verification
+
+Public domain contract remains `1.0.0`; persistence remains schema version `2`; no SQLite migration
+was added. No new architecture or normalization policy was introduced beyond ADR-009's existing
+reviewed dataset-extension process, so `project/DECISIONS.md` was not changed.
+
+See `project/CURRENT-STATE.md` and the latest `project/WORK-LOG.md` entry for final command results.

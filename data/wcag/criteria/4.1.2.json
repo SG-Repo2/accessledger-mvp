@@ -87,6 +87,65 @@
       ]
     },
     {
+      "tool": "axe-core",
+      "ruleId": "aria-prohibited-attr",
+      "toolVersionRange": "4.13.x",
+      "mappingType": "reviewed",
+      "mappingSource": "https://www.w3.org/WAI/standards-guidelines/act/rules/5c01ea/proposed/",
+      "verifiedAt": "2026-09-29T00:00:00.000Z",
+      "evidenceRequirements": [
+        {
+          "id": "scanner-result-is-violation",
+          "description": "The normalized axe result is a violation, not a pass or incomplete result.",
+          "factPath": "result",
+          "operator": "equals",
+          "expectedValue": "violation"
+        },
+        {
+          "id": "concrete-occurrence-present",
+          "description": "At least one concrete failing node is preserved.",
+          "factPath": "occurrenceCount",
+          "operator": "greater_than",
+          "expectedValue": 0
+        },
+        {
+          "id": "prohibited-attribute-facts-complete",
+          "description": "Every occurrence preserves a target, HTML attribute, element name, computed-role fact, and matching axe prohibited-attribute check detail.",
+          "factPath": "deterministicFactCoverage",
+          "operator": "equals",
+          "expectedValue": "complete"
+        },
+        {
+          "id": "prohibited-attribute-present",
+          "description": "At least one non-empty ARIA attribute identified as prohibited is preserved and corroborated by the node HTML.",
+          "factPath": "prohibitedAttributes",
+          "operator": "non_empty",
+          "expectedValue": null
+        },
+        {
+          "id": "user-interface-component-established",
+          "description": "Separate evidence establishes that the affected target is perceived as a single control for a distinct function, as required by WCAG 2.1's user-interface-component definition.",
+          "factPath": "wcag412.userInterfaceComponent",
+          "operator": "equals",
+          "expectedValue": true
+        },
+        {
+          "id": "prohibited-attribute-relevance-established",
+          "description": "Separate evidence establishes that the prohibited attribute carries name, role, state, property, or value information required for that component rather than irrelevant metadata.",
+          "factPath": "wcag412.prohibitedAttributeRelevant",
+          "operator": "equals",
+          "expectedValue": true
+        },
+        {
+          "id": "programmatic-information-unavailable",
+          "description": "Separate browser or human evidence establishes that the required information is not programmatically available to user agents and assistive technologies.",
+          "factPath": "wcag412.programmaticInformationAvailable",
+          "operator": "equals",
+          "expectedValue": false
+        }
+      ]
+    },
+    {
       "tool": "Chrome DevTools Protocol Accessibility",
       "ruleId": "empty-accessible-name",
       "toolVersionRange": null,
@@ -118,5 +177,5 @@
       ]
     }
   ],
-  "manualValidationGuidance": "Browser semantics and deterministic rules support the technical candidate only. Validate complex custom-control behavior and actual assistive-technology interaction separately when those claims are needed."
+  "manualValidationGuidance": "Browser semantics and deterministic rules support the technical candidate only. For prohibited ARIA attributes, separately establish user-interface-component applicability, whether the attribute carries required component information, and whether that information is programmatically unavailable; the axe result alone is insufficient because the related ACT rule is stricter than WCAG 4.1.2. Validate complex custom-control behavior and actual assistive-technology interaction separately when those claims are needed."
 }

@@ -22,9 +22,9 @@ Status values: `done`, `ready`, `planned`, `deferred`, `idea`. Priorities: P0 (r
 
 ## Bugs
 
-| ID      | Description                                                                                        | Priority | Status | Dependency                    | Target chunk |
-| ------- | -------------------------------------------------------------------------------------------------- | -------- | ------ | ----------------------------- | ------------ |
-| BUG-001 | Raw normalization cannot produce high-confidence fingerprint groups, leaving no pre-Finding review | P0       | ready  | Grouping/review design choice | Acceptance   |
+| ID      | Description                                                                            | Priority | Status | Dependency                    | Target chunk |
+| ------- | -------------------------------------------------------------------------------------- | -------- | ------ | ----------------------------- | ------------ |
+| BUG-001 | Saved scans produce pending proposals but have no pre-Finding grouping-review boundary | P0       | ready  | Grouping/review design choice | Acceptance   |
 
 ## Deferred work
 

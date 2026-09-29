@@ -336,3 +336,38 @@ lint`; `npm run format:check`.
   manual acceptance. A read-only diagnostic of its JSON payload produced 0 observations, 5 ignored
   inputs, and 2 unrecognized rules, so the current Naperville capture would still create an empty
   review database after banner removal.
+
+## 2026-09-29 — Codex — Naperville normalization coverage
+
+- **Diagnosis:** The valid JSON payload inside `naperville-scan.json` had five evidence inputs:
+  Playwright operational evidence, one axe-core 4.13.0 result, and three collected Chromium
+  semantics targets. The semantics targets were named `Search`, `City Events`, and `Previous`, so
+  none satisfied the existing empty-button-name rule. The scanner evidence contained only
+  `aria-prohibited-attr` (eight `<time>` nodes) and `region` (one link node), both outside the
+  previous allow-list; this exactly explained 0 observations, 5 ignored inputs, and 2 unrecognized
+  rules.
+- **Implemented:** Added narrow `aria-prohibited-attr` normalization requiring complete targets,
+  parseable matching non-empty ARIA attributes, element/computed-role check facts, and matching
+  source/payload axe provenance. Preserved one Observation, all eight occurrences, exact selectors,
+  HTML, complete raw rule/node source detail, Page/Evidence IDs, and tool/rule versions.
+- **WCAG policy:** Advanced the reviewable dataset to `2026.09.29-1` and added a reviewed 4.1.2
+  candidate mapping. Scanner facts alone remain insufficient: support also requires separate facts
+  establishing a WCAG user-interface component, relevance of the prohibited attribute, and absence
+  of the required programmatic information. The live payload therefore evaluates uncertain, not
+  supported. `region` remains unrecognized because its node snippet lacks reproducible landmark
+  ancestry and the source rule is a contextual best practice, not a WCAG rule.
+- **Naperville result:** Before: 0 observations, 0 occurrences, 5 ignored inputs, 2 unrecognized
+  rules, 0 proposals. After: 1 observation, 8 occurrences, 4 ignored inputs, 1 unrecognized rule,
+  1 uncertain WCAG evaluation, and 5 pending/ineligible proposals. The proposals are two medium-
+  confidence structural repeats with 3 and 2 members and three low-confidence singletons. No draft
+  Finding or review bundle was created.
+- **Boundaries retained:** No component fingerprint, group acceptance, Finding, severity,
+  confidence, Validation, or legal/WCAG conclusion was inferred. Public contract remains `1.0.0`,
+  persistence remains schema `2`, and no migration or ADR was added.
+- **Tests and checks:** Added controlled positive, negative, preservation, unsupported, uncertain,
+  source-version, traceability, `region` non-coverage, and end-to-end preparation tests. `npm run
+typecheck`, `npm test` (18 files / 115 tests), `npm run lint`, and `npm run format:check` pass;
+  Node 22 emits only the expected upstream `node:sqlite` experimental warning.
+- **Next blocker:** A pre-Finding GroupProposal review/persistence boundary is needed so a human can
+  accept the two medium-confidence structural repeats. Auto-acceptance and inferred fingerprints
+  remain prohibited.
