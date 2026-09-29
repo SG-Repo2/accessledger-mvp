@@ -1,6 +1,6 @@
 # Current State
 
-Updated: 2026-09-28
+Updated: 2026-09-29
 
 ## Completed
 
@@ -36,6 +36,12 @@ register artifacts.
   by default, creates destination parents portably, and prints the manifest.
 - `apps/auditor-studio` remains the minimal internal review/journey interface; Chunk 8 required no
   studio download/navigation change.
+- `npm run assessment:prepare -- <scan-json-path> <database-path>` runtime-validates a saved
+  successful `RawPageAssessment`, composes normalization, WCAG evaluation, grouping, eligible
+  Finding drafting, and review-bundle persistence, then prints deterministic stage counts.
+- Preparation uses stable application-level transformation IDs/timestamps, creates database parent
+  directories portably, applies the existing SQLite migrations, refuses duplicate deterministic
+  Finding IDs in an existing database, and closes the repository on success or failure.
 
 ## Public contracts and versions
 
@@ -59,9 +65,13 @@ multi-tenancy, accounts/authentication, billing, production monitoring, remediat
 autonomous journeys, synthetic users/speech, automated form submission, and automated/remote NVDA
 remain deliberately out of scope. CSV consumers must parse documented JSON cells for nested
 records. `generatedAt` intentionally changes artifact bytes/hashes across real runs. The studio
-still has no importer, binary artifact viewer, styling layer, or concurrent merge UI. Node 22 may
-print its upstream `node:sqlite` experimental warning; Windows/NVDA remains an external human
-procedure. No known Chunk 8 correctness defect remains.
+still has no pre-Finding GroupProposal queue/importer, binary artifact viewer, styling layer, or
+concurrent merge UI. The current normalizer emits null component fingerprints, so generated pending
+groups are not high-confidence and remain ineligible for Finding drafting unless already accepted;
+because review persistence begins with a Finding, real raw scans currently prepare zero review
+bundles without a future approved grouping-review boundary. Node 22 may print its upstream
+`node:sqlite` experimental warning; Windows/NVDA remains an external human procedure. No public
+contract or SQLite migration changed for assessment preparation.
 
 ## Validation
 
@@ -71,11 +81,16 @@ behavior, hashes, no-journey/all-outcome journey cases, Evidence/Validation link
 incomplete/unsupported record refusal, no outcome-to-severity inference, CLI help/arguments/
 manifest/errors/resource closure, and a complete approved export path.
 
+Assessment-preparation tests cover valid/invalid/malformed input, navigation/scan refusal, ignored
+and unknown inputs, zero/non-zero eligible cases, deterministic counts, nested portable paths,
+complete SQLite trace persistence, existing-database duplicate behavior, cleanup, unsupported WCAG
+retention, and absence of inferred severity/confidence/Validation.
+
 Required root commands pass:
 
 ```text
 npm run typecheck
-npm test                 # 17 files / 96 tests
+npm test                 # 18 files / 104 tests
 npm run lint
 npm run format:check
 ```
@@ -86,9 +101,11 @@ runtime warning is Node 22's upstream `node:sqlite` experimental notice.
 ## Versions and next work
 
 - Last completed chunk: 8
-- MVP status: implementation complete
-- Next recommended work: post-MVP acceptance and productization decision; do not silently expand
-  the MVP into reports, dashboards, monitoring, accounts, or automation
-- Blockers: none
+- MVP status: implementation complete; operator preparation command added
+- Next recommended work: decide the minimal pre-Finding grouping-review boundary needed to make
+  ordinary saved scans produce reviewable bundles, without auto-accepting groups
+- Blockers: current normalized raw assessments cannot produce a pending high-confidence fingerprint
+  repeat, while lower-confidence/singleton proposals require acceptance before drafting and the
+  persisted review workflow requires a draft Finding before grouping review
 
 Follow `project/HANDOFF.md` for the exact post-MVP decision prompt and retained limitations.

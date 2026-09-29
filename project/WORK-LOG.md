@@ -305,3 +305,34 @@ lint`; `npm run format:check`.
   warning. No known Chunk 8 correctness defect.
 - **Next logical action:** Conduct the post-MVP acceptance and productization decision in
   `project/HANDOFF.md`; do not begin a deferred product track until it is explicitly selected.
+
+## 2026-09-29 — Codex — Saved assessment preparation CLI
+
+- **Files changed:** Added assessment preparation orchestration/CLI and focused tests in
+  `apps/assessment-cli`; added the root `assessment:prepare` script and workspace dependencies;
+  updated architecture, raw-capture, auditor-review, backlog, current-state, work-log, and handoff
+  documentation.
+- **Implemented:** Runtime validation and operational-failure refusal; deterministic observation,
+  WCAG, grouping, and drafting composition; exact per-Finding context slicing; review-service
+  persistence; portable database parent creation; duplicate deterministic Finding preflight;
+  concise count manifest; and repository closure on success/failure.
+- **Boundaries retained:** No group is auto-accepted. No severity, Finding confidence, Validation,
+  unsupported WCAG claim, scanner impact, or grouping confidence is promoted into a Finding.
+  Public contract remains `1.0.0`; persistence schema remains `2`; no migration changed.
+- **Tests:** Added focused coverage for valid, malformed, contract-invalid, navigation-failed, and
+  scan-failed input; supported/ignored/unknown inputs; zero/non-zero eligible paths; deterministic
+  counts; portable nested paths; complete trace persistence; existing-database duplicate refusal;
+  resource closure; unsupported WCAG retention; and no-inference fields.
+- **Checks executed:** `npm run typecheck`; full `npm test` with loopback permission; `npm run lint`;
+  `npm run format:check`. Result: 18 files / 104 tests passed; only Node 22's expected
+  `node:sqlite` experimental warning was emitted.
+- **Acceptance finding:** The current normalizer always emits null component fingerprints, so raw
+  scans cannot create a pending high-confidence repeat. The existing studio/repository cannot
+  accept a GroupProposal before a draft Finding exists. Preparation therefore yields zero bundles
+  for ordinary current scans unless upstream normalization supplies a valid fingerprint-bearing
+  occurrence. This was documented rather than bypassed.
+- **Manual artifact:** The user-owned `naperville-scan.json` was not modified. Its npm command
+  banner makes it malformed JSON; regenerate it with the documented silent npm scan command before
+  manual acceptance. A read-only diagnostic of its JSON payload produced 0 observations, 5 ignored
+  inputs, and 2 unrecognized rules, so the current Naperville capture would still create an empty
+  review database after banner removal.

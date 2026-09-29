@@ -11,8 +11,11 @@
     "@accessledger/export": "0.0.1",
     "@accessledger/evidence": "0.0.1",
     "@accessledger/findings": "0.0.1",
+    "@accessledger/grouping": "0.0.1",
     "@accessledger/journeys": "0.0.1",
+    "@accessledger/observations": "0.0.1",
     "@accessledger/persistence": "0.0.1",
-    "@accessledger/shared": "0.0.1"
+    "@accessledger/shared": "0.0.1",
+    "@accessledger/wcag": "0.0.1"
   }
 }

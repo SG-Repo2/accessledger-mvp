@@ -18,10 +18,13 @@ Status values: `done`, `ready`, `planned`, `deferred`, `idea`. Priorities: P0 (r
 | MVP-601 | Minimal auditor review and human validation workflow            | P0       | done   | MVP-501             | 6            |
 | MVP-701 | Manual resident journey recording                               | P1       | done   | MVP-601             | 7            |
 | MVP-801 | Approved Findings Register JSON/CSV export                      | P0       | done   | MVP-601             | 8            |
+| MVP-901 | Saved assessment preparation CLI                                | P0       | done   | MVP-301–MVP-601     | Acceptance   |
 
 ## Bugs
 
-No known bugs.
+| ID      | Description                                                                                        | Priority | Status | Dependency                    | Target chunk |
+| ------- | -------------------------------------------------------------------------------------------------- | -------- | ------ | ----------------------------- | ------------ |
+| BUG-001 | Raw normalization cannot produce high-confidence fingerprint groups, leaving no pre-Finding review | P0       | ready  | Grouping/review design choice | Acceptance   |
 
 ## Deferred work
 

@@ -1,86 +1,77 @@
-# Handoff — Post-MVP Acceptance and Productization Decision
+# Handoff — Assessment Preparation Acceptance Gap
 
-## MVP completion
+## Completed operator command
 
-Chunks 0–8 are complete. The evidence-first pipeline now reaches deterministic approved Findings
-Register JSON/CSV artifacts while retaining the full source trace, explicit human Validation, and
-optional recorded journey context. All required root checks pass at 17 test files / 96 tests.
-
-Chunk 8 added no SQLite migration or studio UI. Domain contract schema remains `1.0.0`, persistence
-schema remains `2`, and the independently versioned Findings Register export schema begins at
-`1.0.0`.
-
-## Export boundary
-
-`@accessledger/export` exposes `FindingsExporter`, `DeterministicFindingsExporter`, fixed JSON/CSV
-serializers and CSV columns, and narrow review/journey source interfaces. `@accessledger/shared`
-owns the Zod export document/record/summary/manifest schemas. `@accessledger/findings` exposes
-`assertExportableApprovedTrace`, and review repository/service Finding listing can be scoped by
-assessment.
-
-The exporter omits non-approved records and rechecks every approved trace before writing. It
-refuses broken, incomplete, unresolved, improperly evidenced, or insufficiently supported approved
-records. JSON is nested; CSV uses one Finding row and compact JSON for nested structures. Findings,
-criteria, IDs, occurrences, Validations, journeys, and results have documented stable ordering.
-The manifest includes the exact artifact SHA-256 and byte length.
-
-Run:
+The assessment CLI now supports:
 
 ```text
-npm run findings:export -- <database-path> <assessment-id> <json|csv> <destination> [--overwrite]
-npm run findings:export -- --help
+npm run assessment:prepare -- <scan-json-path> <database-path>
 ```
 
-Existing destinations are refused unless `--overwrite` is explicitly supplied. The database must
-already exist. See `docs/FINDINGS-REGISTER-EXPORT.md` for schema, columns, ordering, and examples.
+It reads and validates `RawPageAssessment` JSON, refuses `navigation_failed` and `scan_failed`,
+composes `DeterministicObservationNormalizer`, `EvidenceBasedWcagMapper`,
+`ConservativeGroupingEngine`, `DeterministicFindingDrafter`, and
+`FindingReviewService.createReview`, initializes the existing SQLite schema, and closes the
+repository on every post-open path. The manifest includes resolved input/database paths and counts
+for observations, occurrences, WCAG states, groups, ineligible groups, drafts, persisted bundles,
+ignored evidence, and unknown rules.
 
-## Traceability and journey boundary
+Stable IDs and the scan completion time are supplied through existing public dependency-injection
+options. Preparing an already-present deterministic Finding ID is refused before bundle insertion.
+No public domain contract, WCAG dataset, domain policy, SQLite schema, or migration changed.
 
-Each record retains stable Finding and source GroupProposal IDs; five-part content; exact approved
-severity/confidence; WCAG criteria; occurrence count; affected URLs/components; Observation,
-Occurrence, Page, and Evidence references; and full Validation summaries. Optional linked journey
-summaries retain protocol context, exact result outcomes, performer/environment/timing/notes,
-supporting Evidence IDs, and result-subject Validation IDs.
+## Manual workflow
 
-The outcome values `completed`, `completed_with_difficulty`, `unable_to_complete`, `not_attempted`,
-and `inconclusive` are recorded context only. No outcome is mapped to severity, accessibility or
-WCAG violation, resident impact, conformance, certification, or legal conclusion. Exact severity
-continues to require separate supported human Validation.
+Save pure scan JSON by suppressing npm's banner, then prepare and open it:
 
-## Verification and limitations
+```text
+npm run --silent scan -- https://www.naperville.il.us/ --target ".site-search-button" --target "#label_1" --target ".slick-prev" > naperville-scan.json
+npm run assessment:prepare -- ./naperville-scan.json ./naperville.sqlite
+npm run auditor:studio -- ./naperville.sqlite
+```
 
-Required checks passed:
+After a human completes review and approval, export remains unchanged:
+
+```text
+npm run findings:export -- ./naperville.sqlite <assessment-id> json ./output/naperville-findings.json
+```
+
+The currently uncommitted `naperville-scan.json` in the working tree begins with npm command-banner
+text and is therefore intentionally rejected as malformed JSON. It is user-owned and was not
+modified by this work. A read-only diagnostic of its JSON portion found 0 observations, 0
+occurrences, 0 groups, 0 drafts, 5 ignored normalization inputs, and 2 unrecognized scanner rules.
+Thus, even after regenerating pure JSON, that particular scan currently produces an empty review
+database because its findings are outside the deliberately narrow normalization coverage.
+
+## Blocking workflow gap
+
+Current production normalization sets every `ObservationOccurrence.componentFingerprint` to null.
+The grouping engine therefore emits pending low/medium-confidence singleton, ambiguous, or
+structural-repeat proposals from raw scans. The Finding drafter correctly accepts pending proposals
+only for high-confidence fingerprint repeats; otherwise it requires a human-accepted group. The
+review repository/studio begins at a draft Finding, so no public persisted queue currently lets a
+human accept a GroupProposal before drafting.
+
+The CLI does not bypass this boundary. Ordinary current raw scans can initialize a valid database
+but will persist zero review bundles. Tests prove a non-zero path by supplying a valid
+fingerprint-bearing normalization result through the existing public interface, and prove the full
+trace is then retained with no severity, confidence, Validation, or unsupported-WCAG inference.
+
+The next decision must choose one explicitly reviewed fix: add evidence-supported component
+fingerprints in normalization, or introduce a pre-Finding GroupProposal review/persistence boundary.
+Auto-accepting groups in the CLI is not an acceptable fix. A persistence solution requires a new
+migration; a normalization solution changes domain logic and needs fixture-backed design review.
+
+## Verification
+
+All required root checks pass:
 
 ```text
 npm run typecheck
-npm test                 # 17 files / 96 tests
+npm test                 # 18 files / 104 tests
 npm run lint
 npm run format:check
 ```
 
-The test suite's deterministic fixture server requires loopback binding permission. Node 22 may
-emit its upstream `node:sqlite` experimental warning. No known Chunk 8 correctness defect remains.
-
-The artifact is a working register, not a polished Board Brief/Assessment Report. XLSX, customer
-dashboards, accounts, billing, multi-tenancy, production monitoring, remediation costing,
-autonomous journeys, synthetic users/speech, automated form submission, and automated/remote NVDA
-remain deferred. CSV nested fields require JSON parsing, and real-run generation timestamps
-intentionally produce different bytes/hashes.
-
-## Recommended post-MVP decision point
-
-Do not begin a deferred feature by assumption. First perform an acceptance review against the
-product thesis and real stakeholder workflow, inspect a representative exported register, and
-select one explicitly funded next track. Likely candidates are a fuller report/Board Brief,
-remediation workflow fields, broader detector/WCAG coverage, deployment/account architecture, or
-monitoring; each has materially different product and architecture consequences.
-
-The next agent should produce a decision-ready gap analysis and proposed next chunk with explicit
-scope, evidence, success criteria, contract/migration consequences, and non-goals. It should not
-implement the selected track until the user approves it.
-
-## Exact recommended prompt for the next post-MVP agent
-
-```text
-Read AGENTS.md, project/CURRENT-STATE.md, project/HANDOFF.md, project/BACKLOG.md, docs/PRODUCT-THESIS.md, docs/ARCHITECTURE.md, docs/FINDINGS-REGISTER-EXPORT.md, docs/AUDITOR-REVIEW.md, docs/RESIDENT-JOURNEYS.md, docs/TESTING-METHODOLOGY.md, docs/DATA-MODEL.md, and ADR-014 plus relevant earlier entries in project/DECISIONS.md. Conduct a post-MVP acceptance and productization decision review only; do not implement a deferred feature yet. Verify that the completed Chunks 0–8 satisfy the evidence-first MVP objective and that the approved Findings Register export preserves traceability and the human-only claim boundary. Identify concrete workflow, coverage, usability, portability, and product gaps using repository evidence; distinguish correctness defects from deliberate MVP limitations. Compare the next-track options—full Assessment Report/Board Brief, remediation workflow fields, broader detector/WCAG coverage, deployment/accounts/multi-tenancy, and recurring monitoring—against product value, evidence needs, architecture/contract/migration impact, risk, and scope. Recommend one next chunk with explicit objective, allowed changes, public contracts, acceptance tests, non-goals, dependencies, and decision gates. Update project/CURRENT-STATE.md, project/BACKLOG.md, project/DECISIONS.md, project/WORK-LOG.md, and project/HANDOFF.md only if the review produces an approved documentation decision; otherwise report the recommendation and unresolved choices without changing code or expanding scope.
-```
+Node 22 may print its upstream `node:sqlite` experimental warning. The full browser suite may need
+permission to bind its deterministic loopback fixture server.

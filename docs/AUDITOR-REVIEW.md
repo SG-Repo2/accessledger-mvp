@@ -24,6 +24,26 @@ fail instead of overwriting another reviewer's work.
 Review data is first inserted through `FindingReviewService.createReview(...)`; callers must supply
 the complete Chunk 5 bundle. The service validates the complete trace before SQLite receives it.
 
+The assessment CLI provides the narrow operator path from a saved successful raw assessment:
+
+```text
+npm run assessment:prepare -- <scan-json-path> <database-path>
+npm run auditor:studio -- <database-path>
+```
+
+Preparation composes the public observation, WCAG, grouping, Finding-drafting, and review-service
+boundaries. It creates missing database parents and applies the existing migrations. An existing
+database is retained and may receive new Finding IDs; preparing an already-present deterministic
+Finding ID is refused before any new bundle is written. No importer was added to Auditor Studio.
+
+Only proposals accepted by the existing drafter are persisted. The current raw-assessment
+normalizer does not populate component fingerprints, so its automatically generated pending groups
+are low/medium confidence and do not become draft Findings without an existing human grouping
+decision. The review store has no pre-Finding GroupProposal queue, and the studio cannot make that
+decision before a Finding exists. A real scan can therefore produce a valid initialized database
+with zero review bundles; resolving that circular workflow requires a separately approved domain or
+persistence change rather than an application-layer inference.
+
 ## Service operations
 
 - `createReview(bundle, actor)` validates and stores the original review bundle.
@@ -69,8 +89,9 @@ and authentication are out of scope. Human notes entered in the UI become immuta
 Evidence. A supported claim means the reviewer has actually performed the stated method and recorded
 observable support; selecting an option is not a substitute for that work.
 
-The UI is intentionally unstyled and has no draft importer, artifact viewer, concurrent merge
-interface, automated journey runner, form-submission agent, or NVDA controller. `node:sqlite` keeps
+The UI is intentionally unstyled and has no pre-Finding GroupProposal queue/importer, artifact
+viewer, concurrent merge interface, automated journey runner, form-submission agent, or NVDA
+controller. `node:sqlite` keeps
 installation portable and dependency-free; Node 22 may emit its upstream experimental-feature
 warning. Windows/NVDA execution remains an external human procedure.
 

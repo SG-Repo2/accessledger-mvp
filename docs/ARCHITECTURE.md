@@ -129,6 +129,12 @@ SQLite paths are supplied by the caller and resolved with Node path APIs by the 
 Large binary artifacts remain a future portable artifact-directory concern; only their immutable
 Evidence metadata belongs in SQLite. See `AUDITOR-REVIEW.md` and ADR-012.
 
+`apps/assessment-cli` composes the pure Chunk 3–5 transformations with
+`FindingReviewService.createReview` for saved, successful `RawPageAssessment` JSON. The preparation
+application stores only proposals the existing drafter accepts and does not manufacture a grouping
+decision to overcome an ineligible pending proposal. It uses the unchanged persistence migrations
+and review-bundle schema.
+
 ## Package interfaces by stage
 
 Future package interfaces should preserve these shapes:

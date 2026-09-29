@@ -1,39 +1,42 @@
 
 > accessledger-mvp@0.0.1 scan
-> tsx apps/assessment-cli/src/scan.ts https://www.naperville.il.us/
+> tsx apps/assessment-cli/src/scan.ts https://www.naperville.il.us/ --target .site-search-button --target #label_1 --target .slick-prev
 
 {
   "schemaVersion": "1.0.0",
   "page": {
     "schemaVersion": "1.0.0",
-    "id": "page-a396fac3-0ff4-4f95-b80b-a981f5e517c8",
-    "assessmentId": "developer-scan-2d4c99f6-a3ae-4ef3-92cc-f8f6d1059668",
+    "id": "page-884d5da9-9fcf-4ac6-b904-5e9833daa2f2",
+    "assessmentId": "developer-scan-0eb5e105-e1ce-4ee1-bf16-e3e9906043d7",
     "requestedUrl": "https://www.naperville.il.us/",
     "finalUrl": "https://www.naperville.il.us/",
     "title": "Home | The City of Naperville",
     "language": "en",
     "loadStatus": "loaded",
-    "loadedAt": "2026-09-28T18:42:27.429Z",
+    "loadedAt": "2026-09-28T22:57:10.456Z",
     "failureReason": null,
     "rawEvidenceIds": [
-      "browser-evidence-d820fbbf-5aae-4156-a05d-d4d12f0a8427",
-      "scanner-evidence-b6ab1329-5659-4eac-b435-c50c1628111b"
+      "browser-evidence-af0d05b5-4064-490b-90d8-5509a708a7d6",
+      "scanner-evidence-bc59b102-b8a6-4431-a24e-93c737d1ad1a",
+      "accessibility-evidence-094c66a5-f13f-4df7-89da-c213571b1510",
+      "accessibility-evidence-cb07ace5-49bd-479c-86c6-23ac5af126ca",
+      "accessibility-evidence-0142f70a-74f1-4740-8c01-0ae6ee31182c"
     ],
-    "createdAt": "2026-09-28T18:42:26.106Z",
-    "updatedAt": "2026-09-28T18:42:27.658Z"
+    "createdAt": "2026-09-28T22:57:09.115Z",
+    "updatedAt": "2026-09-28T22:57:10.676Z"
   },
   "browserEvidence": {
     "schemaVersion": "1.0.0",
-    "id": "browser-evidence-d820fbbf-5aae-4156-a05d-d4d12f0a8427",
-    "assessmentId": "developer-scan-2d4c99f6-a3ae-4ef3-92cc-f8f6d1059668",
-    "pageId": "page-a396fac3-0ff4-4f95-b80b-a981f5e517c8",
+    "id": "browser-evidence-af0d05b5-4064-490b-90d8-5509a708a7d6",
+    "assessmentId": "developer-scan-0eb5e105-e1ce-4ee1-bf16-e3e9906043d7",
+    "pageId": "page-884d5da9-9fcf-4ac6-b904-5e9833daa2f2",
     "kind": "raw_browser_result",
     "source": {
       "type": "browser",
       "name": "playwright",
       "version": "1.63.0"
     },
-    "capturedAt": "2026-09-28T18:42:27.429Z",
+    "capturedAt": "2026-09-28T22:57:10.456Z",
     "contentType": "application/json",
     "payload": {
       "status": "loaded",
@@ -41,7 +44,7 @@
       "finalUrl": "https://www.naperville.il.us/",
       "title": "Home | The City of Naperville",
       "language": "en",
-      "loadedAt": "2026-09-28T18:42:27.429Z",
+      "loadedAt": "2026-09-28T22:57:10.456Z",
       "browserName": "chromium",
       "browserVersion": "153.0.8010.12",
       "automationName": "playwright",
@@ -52,19 +55,19 @@
           "access-control-allow-origin": "*",
           "content-encoding": "gzip",
           "content-type": "text/html; charset=utf-8",
-          "date": "Mon, 28 Sep 2026 18:41:48 GMT",
+          "date": "Mon, 28 Sep 2026 22:56:32 GMT",
           "expires": "0",
           "permissions-policy": "accelerometer=*, autoplay=*, camera=*, cross-origin-isolated=*, display-capture=*, encrypted-media=*, fullscreen=*, geolocation=*, gyroscope=*, keyboard-map=*, magnetometer=*, microphone=*, midi=*, payment=*, picture-in-picture=*, publickey-credentials-get=*, screen-wake-lock=*, sync-xhr=*, usb=*, web-share=*, xr-spatial-tracking=*",
           "pragma": "no-cache",
           "referrer-policy": "strict-origin",
           "server": "Microsoft-IIS/10.0",
-          "set-cookie": "EPiStateMarker=true; path=/; secure\nvisid_incap_3192842=OSJwmd46RmqdjBuiwgH7Qe20umoAAAAAQUIPAAAAAADg/uM+NS/2C59KKGXUVDtg; expires=Tue, 28 Sep 2027 07:02:11 GMT; HttpOnly; path=/; Domain=.naperville.il.us\nincap_ses_1016_3192842=rAkUKGcM6l9ZU66Nro4ZDu20umoAAAAAVYSBkuYqIUxtcstbQBagsw==; path=/; Domain=.naperville.il.us",
+          "set-cookie": "EPiStateMarker=true; path=/; secure\nvisid_incap_3192842=GSaWog1tS+ueGpFjKNSEM5/wumoAAAAAQUIPAAAAAADtfxlZ4e/uryu1cDECFF2P; expires=Tue, 28 Sep 2027 07:03:12 GMT; HttpOnly; path=/; Domain=.naperville.il.us\nincap_ses_1016_3192842=uZjlE02HqCUb2miQro4ZDqDwumoAAAAAUgprqg/d+3s8xsOOPNTihg==; path=/; Domain=.naperville.il.us",
           "strict-transport-security": "max-age=31536000; includeSubDomains",
           "vary": "Accept-Encoding",
           "x-cdn": "Imperva",
           "x-download-options": "noopen",
           "x-frame-options": "SAMEORIGIN",
-          "x-iinfo": "44-118058626-118058656 NNNY CT(1 4 0) RT(1790620908967 113) q(0 0 0 29) r(0 0) U12",
+          "x-iinfo": "40-96187885-96187927 NNNY CT(2 8 0) RT(1790636191953 90) q(0 0 0 2) r(1 1) U12",
           "x-powered-by": "ASP.NET",
           "x-xss-protection": "1; mode=block"
         }
@@ -77,16 +80,16 @@
   },
   "scannerEvidence": {
     "schemaVersion": "1.0.0",
-    "id": "scanner-evidence-b6ab1329-5659-4eac-b435-c50c1628111b",
-    "assessmentId": "developer-scan-2d4c99f6-a3ae-4ef3-92cc-f8f6d1059668",
-    "pageId": "page-a396fac3-0ff4-4f95-b80b-a981f5e517c8",
+    "id": "scanner-evidence-bc59b102-b8a6-4431-a24e-93c737d1ad1a",
+    "assessmentId": "developer-scan-0eb5e105-e1ce-4ee1-bf16-e3e9906043d7",
+    "pageId": "page-884d5da9-9fcf-4ac6-b904-5e9833daa2f2",
     "kind": "raw_scanner_result",
     "source": {
       "type": "scanner",
       "name": "axe-core",
       "version": "4.13.0"
     },
-    "capturedAt": "2026-09-28T18:42:27.641Z",
+    "capturedAt": "2026-09-28T22:57:10.661Z",
     "contentType": "application/json",
     "payload": {
       "testEngine": {
@@ -103,7 +106,7 @@
         "orientationAngle": 0,
         "orientationType": "landscape-primary"
       },
-      "timestamp": "2026-09-28T18:42:27.620Z",
+      "timestamp": "2026-09-28T22:57:10.639Z",
       "url": "https://www.naperville.il.us/",
       "toolOptions": {
         "reporter": "v1"
@@ -1148,9 +1151,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-1"
+                "#sm-17906362299956355-1"
               ]
             },
             {
@@ -1188,9 +1191,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906209470692737-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906362299956355-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-3"
+                "#sm-17906362299956355-3"
               ]
             },
             {
@@ -1228,9 +1231,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906209470692737-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906362299956355-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-11"
+                "#sm-17906362299956355-11"
               ]
             },
             {
@@ -1268,9 +1271,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906209470692737-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906362299956355-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-29"
+                "#sm-17906362299956355-29"
               ]
             },
             {
@@ -1308,9 +1311,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906209470692737-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906362299956355-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-31"
+                "#sm-17906362299956355-31"
               ]
             },
             {
@@ -1348,9 +1351,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-33"
+                "#sm-17906362299956355-33"
               ]
             },
             {
@@ -2632,6 +2635,46 @@
               "target": [
                 ".action-nav"
               ]
+            },
+            {
+              "any": [],
+              "all": [
+                {
+                  "id": "aria-allowed-attr",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "ARIA attributes are used correctly for the defined role"
+                },
+                {
+                  "id": "aria-allowed-attr-elm",
+                  "data": null,
+                  "relatedNodes": [],
+                  "message": "ARIA attributes are allowed for this element",
+                  "impact": "critical"
+                },
+                {
+                  "id": "aria-no-deprecated-attr",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "No deprecated ARIA attributes are used"
+                }
+              ],
+              "none": [
+                {
+                  "id": "aria-unsupported-attr",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "ARIA attribute is supported"
+                }
+              ],
+              "impact": null,
+              "html": "<a aria-haspopup=\"true\" class=\"VIpgJd-ZVi9od-xl07Ob-lTBxed\" href=\"#\">",
+              "target": [
+                ".VIpgJd-ZVi9od-xl07Ob-lTBxed"
+              ]
             }
           ]
         },
@@ -2749,9 +2792,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906209470692737-2\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-1\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906362299956355-2\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-1\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-2"
+                "#sm-17906362299956355-2"
               ]
             },
             {
@@ -2767,9 +2810,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906209470692737-4\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-3\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906362299956355-4\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-3\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-4"
+                "#sm-17906362299956355-4"
               ]
             },
             {
@@ -2785,9 +2828,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-6\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-5\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-6\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-5\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-6"
+                "#sm-17906362299956355-6"
               ]
             },
             {
@@ -2803,9 +2846,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-8\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-7\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-8\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-7\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-8"
+                "#sm-17906362299956355-8"
               ]
             },
             {
@@ -2821,9 +2864,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-10\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-9\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-10\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-9\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-10"
+                "#sm-17906362299956355-10"
               ]
             },
             {
@@ -2839,9 +2882,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906209470692737-12\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-11\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906362299956355-12\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-11\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-12"
+                "#sm-17906362299956355-12"
               ]
             },
             {
@@ -2857,9 +2900,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-14\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-13\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-14\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-13\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-14"
+                "#sm-17906362299956355-14"
               ]
             },
             {
@@ -2875,9 +2918,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-16\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-15\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-16\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-15\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-16"
+                "#sm-17906362299956355-16"
               ]
             },
             {
@@ -2893,9 +2936,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-18\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-17\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-18\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-17\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-18"
+                "#sm-17906362299956355-18"
               ]
             },
             {
@@ -2911,9 +2954,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-20\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-19\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-20\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-19\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-20"
+                "#sm-17906362299956355-20"
               ]
             },
             {
@@ -2929,9 +2972,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-22\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-21\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-22\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-21\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-22"
+                "#sm-17906362299956355-22"
               ]
             },
             {
@@ -2947,9 +2990,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-24\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-23\" aria-expanded=\"false\">\n                                                                </ul>",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-24\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-23\" aria-expanded=\"false\">\n                                                                </ul>",
               "target": [
-                "#sm-17906209470692737-24"
+                "#sm-17906362299956355-24"
               ]
             },
             {
@@ -2965,9 +3008,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-26\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-25\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-26\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-25\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-26"
+                "#sm-17906362299956355-26"
               ]
             },
             {
@@ -2983,9 +3026,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-28\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-27\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-28\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-27\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-28"
+                "#sm-17906362299956355-28"
               ]
             },
             {
@@ -3001,9 +3044,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" role=\"group\" aria-hidden=\"true\" aria-expanded=\"false\" style=\"\" id=\"sm-17906209470692737-30\" aria-labelledby=\"sm-17906209470692737-29\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" role=\"group\" aria-hidden=\"true\" aria-expanded=\"false\" style=\"\" id=\"sm-17906362299956355-30\" aria-labelledby=\"sm-17906362299956355-29\">",
               "target": [
-                "#sm-17906209470692737-30"
+                "#sm-17906362299956355-30"
               ]
             },
             {
@@ -3019,9 +3062,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" role=\"group\" aria-hidden=\"true\" aria-expanded=\"false\" style=\"\" id=\"sm-17906209470692737-32\" aria-labelledby=\"sm-17906209470692737-31\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" role=\"group\" aria-hidden=\"true\" aria-expanded=\"false\" style=\"\" id=\"sm-17906362299956355-32\" aria-labelledby=\"sm-17906362299956355-31\">",
               "target": [
-                "#sm-17906209470692737-32"
+                "#sm-17906362299956355-32"
               ]
             },
             {
@@ -3037,9 +3080,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906209470692737-34\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-33\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906362299956355-34\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-33\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-34"
+                "#sm-17906362299956355-34"
               ]
             },
             {
@@ -3613,9 +3656,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-1"
+                "#sm-17906362299956355-1"
               ]
             },
             {
@@ -3631,9 +3674,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906209470692737-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906362299956355-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-3"
+                "#sm-17906362299956355-3"
               ]
             },
             {
@@ -3649,9 +3692,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906209470692737-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906362299956355-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-11"
+                "#sm-17906362299956355-11"
               ]
             },
             {
@@ -3667,9 +3710,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906209470692737-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906362299956355-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-29"
+                "#sm-17906362299956355-29"
               ]
             },
             {
@@ -3685,9 +3728,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906209470692737-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906362299956355-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-31"
+                "#sm-17906362299956355-31"
               ]
             },
             {
@@ -3703,9 +3746,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-33"
+                "#sm-17906362299956355-33"
               ]
             },
             {
@@ -4283,6 +4326,24 @@
               "target": [
                 ".action-nav"
               ]
+            },
+            {
+              "any": [],
+              "all": [
+                {
+                  "id": "aria-conditional-attr",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "ARIA attribute is allowed"
+                }
+              ],
+              "none": [],
+              "impact": null,
+              "html": "<a aria-haspopup=\"true\" class=\"VIpgJd-ZVi9od-xl07Ob-lTBxed\" href=\"#\">",
+              "target": [
+                ".VIpgJd-ZVi9od-xl07Ob-lTBxed"
+              ]
             }
           ]
         },
@@ -4729,9 +4790,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906209470692737-2\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-1\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906362299956355-2\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-1\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-2"
+                "#sm-17906362299956355-2"
               ]
             },
             {
@@ -4761,9 +4822,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906209470692737-4\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-3\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906362299956355-4\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-3\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-4"
+                "#sm-17906362299956355-4"
               ]
             },
             {
@@ -4793,9 +4854,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906209470692737-12\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-11\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906362299956355-12\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-11\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-12"
+                "#sm-17906362299956355-12"
               ]
             },
             {
@@ -4825,9 +4886,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" role=\"group\" aria-hidden=\"true\" aria-expanded=\"false\" style=\"\" id=\"sm-17906209470692737-30\" aria-labelledby=\"sm-17906209470692737-29\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" role=\"group\" aria-hidden=\"true\" aria-expanded=\"false\" style=\"\" id=\"sm-17906362299956355-30\" aria-labelledby=\"sm-17906362299956355-29\">",
               "target": [
-                "#sm-17906209470692737-30"
+                "#sm-17906362299956355-30"
               ]
             },
             {
@@ -4857,9 +4918,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" role=\"group\" aria-hidden=\"true\" aria-expanded=\"false\" style=\"\" id=\"sm-17906209470692737-32\" aria-labelledby=\"sm-17906209470692737-31\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" role=\"group\" aria-hidden=\"true\" aria-expanded=\"false\" style=\"\" id=\"sm-17906362299956355-32\" aria-labelledby=\"sm-17906362299956355-31\">",
               "target": [
-                "#sm-17906209470692737-32"
+                "#sm-17906362299956355-32"
               ]
             },
             {
@@ -4889,9 +4950,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906209470692737-34\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-33\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906362299956355-34\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-33\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-34"
+                "#sm-17906362299956355-34"
               ]
             },
             {
@@ -5915,9 +5976,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-1"
+                "#sm-17906362299956355-1"
               ]
             },
             {
@@ -5933,9 +5994,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906209470692737-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906362299956355-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-3"
+                "#sm-17906362299956355-3"
               ]
             },
             {
@@ -5951,9 +6012,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906209470692737-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906362299956355-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-11"
+                "#sm-17906362299956355-11"
               ]
             },
             {
@@ -5969,9 +6030,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906209470692737-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906362299956355-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-29"
+                "#sm-17906362299956355-29"
               ]
             },
             {
@@ -5987,9 +6048,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906209470692737-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906362299956355-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-31"
+                "#sm-17906362299956355-31"
               ]
             },
             {
@@ -6005,9 +6066,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-33"
+                "#sm-17906362299956355-33"
               ]
             },
             {
@@ -6440,6 +6501,24 @@
               "html": "<nav class=\"action-nav js-action-nav\" role=\"navigation\" aria-label=\"Footer Menu\">",
               "target": [
                 ".action-nav"
+              ]
+            },
+            {
+              "any": [],
+              "all": [],
+              "none": [
+                {
+                  "id": "aria-prohibited-attr",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "ARIA attribute is allowed"
+                }
+              ],
+              "impact": null,
+              "html": "<a aria-haspopup=\"true\" class=\"VIpgJd-ZVi9od-xl07Ob-lTBxed\" href=\"#\">",
+              "target": [
+                ".VIpgJd-ZVi9od-xl07Ob-lTBxed"
               ]
             }
           ]
@@ -8854,6 +8933,38 @@
               "target": [
                 ".action-nav"
               ]
+            },
+            {
+              "any": [],
+              "all": [
+                {
+                  "id": "aria-valid-attr-value",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "ARIA attribute values are valid"
+                },
+                {
+                  "id": "aria-errormessage",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "aria-errormessage exists and references elements visible to screen readers that use a supported aria-errormessage technique"
+                },
+                {
+                  "id": "aria-level",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "aria-level values are valid"
+                }
+              ],
+              "none": [],
+              "impact": null,
+              "html": "<a aria-haspopup=\"true\" class=\"VIpgJd-ZVi9od-xl07Ob-lTBxed\" href=\"#\">",
+              "target": [
+                ".VIpgJd-ZVi9od-xl07Ob-lTBxed"
+              ]
             }
           ]
         },
@@ -9012,9 +9123,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-1"
+                "#sm-17906362299956355-1"
               ]
             },
             {
@@ -9030,9 +9141,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906209470692737-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906362299956355-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-3"
+                "#sm-17906362299956355-3"
               ]
             },
             {
@@ -9048,9 +9159,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906209470692737-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906362299956355-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-11"
+                "#sm-17906362299956355-11"
               ]
             },
             {
@@ -9066,9 +9177,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906209470692737-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906362299956355-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-29"
+                "#sm-17906362299956355-29"
               ]
             },
             {
@@ -9084,9 +9195,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906209470692737-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906362299956355-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-31"
+                "#sm-17906362299956355-31"
               ]
             },
             {
@@ -9102,9 +9213,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-33"
+                "#sm-17906362299956355-33"
               ]
             },
             {
@@ -9682,6 +9793,24 @@
               "target": [
                 ".action-nav"
               ]
+            },
+            {
+              "any": [
+                {
+                  "id": "aria-valid-attr",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "ARIA attribute name is valid"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": null,
+              "html": "<a aria-haspopup=\"true\" class=\"VIpgJd-ZVi9od-xl07Ob-lTBxed\" href=\"#\">",
+              "target": [
+                ".VIpgJd-ZVi9od-xl07Ob-lTBxed"
+              ]
             }
           ]
         },
@@ -9791,7 +9920,7 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"site-nav-menu js-main-nav sm\" style=\"\" data-smartmenus-id=\"17906209470692737\">",
+              "html": "<ul class=\"site-nav-menu js-main-nav sm\" style=\"\" data-smartmenus-id=\"17906362299956355\">",
               "target": [
                 ".site-nav-menu"
               ]
@@ -9823,9 +9952,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-1"
+                "#sm-17906362299956355-1"
               ]
             },
             {
@@ -9855,9 +9984,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906209470692737-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906362299956355-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-3"
+                "#sm-17906362299956355-3"
               ]
             },
             {
@@ -9887,9 +10016,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906209470692737-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906362299956355-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-11"
+                "#sm-17906362299956355-11"
               ]
             },
             {
@@ -9919,9 +10048,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906209470692737-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906362299956355-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-29"
+                "#sm-17906362299956355-29"
               ]
             },
             {
@@ -9951,9 +10080,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906209470692737-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906362299956355-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-31"
+                "#sm-17906362299956355-31"
               ]
             },
             {
@@ -9983,9 +10112,9 @@
               ],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-33"
+                "#sm-17906362299956355-33"
               ]
             },
             {
@@ -10883,6 +11012,166 @@
               "target": [
                 ".item.close:nth-child(6) > .action-nav-menu"
               ]
+            },
+            {
+              "any": [],
+              "all": [
+                {
+                  "id": "important-letter-spacing",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Letter-spacing in the style attribute is not set to !important, or meets the minimum"
+                },
+                {
+                  "id": "important-word-spacing",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "word-spacing in the style attribute is not set to !important, or meets the minimum"
+                },
+                {
+                  "id": "important-line-height",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "line-height in the style attribute is not set to !important, or meets the minimum"
+                }
+              ],
+              "none": [],
+              "impact": null,
+              "html": "<div class=\"skiptranslate goog-te-gadget\" dir=\"ltr\" style=\"\">",
+              "target": [
+                ".goog-te-gadget"
+              ]
+            },
+            {
+              "any": [],
+              "all": [
+                {
+                  "id": "important-letter-spacing",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Letter-spacing in the style attribute is not set to !important, or meets the minimum"
+                },
+                {
+                  "id": "important-word-spacing",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "word-spacing in the style attribute is not set to !important, or meets the minimum"
+                },
+                {
+                  "id": "important-line-height",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "line-height in the style attribute is not set to !important, or meets the minimum"
+                }
+              ],
+              "none": [],
+              "impact": null,
+              "html": "<div id=\":0.targetLanguage\" class=\"goog-te-gadget-simple\" style=\"white-space: nowrap;\">",
+              "target": [
+                "#\\:0\\.targetLanguage"
+              ]
+            },
+            {
+              "any": [],
+              "all": [
+                {
+                  "id": "important-letter-spacing",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Letter-spacing in the style attribute is not set to !important, or meets the minimum"
+                },
+                {
+                  "id": "important-word-spacing",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "word-spacing in the style attribute is not set to !important, or meets the minimum"
+                },
+                {
+                  "id": "important-line-height",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "line-height in the style attribute is not set to !important, or meets the minimum"
+                }
+              ],
+              "none": [],
+              "impact": null,
+              "html": "<img src=\"https://www.google.com/images/cleardot.gif\" class=\"goog-te-gadget-icon\" alt=\"\" style=\"background-image: url(&quot;https://translate.googleapis.com/translate_static/img/te_ctrl3.gif&quot;); background-position: -65px 0px;\">",
+              "target": [
+                ".goog-te-gadget-icon"
+              ]
+            },
+            {
+              "any": [],
+              "all": [
+                {
+                  "id": "important-letter-spacing",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Letter-spacing in the style attribute is not set to !important, or meets the minimum"
+                },
+                {
+                  "id": "important-word-spacing",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "word-spacing in the style attribute is not set to !important, or meets the minimum"
+                },
+                {
+                  "id": "important-line-height",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "line-height in the style attribute is not set to !important, or meets the minimum"
+                }
+              ],
+              "none": [],
+              "impact": null,
+              "html": "<span style=\"vertical-align: middle;\">",
+              "target": [
+                "#\\:0\\.targetLanguage > span"
+              ]
+            },
+            {
+              "any": [],
+              "all": [
+                {
+                  "id": "important-letter-spacing",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Letter-spacing in the style attribute is not set to !important, or meets the minimum"
+                },
+                {
+                  "id": "important-word-spacing",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "word-spacing in the style attribute is not set to !important, or meets the minimum"
+                },
+                {
+                  "id": "important-line-height",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "line-height in the style attribute is not set to !important, or meets the minimum"
+                }
+              ],
+              "none": [],
+              "impact": null,
+              "html": "<span style=\"border-left: 1px solid rgb(187, 187, 187);\">​</span>",
+              "target": [
+                "span:nth-child(3)"
+              ]
             }
           ]
         },
@@ -11376,9 +11665,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-1"
+                "#sm-17906362299956355-1"
               ]
             },
             {
@@ -11401,9 +11690,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906209470692737-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906362299956355-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-3"
+                "#sm-17906362299956355-3"
               ]
             },
             {
@@ -11426,9 +11715,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906209470692737-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906362299956355-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-11"
+                "#sm-17906362299956355-11"
               ]
             },
             {
@@ -11451,9 +11740,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906209470692737-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906362299956355-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-29"
+                "#sm-17906362299956355-29"
               ]
             },
             {
@@ -11476,9 +11765,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906209470692737-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906362299956355-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-31"
+                "#sm-17906362299956355-31"
               ]
             },
             {
@@ -11501,9 +11790,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-33"
+                "#sm-17906362299956355-33"
               ]
             },
             {
@@ -12669,6 +12958,31 @@
                 {
                   "id": "color-contrast",
                   "data": {
+                    "fgColor": "#000000",
+                    "bgColor": "#ffffff",
+                    "contrastRatio": 21,
+                    "fontSize": "10.0pt (13.3333px)",
+                    "fontWeight": "normal",
+                    "expectedContrastRatio": "4.5:1"
+                  },
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Element has sufficient color contrast of 21"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": null,
+              "html": "<span>Select Language</span>",
+              "target": [
+                ".VIpgJd-ZVi9od-xl07Ob-lTBxed > span:nth-child(1)"
+              ]
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
                     "fgColor": "#052e4d",
                     "bgColor": "#ffffff",
                     "contrastRatio": 13.95,
@@ -12904,7 +13218,7 @@
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-1",
+                  "data": "sm-17906362299956355-1",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -12913,16 +13227,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-1"
+                "#sm-17906362299956355-1"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-2",
+                  "data": "sm-17906362299956355-2",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -12931,16 +13245,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906209470692737-2\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-1\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906362299956355-2\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-1\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-2"
+                "#sm-17906362299956355-2"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-3",
+                  "data": "sm-17906362299956355-3",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -12949,16 +13263,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906209470692737-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906362299956355-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-3"
+                "#sm-17906362299956355-3"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-4",
+                  "data": "sm-17906362299956355-4",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -12967,16 +13281,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906209470692737-4\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-3\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906362299956355-4\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-3\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-4"
+                "#sm-17906362299956355-4"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-5",
+                  "data": "sm-17906362299956355-5",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -12985,16 +13299,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a href=\"/government/city-fin...\" alt=\"City Finances\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
+              "html": "<a href=\"/government/city-fin...\" alt=\"City Finances\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
               "target": [
-                "#sm-17906209470692737-5"
+                "#sm-17906362299956355-5"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-6",
+                  "data": "sm-17906362299956355-6",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13003,16 +13317,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-6\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-5\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-6\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-5\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-6"
+                "#sm-17906362299956355-6"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-7",
+                  "data": "sm-17906362299956355-7",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13021,16 +13335,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a href=\"/government/diversit...\" alt=\"Diversity, Equity an...\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
+              "html": "<a href=\"/government/diversit...\" alt=\"Diversity, Equity an...\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
               "target": [
-                "#sm-17906209470692737-7"
+                "#sm-17906362299956355-7"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-8",
+                  "data": "sm-17906362299956355-8",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13039,16 +13353,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-8\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-7\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-8\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-7\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-8"
+                "#sm-17906362299956355-8"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-9",
+                  "data": "sm-17906362299956355-9",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13057,16 +13371,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a href=\"/government/meet-you...\" alt=\"Meet Your City Counc...\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
+              "html": "<a href=\"/government/meet-you...\" alt=\"Meet Your City Counc...\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
               "target": [
-                "#sm-17906209470692737-9"
+                "#sm-17906362299956355-9"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-10",
+                  "data": "sm-17906362299956355-10",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13075,16 +13389,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-10\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-9\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-10\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-9\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-10"
+                "#sm-17906362299956355-10"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-11",
+                  "data": "sm-17906362299956355-11",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13093,16 +13407,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906209470692737-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906362299956355-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-11"
+                "#sm-17906362299956355-11"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-12",
+                  "data": "sm-17906362299956355-12",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13111,16 +13425,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906209470692737-12\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-11\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906362299956355-12\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-11\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-12"
+                "#sm-17906362299956355-12"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-13",
+                  "data": "sm-17906362299956355-13",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13129,16 +13443,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a href=\"/services/brush-leaf...\" alt=\"Brush, Leaf & Yard W...\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
+              "html": "<a href=\"/services/brush-leaf...\" alt=\"Brush, Leaf & Yard W...\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
               "target": [
-                "#sm-17906209470692737-13"
+                "#sm-17906362299956355-13"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-14",
+                  "data": "sm-17906362299956355-14",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13147,16 +13461,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-14\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-13\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-14\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-13\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-14"
+                "#sm-17906362299956355-14"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-15",
+                  "data": "sm-17906362299956355-15",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13165,16 +13479,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a href=\"/services/electric-u...\" alt=\"Electric Utility\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
+              "html": "<a href=\"/services/electric-u...\" alt=\"Electric Utility\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
               "target": [
-                "#sm-17906209470692737-15"
+                "#sm-17906362299956355-15"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-16",
+                  "data": "sm-17906362299956355-16",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13183,16 +13497,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-16\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-15\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-16\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-15\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-16"
+                "#sm-17906362299956355-16"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-17",
+                  "data": "sm-17906362299956355-17",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13201,16 +13515,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a href=\"/services/garbage-an...\" alt=\"Garbage and Recyclin...\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
+              "html": "<a href=\"/services/garbage-an...\" alt=\"Garbage and Recyclin...\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
               "target": [
-                "#sm-17906209470692737-17"
+                "#sm-17906362299956355-17"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-18",
+                  "data": "sm-17906362299956355-18",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13219,16 +13533,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-18\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-17\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-18\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-17\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-18"
+                "#sm-17906362299956355-18"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-19",
+                  "data": "sm-17906362299956355-19",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13237,16 +13551,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a href=\"/services/naperville...\" alt=\"Naperville Fire Depa...\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
+              "html": "<a href=\"/services/naperville...\" alt=\"Naperville Fire Depa...\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
               "target": [
-                "#sm-17906209470692737-19"
+                "#sm-17906362299956355-19"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-20",
+                  "data": "sm-17906362299956355-20",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13255,16 +13569,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-20\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-19\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-20\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-19\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-20"
+                "#sm-17906362299956355-20"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-21",
+                  "data": "sm-17906362299956355-21",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13273,16 +13587,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a href=\"/services/naperville...\" alt=\"Naperville Police De...\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
+              "html": "<a href=\"/services/naperville...\" alt=\"Naperville Police De...\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
               "target": [
-                "#sm-17906209470692737-21"
+                "#sm-17906362299956355-21"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-22",
+                  "data": "sm-17906362299956355-22",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13291,16 +13605,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-22\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-21\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-22\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-21\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-22"
+                "#sm-17906362299956355-22"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-23",
+                  "data": "sm-17906362299956355-23",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13309,16 +13623,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a href=\"/services/permits--l...\" alt=\"Permits\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
+              "html": "<a href=\"/services/permits--l...\" alt=\"Permits\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
               "target": [
-                "#sm-17906209470692737-23"
+                "#sm-17906362299956355-23"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-24",
+                  "data": "sm-17906362299956355-24",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13327,16 +13641,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-24\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-23\" aria-expanded=\"false\">\n                                                                </ul>",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-24\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-23\" aria-expanded=\"false\">\n                                                                </ul>",
               "target": [
-                "#sm-17906209470692737-24"
+                "#sm-17906362299956355-24"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-25",
+                  "data": "sm-17906362299956355-25",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13345,16 +13659,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a href=\"/services/snow-and-i...\" alt=\"Snow and Ice Removal\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
+              "html": "<a href=\"/services/snow-and-i...\" alt=\"Snow and Ice Removal\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
               "target": [
-                "#sm-17906209470692737-25"
+                "#sm-17906362299956355-25"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-26",
+                  "data": "sm-17906362299956355-26",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13363,16 +13677,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-26\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-25\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-26\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-25\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-26"
+                "#sm-17906362299956355-26"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-27",
+                  "data": "sm-17906362299956355-27",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13381,16 +13695,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a href=\"/services/water-util...\" alt=\"Water/Wastewater Uti...\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
+              "html": "<a href=\"/services/water-util...\" alt=\"Water/Wastewater Uti...\" tabindex=\"0\" class=\"has-submenu ga-main-...\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"\n                   ...\">",
               "target": [
-                "#sm-17906209470692737-27"
+                "#sm-17906362299956355-27"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-28",
+                  "data": "sm-17906362299956355-28",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13399,16 +13713,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906209470692737-28\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-27\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown-panel dropdown-panel-menu vlist\" id=\"sm-17906362299956355-28\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-27\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-28"
+                "#sm-17906362299956355-28"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-29",
+                  "data": "sm-17906362299956355-29",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13417,16 +13731,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906209470692737-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906362299956355-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-29"
+                "#sm-17906362299956355-29"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-30",
+                  "data": "sm-17906362299956355-30",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13435,16 +13749,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" role=\"group\" aria-hidden=\"true\" aria-expanded=\"false\" style=\"\" id=\"sm-17906209470692737-30\" aria-labelledby=\"sm-17906209470692737-29\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" role=\"group\" aria-hidden=\"true\" aria-expanded=\"false\" style=\"\" id=\"sm-17906362299956355-30\" aria-labelledby=\"sm-17906362299956355-29\">",
               "target": [
-                "#sm-17906209470692737-30"
+                "#sm-17906362299956355-30"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-31",
+                  "data": "sm-17906362299956355-31",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13453,16 +13767,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906209470692737-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906362299956355-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-31"
+                "#sm-17906362299956355-31"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-32",
+                  "data": "sm-17906362299956355-32",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13471,16 +13785,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" role=\"group\" aria-hidden=\"true\" aria-expanded=\"false\" style=\"\" id=\"sm-17906209470692737-32\" aria-labelledby=\"sm-17906209470692737-31\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" role=\"group\" aria-hidden=\"true\" aria-expanded=\"false\" style=\"\" id=\"sm-17906362299956355-32\" aria-labelledby=\"sm-17906362299956355-31\">",
               "target": [
-                "#sm-17906209470692737-32"
+                "#sm-17906362299956355-32"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-33",
+                  "data": "sm-17906362299956355-33",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13489,16 +13803,16 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-33"
+                "#sm-17906362299956355-33"
               ]
             },
             {
               "any": [
                 {
                   "id": "duplicate-id-aria",
-                  "data": "sm-17906209470692737-34",
+                  "data": "sm-17906362299956355-34",
                   "relatedNodes": [],
                   "impact": "critical",
                   "message": "Document has no elements referenced with ARIA or labels that share the same id attribute"
@@ -13507,9 +13821,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906209470692737-34\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906209470692737-33\" aria-expanded=\"false\">",
+              "html": "<ul class=\"dropdown dropdown-menu\" style=\"\" id=\"sm-17906362299956355-34\" role=\"group\" aria-hidden=\"true\" aria-labelledby=\"sm-17906362299956355-33\" aria-expanded=\"false\">",
               "target": [
-                "#sm-17906209470692737-34"
+                "#sm-17906362299956355-34"
               ]
             },
             {
@@ -14428,6 +14742,111 @@
               "target": [
                 ".site-footer-logo"
               ]
+            },
+            {
+              "any": [
+                {
+                  "id": "has-alt",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "Element has an alt attribute"
+                },
+                {
+                  "id": "presentational-role",
+                  "data": {
+                    "role": "presentation"
+                  },
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "Element's default semantics were overridden with role=\"presentation\""
+                }
+              ],
+              "all": [],
+              "none": [
+                {
+                  "id": "alt-space-value",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "Element has a valid alt attribute value"
+                }
+              ],
+              "impact": null,
+              "html": "<img src=\"https://www.google.com/images/cleardot.gif\" class=\"goog-te-gadget-icon\" alt=\"\" style=\"background-image: url(&quot;https://translate.googleapis.com/translate_static/img/te_ctrl3.gif&quot;); background-position: -65px 0px;\">",
+              "target": [
+                ".goog-te-gadget-icon"
+              ]
+            },
+            {
+              "any": [
+                {
+                  "id": "has-alt",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "Element has an alt attribute"
+                },
+                {
+                  "id": "presentational-role",
+                  "data": {
+                    "role": "presentation"
+                  },
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "Element's default semantics were overridden with role=\"presentation\""
+                }
+              ],
+              "all": [],
+              "none": [
+                {
+                  "id": "alt-space-value",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "Element has a valid alt attribute value"
+                }
+              ],
+              "impact": null,
+              "html": "<img src=\"https://www.google.com/images/cleardot.gif\" alt=\"\" width=\"1\" height=\"1\">",
+              "target": [
+                "img[width=\"1\"][height=\"1\"][alt=\"\"]:nth-child(2)"
+              ]
+            },
+            {
+              "any": [
+                {
+                  "id": "has-alt",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "Element has an alt attribute"
+                },
+                {
+                  "id": "presentational-role",
+                  "data": {
+                    "role": "presentation"
+                  },
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "Element's default semantics were overridden with role=\"presentation\""
+                }
+              ],
+              "all": [],
+              "none": [
+                {
+                  "id": "alt-space-value",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "critical",
+                  "message": "Element has a valid alt attribute value"
+                }
+              ],
+              "impact": null,
+              "html": "<img src=\"https://www.google.com/images/cleardot.gif\" alt=\"\" width=\"1\" height=\"1\">",
+              "target": [
+                "img[width=\"1\"][height=\"1\"][alt=\"\"]:nth-child(4)"
+              ]
             }
           ]
         },
@@ -14584,6 +15003,60 @@
               "html": "<img src=\"/globalassets/media/logos/logo.png\" alt=\"The City of Naperville\" class=\"site-footer-logo\" height=\"50 \" width=\"133\">",
               "target": [
                 ".site-footer-logo"
+              ]
+            },
+            {
+              "any": [],
+              "all": [],
+              "none": [
+                {
+                  "id": "duplicate-img-label",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "minor",
+                  "message": "Element does not duplicate existing text in <img> alt text"
+                }
+              ],
+              "impact": null,
+              "html": "<img src=\"https://www.google.com/images/cleardot.gif\" class=\"goog-te-gadget-icon\" alt=\"\" style=\"background-image: url(&quot;https://translate.googleapis.com/translate_static/img/te_ctrl3.gif&quot;); background-position: -65px 0px;\">",
+              "target": [
+                ".goog-te-gadget-icon"
+              ]
+            },
+            {
+              "any": [],
+              "all": [],
+              "none": [
+                {
+                  "id": "duplicate-img-label",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "minor",
+                  "message": "Element does not duplicate existing text in <img> alt text"
+                }
+              ],
+              "impact": null,
+              "html": "<img src=\"https://www.google.com/images/cleardot.gif\" alt=\"\" width=\"1\" height=\"1\">",
+              "target": [
+                "img[width=\"1\"][height=\"1\"][alt=\"\"]:nth-child(2)"
+              ]
+            },
+            {
+              "any": [],
+              "all": [],
+              "none": [
+                {
+                  "id": "duplicate-img-label",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "minor",
+                  "message": "Element does not duplicate existing text in <img> alt text"
+                }
+              ],
+              "impact": null,
+              "html": "<img src=\"https://www.google.com/images/cleardot.gif\" alt=\"\" width=\"1\" height=\"1\">",
+              "target": [
+                "img[width=\"1\"][height=\"1\"][alt=\"\"]:nth-child(4)"
               ]
             }
           ]
@@ -15358,9 +15831,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-1"
+                "#sm-17906362299956355-1"
               ]
             },
             {
@@ -15384,9 +15857,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906209470692737-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906362299956355-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-3"
+                "#sm-17906362299956355-3"
               ]
             },
             {
@@ -15410,9 +15883,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906209470692737-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906362299956355-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-11"
+                "#sm-17906362299956355-11"
               ]
             },
             {
@@ -15436,9 +15909,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906209470692737-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906362299956355-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-29"
+                "#sm-17906362299956355-29"
               ]
             },
             {
@@ -15462,9 +15935,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906209470692737-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906362299956355-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-31"
+                "#sm-17906362299956355-31"
               ]
             },
             {
@@ -15488,9 +15961,9 @@
                 }
               ],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-33"
+                "#sm-17906362299956355-33"
               ]
             },
             {
@@ -17524,6 +17997,32 @@
               "target": [
                 "a[href$=\"accessibility-statement/\"]"
               ]
+            },
+            {
+              "any": [
+                {
+                  "id": "has-visible-text",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Element has text that is visible to screen readers"
+                }
+              ],
+              "all": [],
+              "none": [
+                {
+                  "id": "focusable-no-name",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Element is not in tab order or has accessible text"
+                }
+              ],
+              "impact": null,
+              "html": "<a aria-haspopup=\"true\" class=\"VIpgJd-ZVi9od-xl07Ob-lTBxed\" href=\"#\">",
+              "target": [
+                ".VIpgJd-ZVi9od-xl07Ob-lTBxed"
+              ]
             }
           ]
         },
@@ -17574,7 +18073,7 @@
                 }
               ],
               "impact": null,
-              "html": "<ul class=\"site-nav-menu js-main-nav sm\" style=\"\" data-smartmenus-id=\"17906209470692737\">",
+              "html": "<ul class=\"site-nav-menu js-main-nav sm\" style=\"\" data-smartmenus-id=\"17906362299956355\">",
               "target": [
                 ".site-nav-menu"
               ]
@@ -20270,6 +20769,81 @@
               "target": [
                 ".js-tablist__item.tabs__item[role=\"presentation\"]:nth-child(2)"
               ]
+            },
+            {
+              "any": [],
+              "all": [],
+              "none": [
+                {
+                  "id": "is-element-focusable",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "minor",
+                  "message": "Element is focusable."
+                },
+                {
+                  "id": "has-global-aria-attribute",
+                  "data": [],
+                  "relatedNodes": [],
+                  "impact": "minor",
+                  "message": "Element has global ARIA attributes: "
+                }
+              ],
+              "impact": null,
+              "html": "<img src=\"https://www.google.com/images/cleardot.gif\" class=\"goog-te-gadget-icon\" alt=\"\" style=\"background-image: url(&quot;https://translate.googleapis.com/translate_static/img/te_ctrl3.gif&quot;); background-position: -65px 0px;\">",
+              "target": [
+                ".goog-te-gadget-icon"
+              ]
+            },
+            {
+              "any": [],
+              "all": [],
+              "none": [
+                {
+                  "id": "is-element-focusable",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "minor",
+                  "message": "Element is focusable."
+                },
+                {
+                  "id": "has-global-aria-attribute",
+                  "data": [],
+                  "relatedNodes": [],
+                  "impact": "minor",
+                  "message": "Element has global ARIA attributes: "
+                }
+              ],
+              "impact": null,
+              "html": "<img src=\"https://www.google.com/images/cleardot.gif\" alt=\"\" width=\"1\" height=\"1\">",
+              "target": [
+                "img[width=\"1\"][height=\"1\"][alt=\"\"]:nth-child(2)"
+              ]
+            },
+            {
+              "any": [],
+              "all": [],
+              "none": [
+                {
+                  "id": "is-element-focusable",
+                  "data": null,
+                  "relatedNodes": [],
+                  "impact": "minor",
+                  "message": "Element is focusable."
+                },
+                {
+                  "id": "has-global-aria-attribute",
+                  "data": [],
+                  "relatedNodes": [],
+                  "impact": "minor",
+                  "message": "Element has global ARIA attributes: "
+                }
+              ],
+              "impact": null,
+              "html": "<img src=\"https://www.google.com/images/cleardot.gif\" alt=\"\" width=\"1\" height=\"1\">",
+              "target": [
+                "img[width=\"1\"][height=\"1\"][alt=\"\"]:nth-child(4)"
+              ]
             }
           ]
         },
@@ -20841,7 +21415,7 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<ul class=\"site-nav-menu js-main-nav sm\" style=\"\" data-smartmenus-id=\"17906209470692737\">",
+              "html": "<ul class=\"site-nav-menu js-main-nav sm\" style=\"\" data-smartmenus-id=\"17906362299956355\">",
               "target": [
                 ".site-nav-menu"
               ]
@@ -20881,9 +21455,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-1"
+                "#sm-17906362299956355-1"
               ]
             },
             {
@@ -20921,9 +21495,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906209470692737-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906362299956355-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-3"
+                "#sm-17906362299956355-3"
               ]
             },
             {
@@ -20961,9 +21535,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906209470692737-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906362299956355-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-11"
+                "#sm-17906362299956355-11"
               ]
             },
             {
@@ -21001,9 +21575,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906209470692737-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906362299956355-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-29"
+                "#sm-17906362299956355-29"
               ]
             },
             {
@@ -21041,9 +21615,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906209470692737-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906362299956355-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-31"
+                "#sm-17906362299956355-31"
               ]
             },
             {
@@ -21081,9 +21655,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-33"
+                "#sm-17906362299956355-33"
               ]
             },
             {
@@ -28673,6 +29247,186 @@
               "all": [],
               "none": [],
               "impact": null,
+              "html": "<div class=\"skiptranslate goog-te-gadget\" dir=\"ltr\" style=\"\">",
+              "target": [
+                ".goog-te-gadget"
+              ]
+            },
+            {
+              "any": [
+                {
+                  "id": "region",
+                  "data": {
+                    "isIframe": false
+                  },
+                  "relatedNodes": [],
+                  "impact": "moderate",
+                  "message": "All page content is contained by landmarks"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": null,
+              "html": "<div id=\":0.targetLanguage\" class=\"goog-te-gadget-simple\" style=\"white-space: nowrap;\">",
+              "target": [
+                "#\\:0\\.targetLanguage"
+              ]
+            },
+            {
+              "any": [
+                {
+                  "id": "region",
+                  "data": {
+                    "isIframe": false
+                  },
+                  "relatedNodes": [],
+                  "impact": "moderate",
+                  "message": "All page content is contained by landmarks"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": null,
+              "html": "<img src=\"https://www.google.com/images/cleardot.gif\" class=\"goog-te-gadget-icon\" alt=\"\" style=\"background-image: url(&quot;https://translate.googleapis.com/translate_static/img/te_ctrl3.gif&quot;); background-position: -65px 0px;\">",
+              "target": [
+                ".goog-te-gadget-icon"
+              ]
+            },
+            {
+              "any": [
+                {
+                  "id": "region",
+                  "data": {
+                    "isIframe": false
+                  },
+                  "relatedNodes": [],
+                  "impact": "moderate",
+                  "message": "All page content is contained by landmarks"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": null,
+              "html": "<span style=\"vertical-align: middle;\">",
+              "target": [
+                "#\\:0\\.targetLanguage > span"
+              ]
+            },
+            {
+              "any": [
+                {
+                  "id": "region",
+                  "data": {
+                    "isIframe": false
+                  },
+                  "relatedNodes": [],
+                  "impact": "moderate",
+                  "message": "All page content is contained by landmarks"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": null,
+              "html": "<a aria-haspopup=\"true\" class=\"VIpgJd-ZVi9od-xl07Ob-lTBxed\" href=\"#\">",
+              "target": [
+                ".VIpgJd-ZVi9od-xl07Ob-lTBxed"
+              ]
+            },
+            {
+              "any": [
+                {
+                  "id": "region",
+                  "data": {
+                    "isIframe": false
+                  },
+                  "relatedNodes": [],
+                  "impact": "moderate",
+                  "message": "All page content is contained by landmarks"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": null,
+              "html": "<span>Select Language</span>",
+              "target": [
+                ".VIpgJd-ZVi9od-xl07Ob-lTBxed > span:nth-child(1)"
+              ]
+            },
+            {
+              "any": [
+                {
+                  "id": "region",
+                  "data": {
+                    "isIframe": false
+                  },
+                  "relatedNodes": [],
+                  "impact": "moderate",
+                  "message": "All page content is contained by landmarks"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": null,
+              "html": "<img src=\"https://www.google.com/images/cleardot.gif\" alt=\"\" width=\"1\" height=\"1\">",
+              "target": [
+                "img[width=\"1\"][height=\"1\"][alt=\"\"]:nth-child(2)"
+              ]
+            },
+            {
+              "any": [
+                {
+                  "id": "region",
+                  "data": {
+                    "isIframe": false
+                  },
+                  "relatedNodes": [],
+                  "impact": "moderate",
+                  "message": "All page content is contained by landmarks"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": null,
+              "html": "<span style=\"border-left: 1px solid rgb(187, 187, 187);\">​</span>",
+              "target": [
+                "span:nth-child(3)"
+              ]
+            },
+            {
+              "any": [
+                {
+                  "id": "region",
+                  "data": {
+                    "isIframe": false
+                  },
+                  "relatedNodes": [],
+                  "impact": "moderate",
+                  "message": "All page content is contained by landmarks"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": null,
+              "html": "<img src=\"https://www.google.com/images/cleardot.gif\" alt=\"\" width=\"1\" height=\"1\">",
+              "target": [
+                "img[width=\"1\"][height=\"1\"][alt=\"\"]:nth-child(4)"
+              ]
+            },
+            {
+              "any": [
+                {
+                  "id": "region",
+                  "data": {
+                    "isIframe": false
+                  },
+                  "relatedNodes": [],
+                  "impact": "moderate",
+                  "message": "All page content is contained by landmarks"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": null,
               "html": "<div class=\"site-footer-group\">\n                    <p class=\"site-footer-disclaimer\">\n                        © 2026\nCity of Naperville, Illinois.                        <br>All Rights Reserved.\n                    </p>\n                </div>",
               "target": [
                 ".site-footer-row:nth-child(2) > .site-footer-group:nth-child(2)"
@@ -28996,9 +29750,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-1"
+                "#sm-17906362299956355-1"
               ]
             },
             {
@@ -29014,9 +29768,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906209470692737-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906362299956355-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-3"
+                "#sm-17906362299956355-3"
               ]
             },
             {
@@ -29032,9 +29786,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906209470692737-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906362299956355-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-11"
+                "#sm-17906362299956355-11"
               ]
             },
             {
@@ -29050,9 +29804,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906209470692737-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906362299956355-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-29"
+                "#sm-17906362299956355-29"
               ]
             },
             {
@@ -29068,9 +29822,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906209470692737-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906362299956355-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-31"
+                "#sm-17906362299956355-31"
               ]
             },
             {
@@ -29086,9 +29840,9 @@
               "all": [],
               "none": [],
               "impact": null,
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-33"
+                "#sm-17906362299956355-33"
               ]
             },
             {
@@ -29352,20 +30106,20 @@
                   "id": "aria-valid-attr-value",
                   "data": {
                     "messageKey": "controlsWithinPopup",
-                    "needsReview": "aria-controls=\"sm-17906209470692737-2\""
+                    "needsReview": "aria-controls=\"sm-17906362299956355-2\""
                   },
                   "relatedNodes": [],
                   "impact": "critical",
-                  "message": "Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906209470692737-2\""
+                  "message": "Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906362299956355-2\""
                 }
               ],
               "none": [],
               "impact": "critical",
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/about-naperville/\" alt=\"About Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"About Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-1"
+                "#sm-17906362299956355-1"
               ],
-              "failureSummary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906209470692737-2\""
+              "failureSummary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906362299956355-2\""
             },
             {
               "any": [],
@@ -29374,20 +30128,20 @@
                   "id": "aria-valid-attr-value",
                   "data": {
                     "messageKey": "controlsWithinPopup",
-                    "needsReview": "aria-controls=\"sm-17906209470692737-4\""
+                    "needsReview": "aria-controls=\"sm-17906362299956355-4\""
                   },
                   "relatedNodes": [],
                   "impact": "critical",
-                  "message": "Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906209470692737-4\""
+                  "message": "Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906362299956355-4\""
                 }
               ],
               "none": [],
               "impact": "critical",
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906209470692737-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/government/\" alt=\"Government\" tabindex=\"0\" id=\"sm-17906362299956355-3\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-4\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Government\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-3"
+                "#sm-17906362299956355-3"
               ],
-              "failureSummary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906209470692737-4\""
+              "failureSummary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906362299956355-4\""
             },
             {
               "any": [],
@@ -29396,20 +30150,20 @@
                   "id": "aria-valid-attr-value",
                   "data": {
                     "messageKey": "controlsWithinPopup",
-                    "needsReview": "aria-controls=\"sm-17906209470692737-12\""
+                    "needsReview": "aria-controls=\"sm-17906362299956355-12\""
                   },
                   "relatedNodes": [],
                   "impact": "critical",
-                  "message": "Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906209470692737-12\""
+                  "message": "Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906362299956355-12\""
                 }
               ],
               "none": [],
               "impact": "critical",
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906209470692737-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/services/\" alt=\"Services\" tabindex=\"0\" id=\"sm-17906362299956355-11\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-12\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Services\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-11"
+                "#sm-17906362299956355-11"
               ],
-              "failureSummary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906209470692737-12\""
+              "failureSummary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906362299956355-12\""
             },
             {
               "any": [],
@@ -29418,20 +30172,20 @@
                   "id": "aria-valid-attr-value",
                   "data": {
                     "messageKey": "controlsWithinPopup",
-                    "needsReview": "aria-controls=\"sm-17906209470692737-30\""
+                    "needsReview": "aria-controls=\"sm-17906362299956355-30\""
                   },
                   "relatedNodes": [],
                   "impact": "critical",
-                  "message": "Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906209470692737-30\""
+                  "message": "Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906362299956355-30\""
                 }
               ],
               "none": [],
               "impact": "critical",
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906209470692737-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/residents/\" alt=\"Residents\" tabindex=\"0\" id=\"sm-17906362299956355-29\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-30\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Residents\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-29"
+                "#sm-17906362299956355-29"
               ],
-              "failureSummary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906209470692737-30\""
+              "failureSummary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906362299956355-30\""
             },
             {
               "any": [],
@@ -29440,20 +30194,20 @@
                   "id": "aria-valid-attr-value",
                   "data": {
                     "messageKey": "controlsWithinPopup",
-                    "needsReview": "aria-controls=\"sm-17906209470692737-32\""
+                    "needsReview": "aria-controls=\"sm-17906362299956355-32\""
                   },
                   "relatedNodes": [],
                   "impact": "critical",
-                  "message": "Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906209470692737-32\""
+                  "message": "Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906362299956355-32\""
                 }
               ],
               "none": [],
               "impact": "critical",
-              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906209470692737-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
+              "html": "<a class=\"top has-submenu ga-main-nav-link\" href=\"/businesses/\" alt=\"Businesses\" tabindex=\"0\" id=\"sm-17906362299956355-31\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355-32\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Businesses\" style=\"cursor: inherit;\">",
               "target": [
-                "#sm-17906209470692737-31"
+                "#sm-17906362299956355-31"
               ],
-              "failureSummary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906209470692737-32\""
+              "failureSummary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906362299956355-32\""
             },
             {
               "any": [],
@@ -29462,20 +30216,20 @@
                   "id": "aria-valid-attr-value",
                   "data": {
                     "messageKey": "controlsWithinPopup",
-                    "needsReview": "aria-controls=\"sm-17906209470692737-34\""
+                    "needsReview": "aria-controls=\"sm-17906362299956355-34\""
                   },
                   "relatedNodes": [],
                   "impact": "critical",
-                  "message": "Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906209470692737-34\""
+                  "message": "Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906362299956355-34\""
                 }
               ],
               "none": [],
               "impact": "critical",
-              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906209470692737...\" aria-haspopup=\"true\" aria-controls=\"sm-17906209470692737...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
+              "html": "<a class=\"top has-submenu ga-m...\" href=\"/enjoy-naperville/\" alt=\"Enjoy Naperville\" tabindex=\"0\" id=\"sm-17906362299956355...\" aria-haspopup=\"true\" aria-controls=\"sm-17906362299956355...\" aria-expanded=\"false\" data-category=\"Main Navigation Link\" data-text=\"Enjoy Naperville\" ...>",
               "target": [
-                "#sm-17906209470692737-33"
+                "#sm-17906362299956355-33"
               ],
-              "failureSummary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906209470692737-34\""
+              "failureSummary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"sm-17906362299956355-34\""
             }
           ]
         },
@@ -31093,6 +31847,27 @@
                 "a[href$=\"event-info/\"]"
               ],
               "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient"
+            },
+            {
+              "any": [
+                {
+                  "id": "color-contrast",
+                  "data": {
+                    "messageKey": "nonBmp"
+                  },
+                  "relatedNodes": [],
+                  "impact": "serious",
+                  "message": "Element content contains only non-text characters"
+                }
+              ],
+              "all": [],
+              "none": [],
+              "impact": "serious",
+              "html": "<span aria-hidden=\"true\" style=\"color: rgb(118, 118, 118);\">▼</span>",
+              "target": [
+                ".VIpgJd-ZVi9od-xl07Ob-lTBxed > span[aria-hidden=\"true\"]"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element content contains only non-text characters"
             }
           ]
         }
@@ -31366,10 +32141,454 @@
       "captureStatus": "completed"
     }
   },
-  "accessibilityEvidence": [],
+  "accessibilityEvidence": [
+    {
+      "schemaVersion": "1.0.0",
+      "id": "accessibility-evidence-094c66a5-f13f-4df7-89da-c213571b1510",
+      "assessmentId": "developer-scan-0eb5e105-e1ce-4ee1-bf16-e3e9906043d7",
+      "pageId": "page-884d5da9-9fcf-4ac6-b904-5e9833daa2f2",
+      "kind": "accessibility_semantics",
+      "source": {
+        "type": "accessibility_api",
+        "name": "Chrome DevTools Protocol Accessibility",
+        "version": "1.3"
+      },
+      "capturedAt": "2026-09-28T22:57:10.695Z",
+      "contentType": "application/json",
+      "payload": {
+        "schemaVersion": "1.0.0",
+        "target": {
+          "schemaVersion": "1.0.0",
+          "id": "cli-target-1",
+          "strategy": "css",
+          "selector": ".site-search-button",
+          "sourceEvidenceId": null
+        },
+        "provenance": {
+          "classification": "browser_accessibility_semantics",
+          "apiName": "Chrome DevTools Protocol Accessibility",
+          "apiVersion": "1.3",
+          "browserName": "chromium",
+          "browserVersion": "153.0.8010.12",
+          "automationName": "playwright",
+          "automationVersion": "1.63.0",
+          "assistiveTechnologyOutput": false
+        },
+        "collectionStatus": "collected",
+        "semantics": {
+          "role": {
+            "status": "available",
+            "value": "button"
+          },
+          "name": {
+            "status": "available",
+            "value": "Search"
+          },
+          "description": {
+            "status": "unavailable",
+            "reason": "not_exposed_or_not_applicable"
+          },
+          "value": {
+            "status": "unavailable",
+            "reason": "not_exposed_or_not_applicable"
+          },
+          "focusable": {
+            "status": "available",
+            "value": true
+          },
+          "states": {
+            "busy": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "disabled": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "focused": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "invalid": {
+              "status": "available",
+              "value": "false"
+            },
+            "readOnly": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "required": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "checked": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "expanded": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "modal": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "pressed": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "selected": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            }
+          },
+          "relationships": {
+            "activeDescendant": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "controls": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "describedBy": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "details": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "errorMessage": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "flowTo": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "labelledBy": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "owns": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            }
+          }
+        },
+        "error": null
+      },
+      "metadata": {
+        "targetId": "cli-target-1",
+        "rawEvidenceIds": [
+          "browser-evidence-af0d05b5-4064-490b-90d8-5509a708a7d6",
+          "scanner-evidence-bc59b102-b8a6-4431-a24e-93c737d1ad1a"
+        ],
+        "sourceEvidenceId": null
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "id": "accessibility-evidence-cb07ace5-49bd-479c-86c6-23ac5af126ca",
+      "assessmentId": "developer-scan-0eb5e105-e1ce-4ee1-bf16-e3e9906043d7",
+      "pageId": "page-884d5da9-9fcf-4ac6-b904-5e9833daa2f2",
+      "kind": "accessibility_semantics",
+      "source": {
+        "type": "accessibility_api",
+        "name": "Chrome DevTools Protocol Accessibility",
+        "version": "1.3"
+      },
+      "capturedAt": "2026-09-28T22:57:10.698Z",
+      "contentType": "application/json",
+      "payload": {
+        "schemaVersion": "1.0.0",
+        "target": {
+          "schemaVersion": "1.0.0",
+          "id": "cli-target-2",
+          "strategy": "css",
+          "selector": "#label_1",
+          "sourceEvidenceId": null
+        },
+        "provenance": {
+          "classification": "browser_accessibility_semantics",
+          "apiName": "Chrome DevTools Protocol Accessibility",
+          "apiVersion": "1.3",
+          "browserName": "chromium",
+          "browserVersion": "153.0.8010.12",
+          "automationName": "playwright",
+          "automationVersion": "1.63.0",
+          "assistiveTechnologyOutput": false
+        },
+        "collectionStatus": "collected",
+        "semantics": {
+          "role": {
+            "status": "available",
+            "value": "tab"
+          },
+          "name": {
+            "status": "available",
+            "value": "City Events"
+          },
+          "description": {
+            "status": "unavailable",
+            "reason": "not_exposed_or_not_applicable"
+          },
+          "value": {
+            "status": "unavailable",
+            "reason": "not_exposed_or_not_applicable"
+          },
+          "focusable": {
+            "status": "available",
+            "value": true
+          },
+          "states": {
+            "busy": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "disabled": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "focused": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "invalid": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "readOnly": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "required": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "checked": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "expanded": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "modal": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "pressed": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "selected": {
+              "status": "available",
+              "value": true
+            }
+          },
+          "relationships": {
+            "activeDescendant": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "controls": {
+              "status": "available",
+              "value": [
+                {
+                  "idref": "tab1",
+                  "text": null
+                }
+              ]
+            },
+            "describedBy": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "details": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "errorMessage": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "flowTo": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "labelledBy": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "owns": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            }
+          }
+        },
+        "error": null
+      },
+      "metadata": {
+        "targetId": "cli-target-2",
+        "rawEvidenceIds": [
+          "browser-evidence-af0d05b5-4064-490b-90d8-5509a708a7d6",
+          "scanner-evidence-bc59b102-b8a6-4431-a24e-93c737d1ad1a"
+        ],
+        "sourceEvidenceId": null
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "id": "accessibility-evidence-0142f70a-74f1-4740-8c01-0ae6ee31182c",
+      "assessmentId": "developer-scan-0eb5e105-e1ce-4ee1-bf16-e3e9906043d7",
+      "pageId": "page-884d5da9-9fcf-4ac6-b904-5e9833daa2f2",
+      "kind": "accessibility_semantics",
+      "source": {
+        "type": "accessibility_api",
+        "name": "Chrome DevTools Protocol Accessibility",
+        "version": "1.3"
+      },
+      "capturedAt": "2026-09-28T22:57:10.699Z",
+      "contentType": "application/json",
+      "payload": {
+        "schemaVersion": "1.0.0",
+        "target": {
+          "schemaVersion": "1.0.0",
+          "id": "cli-target-3",
+          "strategy": "css",
+          "selector": ".slick-prev",
+          "sourceEvidenceId": null
+        },
+        "provenance": {
+          "classification": "browser_accessibility_semantics",
+          "apiName": "Chrome DevTools Protocol Accessibility",
+          "apiVersion": "1.3",
+          "browserName": "chromium",
+          "browserVersion": "153.0.8010.12",
+          "automationName": "playwright",
+          "automationVersion": "1.63.0",
+          "assistiveTechnologyOutput": false
+        },
+        "collectionStatus": "collected",
+        "semantics": {
+          "role": {
+            "status": "available",
+            "value": "button"
+          },
+          "name": {
+            "status": "available",
+            "value": "Previous"
+          },
+          "description": {
+            "status": "unavailable",
+            "reason": "not_exposed_or_not_applicable"
+          },
+          "value": {
+            "status": "unavailable",
+            "reason": "not_exposed_or_not_applicable"
+          },
+          "focusable": {
+            "status": "available",
+            "value": true
+          },
+          "states": {
+            "busy": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "disabled": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "focused": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "invalid": {
+              "status": "available",
+              "value": "false"
+            },
+            "readOnly": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "required": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "checked": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "expanded": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "modal": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "pressed": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "selected": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            }
+          },
+          "relationships": {
+            "activeDescendant": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "controls": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "describedBy": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "details": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "errorMessage": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "flowTo": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "labelledBy": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            },
+            "owns": {
+              "status": "unavailable",
+              "reason": "not_exposed_or_not_applicable"
+            }
+          }
+        },
+        "error": null
+      },
+      "metadata": {
+        "targetId": "cli-target-3",
+        "rawEvidenceIds": [
+          "browser-evidence-af0d05b5-4064-490b-90d8-5509a708a7d6",
+          "scanner-evidence-bc59b102-b8a6-4431-a24e-93c737d1ad1a"
+        ],
+        "sourceEvidenceId": null
+      }
+    }
+  ],
   "operationalResult": {
     "status": "loaded"
   },
-  "startedAt": "2026-09-28T18:42:26.106Z",
-  "completedAt": "2026-09-28T18:42:27.658Z"
+  "startedAt": "2026-09-28T22:57:09.115Z",
+  "completedAt": "2026-09-28T22:57:10.676Z"
 }

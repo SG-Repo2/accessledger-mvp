@@ -50,6 +50,25 @@ navigation failures, scan failures, and unexpected runtime errors exit non-zero.
 failures still print their assessment JSON so the raw failure evidence remains inspectable. The CLI
 contains no scanner rules or interpretation and delegates directly to `assessRawPage`.
 
+To save only the JSON payload for later preparation, suppress npm's command banner:
+
+```text
+npm run --silent scan -- https://example.gov/ > scan.json
+```
+
+The saved file can then be prepared for review with the existing deterministic pipeline:
+
+```text
+npm run assessment:prepare -- ./scan.json ./accessledger-review.sqlite
+```
+
+The preparation command runtime-validates the complete aggregate, refuses navigation/scan failure
+records, initializes the SQLite review store, drafts only groups already eligible under the Chunk 5
+policy, and persists each eligible Finding with its exact source trace. It does not accept grouping,
+create Validation, assign severity/confidence, or convert unsupported WCAG evaluations into claims.
+Its JSON manifest reports resolved paths and stage counts, including ignored normalization inputs,
+unknown rules, unsupported/uncertain WCAG evaluations, ineligible groups, and persisted bundles.
+
 ## Loading, timeout, and ownership
 
 `PlaywrightBrowserLoader` launches one headless Chromium browser, context, and page per `load`
