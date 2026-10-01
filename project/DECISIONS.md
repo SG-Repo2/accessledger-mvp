@@ -368,3 +368,41 @@
   documented JSON cells. `generatedAt` intentionally changes bytes/hashes across real runs. The
   output is a working Findings Register, not a polished report, XLSX workbook, certification,
   legal opinion, dashboard, account boundary, or monitoring system.
+
+## ADR-015 — Durable pre-Finding proposal review with explicit acceptance
+
+- **Date:** 2026-10-01
+- **Status:** Accepted
+- **Context:** Deterministic preparation produces reviewable low/medium-confidence proposals that
+  cannot cross a process boundary because the existing review store begins with a draft Finding.
+  Auto-acceptance would erase the human grouping boundary, while discarding ineligible proposals
+  loses their complete evidence trace.
+- **Decision:** Add `GroupProposalReviewService` over a narrow proposal repository. Preparation
+  persists every original pending GroupProposal plus its exact ordered Observation,
+  ObservationOccurrence, WCAG evaluation, Page, and Evidence links in one transaction. Add public
+  versioned `ProposalReviewDecision` and `ProposalDraftLink` contracts. Project current proposal
+  status from append-only explicit accept/reject/split decisions without changing the original
+  proposal or member ledger.
+- **Drafting decision:** Invoke the existing `DeterministicFindingDrafter` only after explicit
+  acceptance. Accepted repeats retain existing eligibility. Accepted singletons require a supported
+  WCAG criterion. Rejected, split, ambiguous, and otherwise ineligible accepted proposals retain
+  their decision but create no Finding. An eligible acceptance commits the decision, review bundle,
+  review audit event, and immutable proposal-to-draft link atomically.
+- **Persistence decision:** Add ordered migration 3 without changing migrations 1 or 2. It creates
+  `proposal_reviews`, `proposal_source_records`, `proposal_decisions`, and
+  `proposal_draft_links`, plus triggers enforcing immutable originals/trace links/draft links and
+  append-only decisions. Duplicate deterministic proposal IDs abort a complete preparation batch.
+- **Application decision:** Add an Auditor Studio `/proposals` queue and detail view using native
+  semantic links/forms. Show membership, rationale, grouping confidence, WCAG status, Evidence and
+  source/tool versions, append-only history, and draft linkage. Require actor and reason for every
+  explicit choice; provide no default or automatic acceptance.
+- **Alternatives considered:** Auto-accept medium repeats; persist only eligible proposals; attach
+  decisions to a nonexistent Finding; mutate `GroupProposal.reviewStatus` in place; create a draft
+  before grouping review; modify migration 1 or 2; add fingerprints or broader normalization.
+- **Schema-version decision:** Retain public domain contract `1.0.0` under the coordinated
+  pre-release additive policy. Persistence advances independently from 2 to 3. The WCAG dataset,
+  grouping algorithm, and Finding drafting policy versions remain unchanged.
+- **Consequences:** Naperville preparation durably exposes five pending proposals and zero drafts.
+  Explicit acceptance of its two medium-confidence repeats creates two trace-complete draft
+  Findings; the three uncertain singletons remain pending and no proposal is auto-accepted. Finding
+  validation, severity, approval, and export gates are unchanged.

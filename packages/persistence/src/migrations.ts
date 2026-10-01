@@ -4,7 +4,7 @@ export interface SqliteMigration {
   sql: string;
 }
 
-export const SQLITE_REVIEW_SCHEMA_VERSION = 2 as const;
+export const SQLITE_REVIEW_SCHEMA_VERSION = 3 as const;
 
 export const reviewMigrations: readonly SqliteMigration[] = [
   {
@@ -195,6 +195,63 @@ export const reviewMigrations: readonly SqliteMigration[] = [
         BEFORE UPDATE ON journey_audit_events BEGIN SELECT RAISE(ABORT, 'journey audit history is append-only'); END;
       CREATE TRIGGER journey_audit_events_no_delete
         BEFORE DELETE ON journey_audit_events BEGIN SELECT RAISE(ABORT, 'journey audit history is append-only'); END;
+    `,
+  },
+  {
+    version: 3,
+    name: 'create_pre_finding_proposal_review_store',
+    sql: `
+      CREATE TABLE proposal_reviews (
+        proposal_id TEXT PRIMARY KEY,
+        assessment_id TEXT NOT NULL,
+        original_proposal_json TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      );
+
+      CREATE TABLE proposal_source_records (
+        proposal_id TEXT NOT NULL REFERENCES proposal_reviews(proposal_id),
+        record_type TEXT NOT NULL,
+        record_id TEXT NOT NULL,
+        position INTEGER NOT NULL,
+        PRIMARY KEY (proposal_id, record_type, record_id),
+        UNIQUE (proposal_id, record_type, position),
+        FOREIGN KEY (record_type, record_id) REFERENCES source_records(record_type, record_id)
+      );
+
+      CREATE TABLE proposal_decisions (
+        decision_id TEXT PRIMARY KEY,
+        proposal_id TEXT NOT NULL REFERENCES proposal_reviews(proposal_id),
+        decision_json TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('accepted', 'rejected', 'split')),
+        decided_at TEXT NOT NULL
+      );
+
+      CREATE INDEX proposal_decisions_order
+        ON proposal_decisions(proposal_id, decided_at, decision_id);
+
+      CREATE TABLE proposal_draft_links (
+        proposal_id TEXT PRIMARY KEY REFERENCES proposal_reviews(proposal_id),
+        finding_id TEXT NOT NULL UNIQUE REFERENCES review_bundles(finding_id),
+        link_json TEXT NOT NULL,
+        linked_at TEXT NOT NULL
+      );
+
+      CREATE TRIGGER proposal_reviews_no_update
+        BEFORE UPDATE ON proposal_reviews BEGIN SELECT RAISE(ABORT, 'original proposals are immutable'); END;
+      CREATE TRIGGER proposal_reviews_no_delete
+        BEFORE DELETE ON proposal_reviews BEGIN SELECT RAISE(ABORT, 'original proposals are immutable'); END;
+      CREATE TRIGGER proposal_source_records_no_update
+        BEFORE UPDATE ON proposal_source_records BEGIN SELECT RAISE(ABORT, 'proposal source links are immutable'); END;
+      CREATE TRIGGER proposal_source_records_no_delete
+        BEFORE DELETE ON proposal_source_records BEGIN SELECT RAISE(ABORT, 'proposal source links are immutable'); END;
+      CREATE TRIGGER proposal_decisions_no_update
+        BEFORE UPDATE ON proposal_decisions BEGIN SELECT RAISE(ABORT, 'proposal decisions are append-only'); END;
+      CREATE TRIGGER proposal_decisions_no_delete
+        BEFORE DELETE ON proposal_decisions BEGIN SELECT RAISE(ABORT, 'proposal decisions are append-only'); END;
+      CREATE TRIGGER proposal_draft_links_no_update
+        BEFORE UPDATE ON proposal_draft_links BEGIN SELECT RAISE(ABORT, 'proposal draft links are immutable'); END;
+      CREATE TRIGGER proposal_draft_links_no_delete
+        BEFORE DELETE ON proposal_draft_links BEGIN SELECT RAISE(ABORT, 'proposal draft links are immutable'); END;
     `,
   },
 ] as const;

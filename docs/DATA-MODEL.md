@@ -21,6 +21,8 @@ Assessment 1--* Observation 1--* ObservationOccurrence
 ObservationOccurrence *--1 Page
 ObservationOccurrence *--* Evidence
 GroupProposal *--* ObservationOccurrence, Observation, Page, and Evidence
+GroupProposal 1--* ProposalReviewDecision
+GroupProposal 1--0..1 proposal-to-draft link --1 Finding
 Finding *--1 source GroupProposal and *--* Observation and *--* Evidence
 Validation *--1 Observation | Finding | JourneyResult
 ResidentJourney 1--* JourneyResult
@@ -136,6 +138,19 @@ related occurrences without treating them as members. Review can accept, reject,
 split without removing its original member ledger. Grouping confidence is not Finding confidence,
 severity, WCAG support, or resident impact.
 
+### ProposalReviewDecision and proposal-to-draft link
+
+`ProposalReviewDecision` is a versioned, append-only explicit human choice containing its stable
+ID, assessment/proposal IDs, `accepted`, `rejected`, or `split` status, actor, non-empty reason, and
+decision time. `pending` is the absence of a decision, not a stored human choice. The current
+proposal projection is derived from the latest decision; the original proposal JSON and member
+ledger never change.
+
+`ProposalDraftLink` is a versioned immutable one-to-zero-or-one association containing the proposal
+ID, Finding ID, and link time. It exists only when an accepted proposal passes the existing
+deterministic drafting policy and its complete review bundle is committed. Acceptance without a
+link is a retained, ineligible review outcome rather than a failed or fabricated Finding.
+
 ### Finding
 
 A finding is a reviewable systemic issue with:
@@ -187,6 +202,13 @@ revisions, normalized current protocol-to-Finding links, append-only JourneyResu
 append-only result-to-Finding and result-to-Evidence links, and append-only journey audit events.
 Migration 1 is unchanged. Protocol edits use optimistic comparison; result/Evidence/Validation and
 audit writes are transactional.
+
+Persistence schema version `3` adds `proposal_reviews`, `proposal_source_records`,
+`proposal_decisions`, and `proposal_draft_links` without changing migrations 1 or 2. Original
+proposal JSON, trace links, and draft links are immutable; decisions are append-only. Preparation
+inserts a deterministic proposal batch transactionally, so one duplicate prevents all writes in
+that rerun. An accepted eligible proposal commits its decision, draft review bundle, complete
+Finding trace links, review-creation audit event, and proposal-to-draft link atomically.
 
 ### ResidentJourney
 

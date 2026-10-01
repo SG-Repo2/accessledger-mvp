@@ -9,6 +9,8 @@ import {
   observationOccurrenceSchema,
   observationSchema,
   pageSchema,
+  proposalDraftLinkSchema,
+  proposalReviewDecisionSchema,
   reviewAuditEventSchema,
   residentJourneySchema,
   validationSchema,
@@ -18,6 +20,7 @@ import {
   type GroupProposal,
   type JourneyAuditEvent,
   type JourneyResult,
+  type ProposalReviewDecision,
   type ResidentJourney,
   type ReviewAuditEvent,
   type Validation,
@@ -27,7 +30,11 @@ import { reviewMigrations } from './migrations.js';
 import type {
   GroupingDecisionRecord,
   JourneyRepository,
+  PersistedProposalReview,
   PersistedReviewBundle,
+  ProposalDecisionDraft,
+  ProposalReviewInput,
+  ProposalReviewRepository,
   ReviewBundleInput,
   ReviewRepository,
 } from './types.js';
@@ -40,7 +47,9 @@ interface JsonRow {
   record_json: string;
 }
 
-export class SqliteReviewRepository implements ReviewRepository, JourneyRepository {
+export class SqliteReviewRepository
+  implements ReviewRepository, JourneyRepository, ProposalReviewRepository
+{
   readonly #database: DatabaseSync;
   readonly #clock: () => Date;
 
@@ -56,27 +65,175 @@ export class SqliteReviewRepository implements ReviewRepository, JourneyReposito
     const group = groupProposalSchema.parse(input.group);
     const event = reviewAuditEventSchema.parse(eventInput);
     this.#transaction(() => {
+      this.#insertReviewBundle({ ...input, finding, group }, event);
+    });
+  }
+
+  createProposalReviews(inputs: readonly ProposalReviewInput[]): void {
+    const parsed = inputs.map((input) => ({
+      proposal: groupProposalSchema.parse(input.proposal),
+      observations: input.observations.map((record) => observationSchema.parse(record)),
+      occurrences: input.occurrences.map((record) => observationOccurrenceSchema.parse(record)),
+      wcagEvaluations: input.wcagEvaluations.map((record) =>
+        wcagCandidateEvaluationSchema.parse(record),
+      ),
+      pages: input.pages.map((record) => pageSchema.parse(record)),
+      evidence: input.evidence.map((record) => evidenceSchema.parse(record)),
+    }));
+    this.#transaction(() => {
+      for (const input of parsed) {
+        this.#database
+          .prepare(
+            `INSERT INTO proposal_reviews
+              (proposal_id, assessment_id, original_proposal_json, created_at)
+             VALUES (?, ?, ?, ?)`,
+          )
+          .run(
+            input.proposal.id,
+            input.proposal.assessmentId,
+            serialize(input.proposal),
+            input.proposal.createdAt,
+          );
+        this.#insertProposalSources(input.proposal.id, 'observation', input.observations);
+        this.#insertProposalSources(input.proposal.id, 'occurrence', input.occurrences);
+        this.#insertProposalSources(input.proposal.id, 'wcag_evaluation', input.wcagEvaluations);
+        this.#insertProposalSources(input.proposal.id, 'page', input.pages);
+        this.#insertProposalSources(input.proposal.id, 'evidence', input.evidence);
+      }
+    });
+  }
+
+  loadProposalReview(proposalId: string): PersistedProposalReview | null {
+    const row = this.#database
+      .prepare('SELECT original_proposal_json FROM proposal_reviews WHERE proposal_id = ?')
+      .get(proposalId) as { original_proposal_json: string } | undefined;
+    if (row === undefined) return null;
+    const originalProposal = groupProposalSchema.parse(parseJson(row.original_proposal_json));
+    const decisions = this.#database
+      .prepare(
+        `SELECT decision_json FROM proposal_decisions
+         WHERE proposal_id = ? ORDER BY decided_at, rowid`,
+      )
+      .all(proposalId)
+      .map((decisionRow) =>
+        proposalReviewDecisionSchema.parse(
+          parseJson((decisionRow as { decision_json: string }).decision_json),
+        ),
+      );
+    const latestDecision = decisions.at(-1);
+    const proposal = groupProposalSchema.parse(
+      latestDecision === undefined
+        ? originalProposal
+        : {
+            ...originalProposal,
+            reviewStatus: latestDecision.status,
+            updatedAt: latestDecision.decidedAt,
+          },
+    );
+    const linkRow = this.#database
+      .prepare('SELECT link_json FROM proposal_draft_links WHERE proposal_id = ?')
+      .get(proposalId) as { link_json: string } | undefined;
+    return {
+      proposal,
+      originalProposal,
+      observations: this.#loadProposalSources(proposalId, 'observation').map((record) =>
+        observationSchema.parse(record),
+      ),
+      occurrences: this.#loadProposalSources(proposalId, 'occurrence').map((record) =>
+        observationOccurrenceSchema.parse(record),
+      ),
+      wcagEvaluations: this.#loadProposalSources(proposalId, 'wcag_evaluation').map((record) =>
+        wcagCandidateEvaluationSchema.parse(record),
+      ),
+      pages: this.#loadProposalSources(proposalId, 'page').map((record) =>
+        pageSchema.parse(record),
+      ),
+      evidence: this.#loadProposalSources(proposalId, 'evidence').map((record) =>
+        evidenceSchema.parse(record),
+      ),
+      decisions,
+      draftLink:
+        linkRow === undefined ? null : proposalDraftLinkSchema.parse(parseJson(linkRow.link_json)),
+    };
+  }
+
+  listProposalIds(assessmentId?: string): string[] {
+    const rows =
+      assessmentId === undefined
+        ? this.#database
+            .prepare('SELECT proposal_id FROM proposal_reviews ORDER BY proposal_id')
+            .all()
+        : this.#database
+            .prepare(
+              'SELECT proposal_id FROM proposal_reviews WHERE assessment_id = ? ORDER BY proposal_id',
+            )
+            .all(assessmentId);
+    return rows.map((row) => (row as { proposal_id: string }).proposal_id);
+  }
+
+  commitProposalDecision(
+    decisionInput: ProposalReviewDecision,
+    draftInput: ProposalDecisionDraft | null,
+  ): void {
+    const decision = proposalReviewDecisionSchema.parse(decisionInput);
+    const draft =
+      draftInput === null
+        ? null
+        : {
+            reviewBundle: {
+              ...draftInput.reviewBundle,
+              finding: findingSchema.parse(draftInput.reviewBundle.finding),
+              group: groupProposalSchema.parse(draftInput.reviewBundle.group),
+            },
+            reviewEvent: reviewAuditEventSchema.parse(draftInput.reviewEvent),
+            link: proposalDraftLinkSchema.parse(draftInput.link),
+          };
+    this.#transaction(() => {
+      const proposalRow = this.#database
+        .prepare('SELECT assessment_id FROM proposal_reviews WHERE proposal_id = ?')
+        .get(decision.proposalId) as { assessment_id: string } | undefined;
+      if (proposalRow === undefined) {
+        throw new Error(`GroupProposal ${decision.proposalId} is not persisted.`);
+      }
+      if (proposalRow.assessment_id !== decision.assessmentId) {
+        throw new Error('Proposal decision crosses the assessment boundary.');
+      }
       this.#database
         .prepare(
-          `INSERT INTO review_bundles
-            (finding_id, assessment_id, original_finding_json, current_finding_json,
-             original_group_json, created_at)
-           VALUES (?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO proposal_decisions
+            (decision_id, proposal_id, decision_json, status, decided_at)
+           VALUES (?, ?, ?, ?, ?)`,
         )
         .run(
-          finding.id,
-          finding.assessmentId,
-          serialize(finding),
-          serialize(finding),
-          serialize(group),
-          event.occurredAt,
+          decision.id,
+          decision.proposalId,
+          serialize(decision),
+          decision.status,
+          decision.decidedAt,
         );
-      this.#insertBundleSources(finding.id, 'observation', input.observations);
-      this.#insertBundleSources(finding.id, 'occurrence', input.occurrences);
-      this.#insertBundleSources(finding.id, 'wcag_evaluation', input.wcagEvaluations);
-      this.#insertBundleSources(finding.id, 'page', input.pages);
-      this.#insertBundleSources(finding.id, 'evidence', input.evidence);
-      this.#insertAudit(event);
+      if (draft !== null) {
+        if (
+          decision.status !== 'accepted' ||
+          draft.link.proposalId !== decision.proposalId ||
+          draft.link.findingId !== draft.reviewBundle.finding.id ||
+          draft.reviewBundle.finding.sourceGroupProposalId !== decision.proposalId ||
+          draft.reviewBundle.group.id !== decision.proposalId
+        ) {
+          throw new Error('Proposal decision, draft, and linkage do not match.');
+        }
+        this.#insertReviewBundle(draft.reviewBundle, draft.reviewEvent);
+        this.#database
+          .prepare(
+            `INSERT INTO proposal_draft_links
+              (proposal_id, finding_id, link_json, linked_at) VALUES (?, ?, ?, ?)`,
+          )
+          .run(
+            draft.link.proposalId,
+            draft.link.findingId,
+            serialize(draft.link),
+            draft.link.linkedAt,
+          );
+      }
     });
   }
 
@@ -611,6 +768,22 @@ export class SqliteReviewRepository implements ReviewRepository, JourneyReposito
     });
   }
 
+  #insertProposalSources(
+    proposalId: string,
+    recordType: string,
+    records: readonly { id: string; assessmentId: string }[],
+  ): void {
+    records.forEach((record, position) => {
+      this.#insertSource(recordType, record);
+      this.#database
+        .prepare(
+          `INSERT INTO proposal_source_records (proposal_id, record_type, record_id, position)
+           VALUES (?, ?, ?, ?)`,
+        )
+        .run(proposalId, recordType, record.id, position);
+    });
+  }
+
   #loadBundleSources(findingId: string, recordType: string): unknown[] {
     return this.#database
       .prepare(
@@ -622,6 +795,44 @@ export class SqliteReviewRepository implements ReviewRepository, JourneyReposito
       )
       .all(findingId, recordType)
       .map((row) => parseJson((row as unknown as JsonRow).record_json));
+  }
+
+  #loadProposalSources(proposalId: string, recordType: string): unknown[] {
+    return this.#database
+      .prepare(
+        `SELECT source_records.record_json
+         FROM proposal_source_records
+         JOIN source_records USING (record_type, record_id)
+         WHERE proposal_source_records.proposal_id = ?
+           AND proposal_source_records.record_type = ?
+         ORDER BY proposal_source_records.position`,
+      )
+      .all(proposalId, recordType)
+      .map((row) => parseJson((row as unknown as JsonRow).record_json));
+  }
+
+  #insertReviewBundle(input: ReviewBundleInput, event: ReviewAuditEvent): void {
+    this.#database
+      .prepare(
+        `INSERT INTO review_bundles
+          (finding_id, assessment_id, original_finding_json, current_finding_json,
+           original_group_json, created_at)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        input.finding.id,
+        input.finding.assessmentId,
+        serialize(input.finding),
+        serialize(input.finding),
+        serialize(input.group),
+        event.occurredAt,
+      );
+    this.#insertBundleSources(input.finding.id, 'observation', input.observations);
+    this.#insertBundleSources(input.finding.id, 'occurrence', input.occurrences);
+    this.#insertBundleSources(input.finding.id, 'wcag_evaluation', input.wcagEvaluations);
+    this.#insertBundleSources(input.finding.id, 'page', input.pages);
+    this.#insertBundleSources(input.finding.id, 'evidence', input.evidence);
+    this.#insertAudit(event);
   }
 
   #loadSource(recordType: string, recordId: string): unknown {

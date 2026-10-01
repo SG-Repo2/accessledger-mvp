@@ -1,94 +1,74 @@
-# Handoff — Pre-Finding Group Review Is the Acceptance Blocker
+# Handoff — Proposal Review Is Durable; Finding Validation Is Next
 
-## Verified Naperville preparation state
+## Completed boundary
 
-The saved `naperville-scan.json` still contains an npm banner before its valid JSON object. The
-payload itself was parsed without modification and run through the same
-`createAssessmentPreparationStages` / `prepareAssessmentForReview` composition used by
-`npm run assessment:prepare`.
+Preparation now persists every deterministic GroupProposal with its complete immutable
+Observation, ObservationOccurrence, WCAG evaluation, Page, and Evidence trace. Migration 3 stores
+original proposals and ordered trace links immutably, decisions append-only, and proposal-to-draft
+links immutably. Migrations 1 and 2 were not changed.
 
-Before this normalization work, the payload produced:
+Auditor Studio now links to `/proposals`. The queue contains pending and ineligible proposals, and
+the detail page shows exact membership, rationale, grouping confidence, WCAG status, Evidence,
+source/tool versions, decision history, and any draft link. The only proposal actions are explicit
+human accept, reject, or split forms with actor and reason. Nothing auto-accepts.
 
-```text
-observations: 0
-occurrences: 0
-ignored normalization inputs: 5
-unrecognized rules: 2
-grouping proposals: 0
-draft Findings: 0
-persisted review bundles: 0
-```
+Acceptance invokes the existing `DeterministicFindingDrafter`. Accepted repeats may draft under its
+existing policy. Accepted singletons require a supported WCAG criterion. Rejected, split,
+ambiguous, and otherwise ineligible accepted proposals retain their decision without a draft. An
+eligible decision, review bundle, review audit event, and proposal-to-draft link commit atomically.
 
-After this work, it produces:
+## Verified Naperville state
+
+The JSON payload inside `naperville-scan.json` was passed through the production preparation
+composition. Its leading npm command banner remains untouched and must be stripped or avoided when
+using the CLI directly.
+
+Before human proposal review:
 
 ```text
 observations: 1
 occurrences: 8
-ignored normalization inputs: 4
-unrecognized rules: 1
-WCAG evaluations: 1 uncertain / 0 supported / 0 unsupported
-grouping proposals: 5
-ineligible grouping proposals: 5
+WCAG evaluations: 1 uncertain
+persisted proposals: 5
+proposal decisions: 0
 draft Findings: 0
 persisted review bundles: 0
 ```
 
-The five proposals are all pending: two medium-confidence `repeat_candidate` records containing
-three and two occurrences, and three low-confidence `singleton` records. No proposal is currently
-eligible for `DeterministicFindingDrafter.draft`.
+The five original proposals are pending: two medium-confidence repeat candidates with 3 and 2
+members, and three low-confidence singletons. Explicitly accepting only the two repeats produces:
 
-## Added normalization and mapping
+```text
+accepted proposals: 2
+pending proposals: 3
+draft Findings: 2
+persisted review bundles: 2
+draft occurrence counts: 3 and 2
+```
 
-`aria-prohibited-attr` is now a narrowly supported axe-core technical observation. Normalization
-requires every node to retain:
+The original proposal JSON/member ledgers remain pending and unchanged; current accepted status is
+projected from decision history. No singleton, WCAG mapping, fingerprint, severity, confidence,
+resident impact, Validation, or legal conclusion is invented.
 
-- a concrete target and parseable HTML;
-- a matching non-empty ARIA attribute in that HTML;
-- matching `aria-prohibited-attr` check data with element name, computed role (including explicit
-  null), and prohibited attributes; and
-- axe engine name/version matching the Evidence source provenance.
+## Next blocker
 
-The Naperville rule has eight `<time tabindex="0" aria-label="…">` nodes. Each carries
-`nodeName: "time"`, `role: null`, `prohibited: ["aria-label"]`, an exact selector, HTML, and the
-complete raw violation/node detail. One Observation and all eight occurrences retain the Page,
-Evidence, selector, HTML, source detail, tool version, and rule version chain.
+The two Naperville records are only draft Findings. They cannot be approved or exported until a
+human starts Finding review, completes the missing Cause/Effect/Recommendation/confidence fields,
+records the required evidence-backed Validation claims, assigns an exactly supported severity, and
+passes the existing approval gate. The three remaining singleton proposals additionally cannot
+draft while their WCAG 4.1.2 candidate remains uncertain.
 
-WCAG dataset `2026.09.29-1` adds a reviewed 4.1.2 candidate mapping. It does not treat axe impact,
-tags, prose, or the rule result as a final criterion conclusion. A supported evaluation additionally
-requires separate facts that the target is a WCAG user-interface component, the prohibited
-attribute carries criterion-relevant information, and that required information is not
-programmatically available. Those facts are absent from the Naperville payload, so its candidate is
-correctly `uncertain`.
+Preserve the current grouping, WCAG, drafting, severity, validation, approval, and export policies.
+Do not auto-accept the remaining proposals, infer component fingerprints, or promote the scanner
+result into resident impact or a WCAG conclusion.
 
-## Inputs that remain ignored or unsupported
+## Versions and checks
 
-- Playwright `raw_browser_result` is operational load evidence, not a normalization source.
-- `.site-search-button` is a collected Chromium button named `Search`; it is a negative/non-
-  violation example for the empty-button-name normalizer.
-- `#label_1` is a collected Chromium tab named `City Events`; it is outside the intentionally
-  narrow browser-semantics normalizer and contains no supported deterministic failure.
-- `.slick-prev` is a collected Chromium button named `Previous`; it is another negative/non-
-  violation empty-name input.
-- axe-core `region` remains unrecognized. The one node retains a target and link snippet, but not
-  the DOM ancestry/landmark context needed to reproduce the assertion. Deque documents it as a best
-  practice rather than a WCAG rule, and landmark usefulness is contextual. No mapping was added.
+- Public domain contract: `1.0.0` (additive `ProposalReviewDecision` and `ProposalDraftLink`)
+- Persistence schema: `3`
+- WCAG dataset: `2026.09.29-1`
+- Grouping algorithm: `1.0.0`
+- Finding drafting policy: `1.0.0`
 
-## Next decision
-
-The immediate normalization blocker is resolved narrowly enough to expose real Naperville
-proposals. Component fingerprints remain null, but the two structural repeats already have
-inspectable medium-confidence membership. The next blocker is the missing pre-Finding
-GroupProposal review/persistence workflow: a human has no durable boundary at which to accept those
-proposals before drafting, while persistence currently begins with a Finding.
-
-Do not auto-accept groups or infer fingerprints. The next design should introduce the smallest
-reviewable pre-Finding grouping boundary, with a migration only if durable proposal decisions are
-actually required. Preserve the existing drafting, severity, validation, approval, and WCAG gates.
-
-## Contracts and verification
-
-Public domain contract remains `1.0.0`; persistence remains schema version `2`; no SQLite migration
-was added. No new architecture or normalization policy was introduced beyond ADR-009's existing
-reviewed dataset-extension process, so `project/DECISIONS.md` was not changed.
-
-See `project/CURRENT-STATE.md` and the latest `project/WORK-LOG.md` entry for final command results.
+See `project/CURRENT-STATE.md`, ADR-015 in `project/DECISIONS.md`, and the latest
+`project/WORK-LOG.md` entry for final command counts.

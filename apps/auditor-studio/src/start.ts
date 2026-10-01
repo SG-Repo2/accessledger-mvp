@@ -1,6 +1,10 @@
 import { resolve } from 'node:path';
 
-import { FindingReviewService } from '@accessledger/findings';
+import {
+  DeterministicFindingDrafter,
+  FindingReviewService,
+  GroupProposalReviewService,
+} from '@accessledger/findings';
 import { ResidentJourneyService } from '@accessledger/journeys';
 import { SqliteReviewRepository } from '@accessledger/persistence';
 
@@ -12,7 +16,11 @@ const port = Number.parseInt(process.env.ACCESSLEDGER_AUDITOR_PORT ?? '4178', 10
 const repository = new SqliteReviewRepository(databasePath);
 const service = new FindingReviewService(repository);
 const journeyService = new ResidentJourneyService(repository);
-const studio = new AuditorStudio(service, journeyService);
+const proposalService = new GroupProposalReviewService(
+  repository,
+  new DeterministicFindingDrafter(),
+);
+const studio = new AuditorStudio(service, journeyService, proposalService);
 const server = createAuditorStudioServer(studio);
 
 server.listen(port, '127.0.0.1', () => {

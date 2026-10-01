@@ -1,7 +1,13 @@
 import { createServer, type IncomingMessage, type Server } from 'node:http';
 
-import type { AuditorStudio, AuditorAction, JourneyAction } from './auditor-studio.js';
+import type {
+  AuditorStudio,
+  AuditorAction,
+  JourneyAction,
+  ProposalAction,
+} from './auditor-studio.js';
 import { renderJourneyIndexPage, renderJourneyPage } from './render-journey-page.js';
+import { renderProposalIndexPage, renderProposalPage } from './render-proposal-page.js';
 import { renderReviewPage } from './render-review-page.js';
 
 export function createAuditorStudioServer(studio: AuditorStudio): Server {
@@ -9,6 +15,19 @@ export function createAuditorStudioServer(studio: AuditorStudio): Server {
     try {
       const url = new URL(request.url ?? '/', 'http://127.0.0.1');
       if (request.method === 'GET') {
+        if (url.pathname === '/proposals') {
+          const proposalId = url.searchParams.get('proposalId');
+          send(
+            response,
+            200,
+            proposalId === null
+              ? renderProposalIndexPage(
+                  studio.listProposalIds().map((id) => studio.loadProposal(id)),
+                )
+              : renderProposalPage(studio.loadProposal(proposalId)),
+          );
+          return;
+        }
         if (url.pathname === '/journeys') {
           const journeyId = url.searchParams.get('journeyId');
           send(
@@ -32,7 +51,7 @@ export function createAuditorStudioServer(studio: AuditorStudio): Server {
           send(
             response,
             200,
-            `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Auditor Studio</title></head><body><main><h1>Findings awaiting review</h1><p><a href="/journeys">Resident journey protocols</a></p><ul>${links}</ul></main></body></html>`,
+            `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Auditor Studio</title></head><body><main><h1>Findings awaiting review</h1><p><a href="/proposals">Pre-Finding proposal queue</a></p><p><a href="/journeys">Resident journey protocols</a></p><ul>${links}</ul></main></body></html>`,
           );
           return;
         }
@@ -43,6 +62,16 @@ export function createAuditorStudioServer(studio: AuditorStudio): Server {
         const body = await readBody(request);
         const fields = Object.fromEntries(new URLSearchParams(body));
         const action = required(fields, 'action');
+        if (url.pathname === '/proposals') {
+          const trace = studio.handleProposal(action as ProposalAction, fields);
+          response.statusCode = 303;
+          response.setHeader(
+            'Location',
+            `/proposals?proposalId=${encodeURIComponent(trace.proposal.id)}`,
+          );
+          response.end();
+          return;
+        }
         if (url.pathname === '/journeys') {
           const trace = studio.handleJourney(action as JourneyAction, fields);
           response.statusCode = 303;

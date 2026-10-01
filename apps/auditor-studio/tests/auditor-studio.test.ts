@@ -1,10 +1,22 @@
-import { FindingReviewService } from '@accessledger/findings';
+import {
+  DeterministicFindingDrafter,
+  FindingReviewService,
+  GroupProposalReviewService,
+} from '@accessledger/findings';
 import { ResidentJourneyService } from '@accessledger/journeys';
 import { SqliteReviewRepository } from '@accessledger/persistence';
 import { describe, expect, it } from 'vitest';
 
+import { groupProposalSchema } from '@accessledger/shared';
+
 import { reviewFixture, reviewNow } from '../../../tests/support/review-fixture.js';
-import { AuditorStudio, renderJourneyPage, renderReviewPage } from '../src/index.js';
+import {
+  AuditorStudio,
+  renderJourneyPage,
+  renderProposalIndexPage,
+  renderProposalPage,
+  renderReviewPage,
+} from '../src/index.js';
 
 describe('Auditor Studio', () => {
   it('renders an evidence-first, keyboard-operable semantic review page', () => {
@@ -112,11 +124,44 @@ describe('Auditor Studio', () => {
     expect(trace.evidence.some((record) => record.source.type === 'human')).toBe(true);
     repository.close();
   });
+
+  it('renders the proposal queue and detail, then routes native accept actions without auto-acceptance', () => {
+    const { repository, service, studio, proposalService } = setup();
+    const fixture = reviewFixture();
+    const proposal = groupProposalSchema.parse({ ...fixture.group, reviewStatus: 'pending' });
+    proposalService.persistProposals([{ ...fixture, proposal }]);
+
+    const pending = studio.loadProposal(proposal.id);
+    const queueHtml = renderProposalIndexPage([pending]);
+    const detailHtml = renderProposalPage(pending);
+    expect(queueHtml).toContain('Pre-Finding proposal queue');
+    expect(queueHtml).toContain('pending');
+    expect(detailHtml).toContain('<caption>Immutable proposal member ledger</caption>');
+    expect(detailHtml).toContain('WCAG candidate status');
+    expect(detailHtml).toContain('Evidence and source metadata');
+    expect(detailHtml).toContain('Append-only decision history');
+    expect(detailHtml).toContain('<form method="post" action="/proposals">');
+    expect(detailHtml).toContain('<button type="submit">Record proposal decision</button>');
+    expect(service.listFindingIds()).toEqual([]);
+
+    const accepted = studio.handleProposal('proposal-decision', {
+      proposalId: proposal.id,
+      decision: 'accepted',
+      actor: 'Auditor Example',
+      reason: 'The supported singleton membership was inspected.',
+    });
+    expect(accepted.proposal.reviewStatus).toBe('accepted');
+    expect(accepted.originalProposal.reviewStatus).toBe('pending');
+    expect(accepted.draftLink).not.toBeNull();
+    expect(service.listFindingIds()).toEqual([accepted.draftLink!.findingId]);
+    repository.close();
+  });
 });
 
 function setup(): {
   repository: SqliteReviewRepository;
   service: FindingReviewService;
+  proposalService: GroupProposalReviewService;
   studio: AuditorStudio;
 } {
   const repository = new SqliteReviewRepository(':memory:');
@@ -128,10 +173,19 @@ function setup(): {
     clock: () => new Date(reviewNow),
     idFactory: sequenceIds(),
   });
+  const proposalService = new GroupProposalReviewService(
+    repository,
+    new DeterministicFindingDrafter(),
+    {
+      clock: () => new Date(reviewNow),
+      idFactory: sequenceIds(),
+    },
+  );
   return {
     repository,
     service,
-    studio: new AuditorStudio(service, journeyService, {
+    proposalService,
+    studio: new AuditorStudio(service, journeyService, proposalService, {
       clock: () => new Date(reviewNow),
       idFactory: sequenceIds(),
     }),

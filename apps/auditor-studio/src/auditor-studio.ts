@@ -1,6 +1,11 @@
 import { randomUUID } from 'node:crypto';
 
-import { type FindingReviewService, type FindingReviewTrace } from '@accessledger/findings';
+import {
+  type FindingReviewService,
+  type FindingReviewTrace,
+  type GroupProposalReviewService,
+  type GroupProposalReviewTrace,
+} from '@accessledger/findings';
 import { type ResidentJourneyService, type ResidentJourneyTrace } from '@accessledger/journeys';
 import {
   CONTRACT_SCHEMA_VERSION,
@@ -20,6 +25,8 @@ export type AuditorAction =
 export type JourneyAction =
   'create-journey' | 'edit-journey' | 'record-journey-result' | 'add-journey-validation';
 
+export type ProposalAction = 'proposal-decision';
+
 export interface AuditorStudioOptions {
   clock?: () => Date;
   idFactory?: () => string;
@@ -28,16 +35,19 @@ export interface AuditorStudioOptions {
 export class AuditorStudio {
   readonly #service: FindingReviewService;
   readonly #journeyService: ResidentJourneyService;
+  readonly #proposalService: GroupProposalReviewService;
   readonly #clock: () => Date;
   readonly #idFactory: () => string;
 
   constructor(
     service: FindingReviewService,
     journeyService: ResidentJourneyService,
+    proposalService: GroupProposalReviewService,
     options: AuditorStudioOptions = {},
   ) {
     this.#service = service;
     this.#journeyService = journeyService;
+    this.#proposalService = proposalService;
     this.#clock = options.clock ?? (() => new Date());
     this.#idFactory = options.idFactory ?? randomUUID;
   }
@@ -48,6 +58,28 @@ export class AuditorStudio {
 
   listFindingIds(): string[] {
     return this.#service.listFindingIds();
+  }
+
+  listProposalIds(): string[] {
+    return this.#proposalService.listProposalIds();
+  }
+
+  loadProposal(proposalId: string): GroupProposalReviewTrace {
+    return this.#proposalService.load(proposalId);
+  }
+
+  handleProposal(
+    action: ProposalAction,
+    fields: Readonly<Record<string, string>>,
+  ): GroupProposalReviewTrace {
+    if (action !== 'proposal-decision') {
+      throw new Error(`Unsupported proposal action: ${String(action)}`);
+    }
+    return this.#proposalService.decide(
+      required(fields, 'proposalId'),
+      oneOf(required(fields, 'decision'), ['accepted', 'rejected', 'split']),
+      { actor: required(fields, 'actor'), reason: required(fields, 'reason') },
+    );
   }
 
   listJourneys() {

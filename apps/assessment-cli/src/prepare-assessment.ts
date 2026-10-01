@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 
 import {
   DeterministicFindingDrafter,
-  FindingReviewService,
+  GroupProposalReviewService,
   type FindingDrafter,
   type FindingEvidenceContext,
 } from '@accessledger/findings';
@@ -11,7 +11,7 @@ import {
   DeterministicObservationNormalizer,
   type ObservationNormalizer,
 } from '@accessledger/observations';
-import type { ReviewRepository } from '@accessledger/persistence';
+import type { ProposalReviewRepository, ReviewRepository } from '@accessledger/persistence';
 import {
   rawPageAssessmentSchema,
   type Evidence,
@@ -31,6 +31,7 @@ export interface AssessmentPreparationCounts {
   ineligibleGroupingProposals: number;
   draftFindings: number;
   persistedReviewBundles: number;
+  persistedProposals: number;
   ignoredNormalizationInputs: number;
   unrecognizedRules: number;
 }
@@ -40,19 +41,21 @@ export interface AssessmentPreparationStages {
   wcagMapper: WcagMapper;
   groupingEngine: GroupingEngine;
   findingDrafter: FindingDrafter;
-  reviewService: Pick<FindingReviewService, 'createReview' | 'listFindingIds'>;
+  proposalReviewService: Pick<GroupProposalReviewService, 'persistProposals'>;
 }
 
 export function createAssessmentPreparationStages(
   assessmentInput: RawPageAssessment,
-  repository: ReviewRepository,
-  overrides: Partial<Omit<AssessmentPreparationStages, 'reviewService'>> = {},
+  repository: ReviewRepository & ProposalReviewRepository,
+  overrides: Partial<Omit<AssessmentPreparationStages, 'proposalReviewService'>> = {},
 ): AssessmentPreparationStages {
   const assessment = rawPageAssessmentSchema.parse(assessmentInput);
   const timestamp = assessment.completedAt;
   const clock = () => new Date(timestamp);
-  const assessmentDigest = digest(JSON.stringify(assessment));
-  let auditIdSequence = 0;
+  const findingDrafter = overrides.findingDrafter ?? new DeterministicFindingDrafter({ clock });
+  const proposalReviewService = new GroupProposalReviewService(repository, findingDrafter, {
+    clock,
+  });
 
   return {
     normalizer:
@@ -80,14 +83,8 @@ export function createAssessmentPreparationStages(
           ]),
       }),
     groupingEngine: overrides.groupingEngine ?? new ConservativeGroupingEngine({ clock }),
-    findingDrafter: overrides.findingDrafter ?? new DeterministicFindingDrafter({ clock }),
-    reviewService: new FindingReviewService(repository, {
-      clock,
-      idFactory: () => {
-        auditIdSequence += 1;
-        return stableId('preparation', [assessmentDigest, String(auditIdSequence)]);
-      },
-    }),
+    findingDrafter,
+    proposalReviewService,
   };
 }
 
@@ -110,7 +107,7 @@ export function prepareAssessmentForReview(
   const groups = stages.groupingEngine.propose(normalized.observations, normalized.occurrences, {
     pages: [assessment.page],
   });
-  const eligibleDrafts = groups.flatMap((group) => {
+  const proposals = groups.map((group) => {
     const context = contextForGroup(group, {
       observations: normalized.observations,
       occurrences: normalized.occurrences,
@@ -118,35 +115,9 @@ export function prepareAssessmentForReview(
       pages: [assessment.page],
       evidence,
     });
-    try {
-      return [{ finding: stages.findingDrafter.draft(group, context), group, context }];
-    } catch (error) {
-      if (isDraftIneligibility(error)) return [];
-      throw error;
-    }
+    return { proposal: group, ...context };
   });
-
-  const existingFindingIds = new Set(
-    stages.reviewService.listFindingIds(assessment.page.assessmentId),
-  );
-  const duplicates = eligibleDrafts
-    .map(({ finding }) => finding.id)
-    .filter((findingId) => existingFindingIds.has(findingId));
-  if (duplicates.length > 0) {
-    throw new Error(
-      `Review database already contains prepared Finding IDs: ${duplicates.join(', ')}.`,
-    );
-  }
-
-  for (const { finding, group, context } of eligibleDrafts) {
-    stages.reviewService.createReview(
-      { finding, group, ...context },
-      {
-        actor: 'AccessLedger assessment preparation CLI',
-        reason: 'Prepared from a saved RawPageAssessment through the existing pipeline.',
-      },
-    );
-  }
+  stages.proposalReviewService.persistProposals(proposals);
 
   return {
     observations: normalized.observations.length,
@@ -162,9 +133,10 @@ export function prepareAssessmentForReview(
       (evaluation) => evaluation.evaluation === 'uncertain',
     ).length,
     groupingProposals: groups.length,
-    ineligibleGroupingProposals: groups.length - eligibleDrafts.length,
-    draftFindings: eligibleDrafts.length,
-    persistedReviewBundles: eligibleDrafts.length,
+    ineligibleGroupingProposals: groups.length,
+    persistedProposals: groups.length,
+    draftFindings: 0,
+    persistedReviewBundles: 0,
     ignoredNormalizationInputs: normalized.ignoredEvidence.length,
     unrecognizedRules: normalized.unrecognizedRules.length,
   };
@@ -195,16 +167,6 @@ function contextForGroup(
     pages: context.pages.filter((record) => pageIds.has(record.id)),
     evidence: context.evidence.filter((record) => evidenceIds.has(record.id)),
   };
-}
-
-function isDraftIneligibility(error: unknown): boolean {
-  if (!(error instanceof Error)) return false;
-  return [
-    /^Cannot draft from a (rejected|split) proposal\.$/,
-    /^Cannot draft from an ambiguous proposal\.$/,
-    /^Drafting requires an accepted proposal or a pending high-confidence repeat candidate\.$/,
-    /^A singleton proposal requires at least one supported WCAG criterion\.$/,
-  ].some((pattern) => pattern.test(error.message));
 }
 
 function stableId(prefix: string, parts: readonly string[]): string {

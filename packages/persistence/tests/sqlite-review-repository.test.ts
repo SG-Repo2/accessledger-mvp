@@ -3,7 +3,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 
-import { FindingReviewService } from '@accessledger/findings';
+import {
+  DeterministicFindingDrafter,
+  FindingReviewService,
+  GroupProposalReviewService,
+} from '@accessledger/findings';
 import {
   findingSchema,
   groupProposalSchema,
@@ -35,9 +39,13 @@ describe('SqliteReviewRepository', () => {
 
       expect(migrations).toEqual([
         { version: 1, name: 'create_auditor_review_store' },
-        { version: SQLITE_REVIEW_SCHEMA_VERSION, name: 'create_resident_journey_store' },
+        { version: 2, name: 'create_resident_journey_store' },
+        {
+          version: SQLITE_REVIEW_SCHEMA_VERSION,
+          name: 'create_pre_finding_proposal_review_store',
+        },
       ]);
-      expect(reviewMigrations.map((migration) => migration.version)).toEqual([1, 2]);
+      expect(reviewMigrations.map((migration) => migration.version)).toEqual([1, 2, 3]);
       expect(tables).toEqual(
         expect.arrayContaining([
           'audit_events',
@@ -50,11 +58,51 @@ describe('SqliteReviewRepository', () => {
           'journey_results',
           'journey_revisions',
           'resident_journeys',
+          'proposal_decisions',
+          'proposal_draft_links',
+          'proposal_reviews',
+          'proposal_source_records',
           'review_bundles',
           'source_records',
           'validations',
         ]),
       );
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
+
+  it('keeps migration 3 proposal originals, source links, decisions, and draft links immutable', () => {
+    const directory = mkdtempSync(join(tmpdir(), 'accessledger-proposal-immutable-'));
+    const databasePath = join(directory, 'review.sqlite');
+    try {
+      const repository = new SqliteReviewRepository(databasePath);
+      const fixture = reviewFixture();
+      const proposal = groupProposalSchema.parse({ ...fixture.group, reviewStatus: 'pending' });
+      const service = new GroupProposalReviewService(
+        repository,
+        new DeterministicFindingDrafter({ clock: () => new Date(reviewNow) }),
+        { clock: () => new Date(reviewNow), idFactory: sequenceIds() },
+      );
+      service.persistProposals([{ ...fixture, proposal }]);
+      service.decide(proposal.id, 'accepted', {
+        actor: 'Auditor Example',
+        reason: 'The singleton has a supported WCAG criterion.',
+      });
+      repository.close();
+
+      const database = new DatabaseSync(databasePath);
+      expect(() =>
+        database.prepare("UPDATE proposal_reviews SET original_proposal_json = '{}'").run(),
+      ).toThrow(/immutable/);
+      expect(() => database.prepare('DELETE FROM proposal_source_records').run()).toThrow(
+        /immutable/,
+      );
+      expect(() =>
+        database.prepare("UPDATE proposal_decisions SET status = 'split'").run(),
+      ).toThrow(/append-only/);
+      expect(() => database.prepare('DELETE FROM proposal_draft_links').run()).toThrow(/immutable/);
+      database.close();
     } finally {
       rmSync(directory, { recursive: true, force: true });
     }

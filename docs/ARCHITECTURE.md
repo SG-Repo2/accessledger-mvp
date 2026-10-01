@@ -10,7 +10,7 @@ The non-negotiable invariant is:
 
 ```text
 Finding
-  -> accepted/high-confidence GroupProposal
+  -> explicitly accepted GroupProposal
     -> Observation
       -> ObservationOccurrence records
         -> Evidence
@@ -30,6 +30,7 @@ Target URL
   -> Observation normalization
   -> Grouping without occurrence loss
   -> WCAG candidate mapping and evidence evaluation
+  -> Durable pre-Finding proposal review
   -> Draft Finding
   -> Human / NVDA validation where required
   -> Findings Register export
@@ -103,11 +104,11 @@ Windows-specific implementation behind the cross-platform validation interface.
 
 ## Persistence strategy
 
-Chunks 6–7 use SQLite through the Node `node:sqlite` API for the proven durable access patterns:
+Chunks 6–7 and the acceptance workflow use SQLite through the Node `node:sqlite` API for the proven durable access patterns:
 reviewer edits, grouping decisions, Validation records, guarded Finding transitions, audit
 history, human-authored journey protocols, and append-only manual results.
-`@accessledger/persistence` owns ordered SQL migrations and narrow synchronous review/journey
-repositories. The current persistence schema version is `2`; migrations run in explicit
+`@accessledger/persistence` owns ordered SQL migrations and narrow synchronous proposal/review/journey
+repositories. The current persistence schema version is `3`; migrations run in explicit
 `BEGIN IMMEDIATE` transactions and are recorded in `schema_migrations`.
 
 Immutable Observation, ObservationOccurrence, WcagCandidateEvaluation, Page, and Evidence JSON is
@@ -125,15 +126,22 @@ result with immutable human Evidence, and adding a result-backed Validation each
 Journey result Validation reuses the Chunk 6 `validations` table and exact-severity gate; a result
 outcome alone never updates a Finding or assigns severity.
 
+Migration 3 adds immutable original GroupProposal rows, ordered immutable links to every source
+Observation, ObservationOccurrence, WCAG evaluation, Page, and Evidence record, append-only
+pre-Finding decisions, and immutable proposal-to-draft links. An explicit accepted decision and an
+eligible draft review bundle/link commit atomically. Rejected, split, ambiguous, and accepted but
+unsupported singletons retain their decisions without a draft. Migrations 1 and 2 are unchanged.
+
 SQLite paths are supplied by the caller and resolved with Node path APIs by the local application.
 Large binary artifacts remain a future portable artifact-directory concern; only their immutable
 Evidence metadata belongs in SQLite. See `AUDITOR-REVIEW.md` and ADR-012.
 
-`apps/assessment-cli` composes the pure Chunk 3–5 transformations with
-`FindingReviewService.createReview` for saved, successful `RawPageAssessment` JSON. The preparation
-application stores only proposals the existing drafter accepts and does not manufacture a grouping
-decision to overcome an ineligible pending proposal. It uses the unchanged persistence migrations
-and review-bundle schema.
+`apps/assessment-cli` composes the pure Chunk 3–4 transformations with
+`GroupProposalReviewService.persistProposals` for saved, successful `RawPageAssessment` JSON. The
+preparation application stores every pending proposal and its complete trace in one transaction;
+it does not draft or manufacture a grouping decision. Duplicate deterministic proposal IDs fail
+before any batch member is written. `GroupProposalReviewService.decide` records the explicit human
+decision and invokes the existing `DeterministicFindingDrafter` only after acceptance.
 
 ## Package interfaces by stage
 
@@ -288,6 +296,12 @@ agent behavior, and LLM text have no promotion path into these judgments.
 fieldsets, tables, buttons, and disclosure elements expose the representative occurrence, every
 member occurrence, raw/human Evidence, WCAG evaluations, missing fields, validation needs, review
 actions, and audit history without requiring direct database use. It is not a customer dashboard.
+
+The studio also exposes `/proposals` as the pre-Finding queue. Its detail view shows immutable
+membership, rationale, grouping confidence, WCAG evaluations, source/tool versions, raw Evidence,
+decision history, and any draft link. Native forms require an actor, reason, and explicit accept,
+reject, or split choice. Acceptance never supplies WCAG support or resident-impact claims and does
+not guarantee that a draft is eligible.
 
 ### Chunk 7 resident-journey boundary
 

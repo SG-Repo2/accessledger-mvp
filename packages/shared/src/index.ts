@@ -8,6 +8,7 @@ export * from './grouping.js';
 export * from './journey.js';
 export * from './observation.js';
 export * from './page.js';
+export * from './proposal-review.js';
 export * from './raw-page-assessment.js';
 export * from './review.js';
 export * from './validation.js';

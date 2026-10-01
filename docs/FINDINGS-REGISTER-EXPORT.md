@@ -28,7 +28,8 @@ FINDINGS_REGISTER_CSV_COLUMNS
 `@accessledger/shared` exposes the matching Zod schemas and types. The Findings Register export
 schema version is independently fixed at `1.0.0` through
 `FINDINGS_REGISTER_EXPORT_SCHEMA_VERSION`. The public domain contract remains `1.0.0`, and SQLite
-persistence remains version `2`.
+persistence is version `3`; migration 3's proposal-review tables do not change the approved-Finding
+export boundary.
 
 The manifest contains export schema version, `json` or `csv`, assessment ID, generation time,
 record count, resolved artifact path, lowercase SHA-256 of the exact file bytes, and byte length.

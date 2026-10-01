@@ -1,9 +1,13 @@
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 
-import { FindingReviewService } from '@accessledger/findings';
+import {
+  DeterministicFindingDrafter,
+  FindingReviewService,
+  GroupProposalReviewService,
+} from '@accessledger/findings';
 import { SqliteReviewRepository } from '@accessledger/persistence';
 import {
   CONTRACT_SCHEMA_VERSION,
@@ -49,6 +53,7 @@ describe('assessment preparation CLI', () => {
         ineligibleGroupingProposals: 2,
         draftFindings: 0,
         persistedReviewBundles: 0,
+        persistedProposals: 2,
         ignoredNormalizationInputs: 1,
         unrecognizedRules: 1,
       });
@@ -56,7 +61,7 @@ describe('assessment preparation CLI', () => {
       const database = new DatabaseSync(databasePath, { readOnly: true });
       expect(
         database.prepare('SELECT version FROM schema_migrations ORDER BY version').all(),
-      ).toEqual([{ version: 1 }, { version: 2 }]);
+      ).toEqual([{ version: 1 }, { version: 2 }, { version: 3 }]);
       database.close();
 
       const secondDatabasePath = join(directory, 'second', 'review.sqlite');
@@ -129,7 +134,7 @@ describe('assessment preparation CLI', () => {
     },
   );
 
-  it('persists a complete eligible trace while preserving unsupported WCAG and no-inference fields', () => {
+  it('persists a complete proposal trace and drafts only after explicit acceptance', () => {
     const assessment = loadedAssessment();
     const repository = new SqliteReviewRepository(':memory:');
     try {
@@ -170,16 +175,36 @@ describe('assessment preparation CLI', () => {
 
       expect(manifest).toMatchObject({
         groupingProposals: 1,
-        ineligibleGroupingProposals: 0,
-        draftFindings: 1,
-        persistedReviewBundles: 1,
+        ineligibleGroupingProposals: 1,
+        persistedProposals: 1,
+        draftFindings: 0,
+        persistedReviewBundles: 0,
         supportedWcagEvaluations: 0,
         unsupportedWcagEvaluations: 1,
       });
-      const service = new FindingReviewService(repository);
-      const [findingId] = service.listFindingIds(assessment.page.assessmentId);
-      expect(findingId).toBeDefined();
-      const trace = service.loadCompleteTrace(findingId!);
+      const proposalService = new GroupProposalReviewService(
+        repository,
+        new DeterministicFindingDrafter({ clock: () => new Date(assessment.completedAt) }),
+        { clock: () => new Date(assessment.completedAt), idFactory: sequenceIds() },
+      );
+      const [proposalId] = proposalService.listProposalIds(assessment.page.assessmentId);
+      expect(proposalId).toBeDefined();
+      const pending = proposalService.load(proposalId!);
+      expect(pending.proposal.reviewStatus).toBe('pending');
+      expect(pending.draftLink).toBeNull();
+      expect(new FindingReviewService(repository).listFindingIds()).toEqual([]);
+
+      const accepted = proposalService.decide(proposalId!, 'accepted', {
+        actor: 'Auditor Example',
+        reason: 'The repeated member structure was inspected and confirmed.',
+      });
+      expect(accepted.originalProposal.reviewStatus).toBe('pending');
+      expect(accepted.proposal.reviewStatus).toBe('accepted');
+      expect(accepted.decisions).toHaveLength(1);
+      expect(accepted.draftLink).not.toBeNull();
+      const trace = new FindingReviewService(repository).loadCompleteTrace(
+        accepted.draftLink!.findingId,
+      );
       expect(trace.finding).toMatchObject({
         status: 'draft',
         severity: null,
@@ -191,7 +216,7 @@ describe('assessment preparation CLI', () => {
         recommendation: null,
       });
       expect(trace.group).toMatchObject({
-        reviewStatus: 'pending',
+        reviewStatus: 'accepted',
         groupingConfidence: 'high',
       });
       expect(trace.validations).toEqual([]);
@@ -202,9 +227,9 @@ describe('assessment preparation CLI', () => {
       expect(trace.evidence.map((record) => record.id)).toEqual(['scanner-evidence']);
 
       expect(() => prepareAssessmentForReview(assessment, stages)).toThrow(
-        /already contains prepared Finding IDs/,
+        /already contains prepared GroupProposal IDs/,
       );
-      expect(service.listFindingIds(assessment.page.assessmentId)).toHaveLength(1);
+      expect(proposalService.listProposalIds(assessment.page.assessmentId)).toHaveLength(1);
     } finally {
       repository.close();
     }
@@ -275,10 +300,93 @@ describe('assessment preparation CLI', () => {
         ineligibleGroupingProposals: 1,
         draftFindings: 0,
         persistedReviewBundles: 0,
+        persistedProposals: 1,
         ignoredNormalizationInputs: 1,
         unrecognizedRules: 1,
       });
       expect(new FindingReviewService(repository).listFindingIds('assessment-prepare')).toEqual([]);
+      expect(
+        new GroupProposalReviewService(
+          repository,
+          new DeterministicFindingDrafter(),
+        ).listProposalIds('assessment-prepare'),
+      ).toHaveLength(1);
+    } finally {
+      repository.close();
+    }
+  });
+
+  it('persists all five Naperville proposals, then drafts only the two explicitly accepted repeats', () => {
+    const savedOutput = readFileSync(
+      new URL('../../../naperville-scan.json', import.meta.url),
+      'utf8',
+    );
+    const assessment = rawPageAssessmentSchema.parse(
+      JSON.parse(savedOutput.slice(savedOutput.indexOf('{'))) as unknown,
+    );
+    const repository = new SqliteReviewRepository(':memory:');
+    try {
+      const counts = prepareAssessmentForReview(
+        assessment,
+        createAssessmentPreparationStages(assessment, repository),
+      );
+      expect(counts).toMatchObject({
+        observations: 1,
+        occurrences: 8,
+        groupingProposals: 5,
+        persistedProposals: 5,
+        draftFindings: 0,
+        persistedReviewBundles: 0,
+      });
+
+      const proposalService = new GroupProposalReviewService(
+        repository,
+        new DeterministicFindingDrafter({ clock: () => new Date(assessment.completedAt) }),
+        { clock: () => new Date(assessment.completedAt), idFactory: sequenceIds() },
+      );
+      const findingService = new FindingReviewService(repository);
+      const initial = proposalService
+        .listProposalIds(assessment.page.assessmentId)
+        .map((id) => proposalService.load(id));
+      expect(initial).toHaveLength(5);
+      expect(initial.every((trace) => trace.proposal.reviewStatus === 'pending')).toBe(true);
+      expect(initial.every((trace) => trace.decisions.length === 0)).toBe(true);
+      expect(initial.every((trace) => trace.draftLink === null)).toBe(true);
+      expect(findingService.listFindingIds(assessment.page.assessmentId)).toEqual([]);
+
+      const repeats = initial.filter(
+        (trace) =>
+          trace.proposal.kind === 'repeat_candidate' &&
+          trace.proposal.groupingConfidence === 'medium',
+      );
+      expect(repeats.map((trace) => trace.occurrences.length).sort()).toEqual([2, 3]);
+      for (const trace of repeats) {
+        proposalService.decide(trace.proposal.id, 'accepted', {
+          actor: 'Naperville fixture auditor',
+          reason: 'The repeat membership and retained occurrence evidence were inspected.',
+        });
+      }
+
+      const after = proposalService
+        .listProposalIds(assessment.page.assessmentId)
+        .map((id) => proposalService.load(id));
+      expect(after.filter((trace) => trace.proposal.reviewStatus === 'accepted')).toHaveLength(2);
+      expect(after.filter((trace) => trace.proposal.reviewStatus === 'pending')).toHaveLength(3);
+      expect(after.filter((trace) => trace.draftLink !== null)).toHaveLength(2);
+      expect(findingService.listFindingIds(assessment.page.assessmentId)).toHaveLength(2);
+      const draftTraces = findingService
+        .listFindingIds(assessment.page.assessmentId)
+        .map((id) => findingService.loadCompleteTrace(id));
+      expect(draftTraces.map((trace) => trace.finding.occurrenceCount).sort()).toEqual([2, 3]);
+      expect(
+        draftTraces.every(
+          (trace) =>
+            trace.finding.status === 'draft' &&
+            trace.group.kind === 'repeat_candidate' &&
+            trace.group.reviewStatus === 'accepted' &&
+            trace.finding.wcagCriteria.length === 0,
+        ),
+      ).toBe(true);
     } finally {
       repository.close();
     }
@@ -342,9 +450,15 @@ function emptyCounts() {
     ineligibleGroupingProposals: 0,
     draftFindings: 0,
     persistedReviewBundles: 0,
+    persistedProposals: 0,
     ignoredNormalizationInputs: 0,
     unrecognizedRules: 0,
   };
+}
+
+function sequenceIds(): () => string {
+  let value = 0;
+  return () => String(++value).padStart(4, '0');
 }
 
 function writeJson(path: string, value: unknown): void {

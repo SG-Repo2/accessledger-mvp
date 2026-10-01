@@ -6,6 +6,8 @@ import type {
   Observation,
   ObservationOccurrence,
   Page,
+  ProposalDraftLink,
+  ProposalReviewDecision,
   WcagCandidateEvaluation,
   ReviewAuditEvent,
   Validation,
@@ -27,6 +29,13 @@ export interface FindingDrafterOptions {
 
 export interface FindingDrafter {
   draft(group: GroupProposal, evidenceContext: FindingEvidenceContext): Finding;
+}
+
+export interface GroupProposalReviewTrace extends FindingEvidenceContext {
+  proposal: GroupProposal;
+  originalProposal: GroupProposal;
+  decisions: readonly ProposalReviewDecision[];
+  draftLink: ProposalDraftLink | null;
 }
 
 export interface FindingReviewTrace extends FindingEvidenceContext {

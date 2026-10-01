@@ -7,6 +7,8 @@ import type {
   Observation,
   ObservationOccurrence,
   Page,
+  ProposalDraftLink,
+  ProposalReviewDecision,
   ReviewAuditEvent,
   ResidentJourney,
   Validation,
@@ -24,6 +26,23 @@ export interface ReviewSourceContext {
 export interface ReviewBundleInput extends ReviewSourceContext {
   finding: Finding;
   group: GroupProposal;
+}
+
+export interface ProposalReviewInput extends ReviewSourceContext {
+  proposal: GroupProposal;
+}
+
+export interface PersistedProposalReview extends ReviewSourceContext {
+  proposal: GroupProposal;
+  originalProposal: GroupProposal;
+  decisions: ProposalReviewDecision[];
+  draftLink: ProposalDraftLink | null;
+}
+
+export interface ProposalDecisionDraft {
+  reviewBundle: ReviewBundleInput;
+  reviewEvent: ReviewAuditEvent;
+  link: ProposalDraftLink;
 }
 
 export interface PersistedReviewBundle extends ReviewSourceContext {
@@ -60,6 +79,16 @@ export interface ReviewRepository {
     event: ReviewAuditEvent,
   ): void;
   close(): void;
+}
+
+export interface ProposalReviewRepository {
+  createProposalReviews(inputs: readonly ProposalReviewInput[]): void;
+  loadProposalReview(proposalId: string): PersistedProposalReview | null;
+  listProposalIds(assessmentId?: string): string[];
+  commitProposalDecision(
+    decision: ProposalReviewDecision,
+    draft: ProposalDecisionDraft | null,
+  ): void;
 }
 
 export interface JourneyRepository {

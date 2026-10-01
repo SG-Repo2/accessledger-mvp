@@ -24,7 +24,7 @@ export interface AssessmentPrepareCliDependencies {
 }
 
 const usage = `Usage: npm run assessment:prepare -- <scan-json-path> <database-path>
-Prepares eligible draft Findings and their complete source traces for Auditor Studio review.
+Persists every GroupProposal and its complete source trace for explicit Auditor Studio review.
 `;
 
 export function runAssessmentPrepareCli(

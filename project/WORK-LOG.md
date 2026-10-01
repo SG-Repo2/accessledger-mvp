@@ -371,3 +371,41 @@ typecheck`, `npm test` (18 files / 115 tests), `npm run lint`, and `npm run form
 - **Next blocker:** A pre-Finding GroupProposal review/persistence boundary is needed so a human can
   accept the two medium-confidence structural repeats. Auto-acceptance and inferred fingerprints
   remain prohibited.
+
+## 2026-10-01 — Codex — Durable pre-Finding GroupProposal review
+
+- **Implemented:** Added public `ProposalReviewDecision` and `ProposalDraftLink` contracts;
+  `GroupProposalReviewService`; atomic persistence for every preparation-stage proposal and its
+  exact Observation/Occurrence/WCAG/Page/Evidence context; append-only accept/reject/split history;
+  conditional post-acceptance use of `DeterministicFindingDrafter`; and immutable proposal-to-draft
+  linkage.
+- **Persistence:** Added ordered SQLite migration 3 with `proposal_reviews`,
+  `proposal_source_records`, `proposal_decisions`, and `proposal_draft_links`, plus immutability and
+  append-only triggers. Migrations 1 and 2 are unchanged. Duplicate deterministic proposal IDs are
+  rejected before the atomic preparation batch, and transaction failures cannot leave partial
+  proposal or draft state.
+- **Studio:** Added `/proposals` queue/detail routes showing original membership, rationale,
+  confidence, WCAG status, full Evidence/source versions, decision history, and draft linkage.
+  Native forms require an explicit accept/reject/split choice, actor, and reason. No proposal is
+  automatically accepted.
+- **Drafting behavior:** Accepted repeats draft under the existing policy. Accepted singletons draft
+  only with a supported WCAG criterion. Rejected, split, ambiguous, and accepted-but-ineligible
+  records retain history without a draft. Existing Finding review, severity, Validation, approval,
+  and export gates are unchanged.
+- **Naperville verification:** Preparation persists five pending proposals and creates zero drafts
+  or review bundles. Explicit acceptance of only the two medium-confidence repeats creates two
+  draft Findings with exact occurrence counts 3 and 2; the three singleton proposals remain
+  pending, and their WCAG evaluation remains uncertain.
+- **Documentation:** Updated architecture, data model, auditor review, ADR-015, current state,
+  handoff, backlog, and this work log. Public contract stays `1.0.0`; persistence advances to `3`;
+  grouping/drafting/WCAG dataset versions remain unchanged.
+- **Tests:** Added focused contract serialization, migration/trigger, repository full-trace and
+  rerun atomicity, append-only history, accepted repeat/singleton eligibility, ineligible singleton,
+  rejected/split/ambiguous, studio queue/detail/forms, Naperville, no-auto-accept, and no-occurrence-
+  loss coverage.
+- **Checks:** `npm run typecheck`, `npm test` (19 files / 124 tests), `npm run lint`, and
+  `npm run format:check` pass. The full test run used loopback permission for deterministic browser
+  fixtures; Node 22 emitted only the expected upstream `node:sqlite` experimental warning.
+- **Next blocker:** The two Naperville drafts still require human Finding review: completed judgment
+  fields, supported Validation claims, exact severity, and approval. The three singleton proposals
+  additionally lack supported WCAG criteria and cannot draft under the preserved policy.

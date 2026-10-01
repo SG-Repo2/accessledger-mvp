@@ -13,7 +13,9 @@ Register, or make certification, conformance, or legal conclusions.
 On construction it enables foreign keys/WAL and applies ordered SQL migrations. Schema version `1`
 creates review bundles, immutable source records, grouping decisions, validations, and audit events;
 schema version `2` adds ResidentJourney protocols/revisions, JourneyResult records/links, and journey
-audit history without changing migration 1. Migration and domain schema versions are independent.
+audit history; schema version `3` adds durable pre-Finding proposals, immutable trace links,
+append-only decisions, and immutable proposal-to-draft links. Migrations 1 and 2 are unchanged.
+Migration and domain schema versions are independent.
 
 The repository retains original Finding/GroupProposal JSON and a current Finding projection.
 Source records cannot be updated or deleted. Group decisions, validations, and audit events are
@@ -21,8 +23,10 @@ append-only. Every Finding change and audit event is one transaction; adding Val
 its human Evidence and derived validation status in that same transaction. Stale Finding snapshots
 fail instead of overwriting another reviewer's work.
 
-Review data is first inserted through `FindingReviewService.createReview(...)`; callers must supply
-the complete Chunk 5 bundle. The service validates the complete trace before SQLite receives it.
+Preparation data is first inserted through `GroupProposalReviewService.persistProposals(...)`;
+callers must supply every proposal and its complete source context. The service validates the trace
+before SQLite receives one atomic batch. Existing direct Finding review creation remains available
+through `FindingReviewService.createReview(...)` for complete Chunk 5 bundles.
 
 The assessment CLI provides the narrow operator path from a saved successful raw assessment:
 
@@ -31,20 +35,25 @@ npm run assessment:prepare -- <scan-json-path> <database-path>
 npm run auditor:studio -- <database-path>
 ```
 
-Preparation composes the public observation, WCAG, grouping, Finding-drafting, and review-service
-boundaries. It creates missing database parents and applies the existing migrations. An existing
-database is retained and may receive new Finding IDs; preparing an already-present deterministic
-Finding ID is refused before any new bundle is written. No importer was added to Auditor Studio.
+Preparation composes the public observation, WCAG, and grouping boundaries, creates missing
+database parents, applies all migrations, and persists every proposal separately from draft
+Findings/review bundles. It never auto-accepts or drafts a pending proposal. Preparing any
+already-present deterministic proposal ID is refused before the batch writes, so a rerun cannot
+partially add proposals.
 
-Only proposals accepted by the existing drafter are persisted. The current raw-assessment
-normalizer does not populate component fingerprints, so its automatically generated pending groups
-are low/medium confidence and do not become draft Findings without an existing human grouping
-decision. The review store has no pre-Finding GroupProposal queue, and the studio cannot make that
-decision before a Finding exists. A real scan can therefore produce a valid initialized database
-with zero review bundles; resolving that circular workflow requires a separately approved domain or
-persistence change rather than an application-layer inference.
+`GroupProposalReviewService.decide(...)` records an explicit human `accepted`, `rejected`, or
+`split` decision. Only acceptance invokes `DeterministicFindingDrafter`. Accepted repeats may draft
+under the existing eligibility rules. Accepted singletons draft only with a criterion supported by
+their retained WCAG evaluations. Rejected, split, ambiguous, and otherwise ineligible accepted
+records remain in the proposal history with no draft. An eligible decision, review bundle, and
+proposal-to-draft link commit in one transaction.
 
 ## Service operations
+
+- `persistProposals(...)` validates and atomically stores original proposals and complete traces.
+- `load(proposalId)` returns original/current proposal, complete trace, decisions, and draft link.
+- `listProposalIds(assessmentId?)` supplies the durable queue.
+- `decide(...)` appends the explicit decision and conditionally drafts after acceptance.
 
 - `createReview(bundle, actor)` validates and stores the original review bundle.
 - `loadCompleteTrace(findingId)` returns original/current Finding and group, all source records,
@@ -76,6 +85,11 @@ semantically labeled native forms, representative/all-occurrence views, Evidence
 evaluations, validation and severity controls, approval blockers, and audit history. It requires no
 client-side scripting and is operable with standard keyboard form interaction.
 
+The home page links to `/proposals`. The proposal queue includes pending and ineligible records;
+each detail page shows membership, rationale, confidence, WCAG status, complete Evidence/source
+metadata, append-only history, and draft linkage. A labeled native form records accept/reject/split
+with reviewer and reason; no client-side scripting or default acceptance is used.
+
 The home page also links to `/journeys`. Journey screens provide labeled native forms for protocol
 creation/edit, explicit manual result recording, and separate result-backed Validation. Finding
 review shows linked result outcome, performer, environment, and timing. The UI explains that
@@ -89,9 +103,8 @@ and authentication are out of scope. Human notes entered in the UI become immuta
 Evidence. A supported claim means the reviewer has actually performed the stated method and recorded
 observable support; selecting an option is not a substitute for that work.
 
-The UI is intentionally unstyled and has no pre-Finding GroupProposal queue/importer, artifact
-viewer, concurrent merge interface, automated journey runner, form-submission agent, or NVDA
-controller. `node:sqlite` keeps
+The UI is intentionally unstyled and has no binary artifact viewer, concurrent merge interface,
+automated journey runner, form-submission agent, or NVDA controller. `node:sqlite` keeps
 installation portable and dependency-free; Node 22 may emit its upstream experimental-feature
 warning. Windows/NVDA execution remains an external human procedure.
 

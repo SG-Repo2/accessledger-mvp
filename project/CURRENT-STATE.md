@@ -1,6 +1,6 @@
 # Current State
 
-Updated: 2026-09-29
+Updated: 2026-10-01
 
 ## Completed
 
@@ -37,11 +37,17 @@ register artifacts.
 - `apps/auditor-studio` remains the minimal internal review/journey interface; Chunk 8 required no
   studio download/navigation change.
 - `npm run assessment:prepare -- <scan-json-path> <database-path>` runtime-validates a saved
-  successful `RawPageAssessment`, composes normalization, WCAG evaluation, grouping, eligible
-  Finding drafting, and review-bundle persistence, then prints deterministic stage counts.
+  successful `RawPageAssessment`, composes normalization, WCAG evaluation, and grouping, persists
+  every proposal with its complete trace, and prints proposal/draft/review-bundle counts separately.
 - Preparation uses stable application-level transformation IDs/timestamps, creates database parent
-  directories portably, applies the existing SQLite migrations, refuses duplicate deterministic
-  Finding IDs in an existing database, and closes the repository on success or failure.
+  directories portably, applies SQLite migration 3, refuses duplicate deterministic proposal IDs
+  before its atomic batch write, and closes the repository on success or failure.
+- `GroupProposalReviewService` loads the original/current proposal, complete trace, append-only
+  decision history, and optional draft link. It records explicit accept/reject/split decisions and
+  invokes `DeterministicFindingDrafter` only after acceptance.
+- Auditor Studio `/proposals` lists every preparation-stage proposal and exposes membership,
+  rationale, grouping confidence, WCAG status, evidence/source versions, decision history, and
+  native accept/reject/split forms. No proposal is auto-accepted.
 - Deterministic scanner normalization now also covers axe-core `aria-prohibited-attr` when every
   node preserves a target, matching non-empty ARIA attribute in parseable HTML, element/computed-
   role check facts, and source/payload engine provenance. The Naperville payload produces one
@@ -53,13 +59,17 @@ register artifacts.
 
 ## Public contracts and versions
 
-- Public domain contract schema remains `1.0.0`; persistence schema remains `2`.
+- Public domain contract schema remains `1.0.0`; persistence schema is `3`.
 - WCAG dataset version is `2026.09.29-1`; it adds the reviewed, evidence-gated
   `aria-prohibited-attr` mapping without adding a criterion or changing the public schema.
 - Findings Register export schema is independently versioned `1.0.0` through
   `FINDINGS_REGISTER_EXPORT_SCHEMA_VERSION`.
 - `@accessledger/shared` adds Zod schemas/types for export format, Validation/occurrence/journey
   summaries, Finding record, JSON document, and manifest.
+- `@accessledger/shared` also exposes versioned `ProposalReviewDecision` and `ProposalDraftLink`
+  schemas/types; the original `GroupProposal` contract and algorithm version are unchanged.
+- Migration 3 adds immutable proposal originals, immutable ordered source links, append-only
+  decisions, and immutable proposal-to-draft links without changing migrations 1 or 2.
 - `@accessledger/export` publicly exposes the exporter interface/implementation, options/source
   boundaries, JSON/CSV serializers, and fixed CSV column list.
 - `ReviewRepository.listFindingIds(assessmentId?)` and
@@ -75,13 +85,11 @@ multi-tenancy, accounts/authentication, billing, production monitoring, remediat
 autonomous journeys, synthetic users/speech, automated form submission, and automated/remote NVDA
 remain deliberately out of scope. CSV consumers must parse documented JSON cells for nested
 records. `generatedAt` intentionally changes artifact bytes/hashes across real runs. The studio
-still has no pre-Finding GroupProposal queue/importer, binary artifact viewer, styling layer, or
-concurrent merge UI. The current normalizer emits null component fingerprints. The Naperville
-payload now creates two pending medium-confidence repeat proposals and three pending low-confidence
-singletons, but all remain ineligible for Finding drafting because review persistence begins with a
-Finding and cannot accept a GroupProposal first. Node 22 may print its upstream
-`node:sqlite` experimental warning; Windows/NVDA remains an external human procedure. No public
-contract or SQLite migration changed for assessment preparation.
+still has no binary artifact viewer, styling layer, or concurrent merge UI. The current normalizer
+emits null component fingerprints. The Naperville payload creates two medium-confidence repeat
+proposals and three low-confidence singletons. Its WCAG evaluations remain uncertain; therefore the
+singletons cannot draft even if accepted. Node 22 may print its upstream `node:sqlite` experimental
+warning; Windows/NVDA remains an external human procedure.
 
 ## Validation
 
@@ -99,11 +107,18 @@ Observation/WCAG tests add positive, negative, preservation, source-version, tra
 supported, unsupported, and uncertain coverage for `aria-prohibited-attr`, plus explicit `region`
 non-coverage.
 
+Proposal-review tests cover public serialization, migration 3 and immutability triggers, atomic
+round trips with full trace/source versions, duplicate rerun refusal, append-only decision history,
+accepted repeat and supported-singleton drafting, ineligible accepted singletons, rejected/split/
+ambiguous non-drafting, studio queue/detail/native forms, and occurrence preservation. The saved
+Naperville payload is verified at five persisted pending proposals and zero drafts before review;
+explicit acceptance of only its two medium repeats yields two drafts with 3 and 2 occurrences.
+
 Required root commands pass:
 
 ```text
 npm run typecheck
-npm test                 # 18 files / 115 tests
+npm test                 # 19 files / 124 tests
 npm run lint
 npm run format:check
 ```
@@ -115,9 +130,9 @@ runtime warning is Node 22's upstream `node:sqlite` experimental notice.
 
 - Last completed chunk: 8
 - MVP status: implementation complete; operator preparation command added
-- Next recommended work: design the minimal pre-Finding GroupProposal review/persistence boundary
-  so a human can accept the two Naperville structural repeat proposals without auto-acceptance
-- Blocker: preparation now reaches five traceable pending proposals, but none is legally eligible
-  for drafting; the persisted review workflow still requires a draft Finding before grouping review
+- Next recommended work: conduct human Finding review/Validation for the two Naperville drafts
+  before any approval or export attempt
+- Blocker: the two drafts still lack human judgment fields, supported Validation claims, exact
+  severity, and approval; the three remaining singletons also lack supported WCAG criteria
 
 Follow `project/HANDOFF.md` for the exact post-MVP decision prompt and retained limitations.

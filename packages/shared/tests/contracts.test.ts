@@ -10,6 +10,8 @@ import {
   observationOccurrenceSchema,
   observationSchema,
   pageSchema,
+  proposalDraftLinkSchema,
+  proposalReviewDecisionSchema,
   residentJourneySchema,
   validationSchema,
   wcagCriterionSchema,
@@ -330,5 +332,32 @@ describe('shared domain contracts', () => {
     expect(
       groupProposalSchema.safeParse({ ...proposal, memberOccurrenceIds: ['occurrence-1'] }).success,
     ).toBe(false);
+  });
+
+  it('serializes explicit pre-Finding decisions and proposal-to-draft links', () => {
+    const decision = proposalReviewDecisionSchema.parse({
+      schemaVersion: CONTRACT_SCHEMA_VERSION,
+      id: 'proposal-decision-1',
+      assessmentId: 'assessment-1',
+      proposalId: 'group-proposal-1',
+      status: 'accepted',
+      actor: 'Human auditor',
+      reason: 'The repeated members share the inspected structure.',
+      decidedAt: now,
+    });
+    const link = proposalDraftLinkSchema.parse({
+      schemaVersion: CONTRACT_SCHEMA_VERSION,
+      proposalId: decision.proposalId,
+      findingId: 'finding-1',
+      linkedAt: now,
+    });
+
+    expect(proposalReviewDecisionSchema.parse(JSON.parse(JSON.stringify(decision)))).toEqual(
+      decision,
+    );
+    expect(proposalDraftLinkSchema.parse(JSON.parse(JSON.stringify(link)))).toEqual(link);
+    expect(proposalReviewDecisionSchema.safeParse({ ...decision, status: 'pending' }).success).toBe(
+      false,
+    );
   });
 });
